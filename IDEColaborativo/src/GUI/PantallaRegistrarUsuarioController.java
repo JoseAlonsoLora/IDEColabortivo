@@ -63,7 +63,7 @@ public class PantallaRegistrarUsuarioController implements Initializable {
 
     @FXML
     private void lanzarPantallaInicioSesion(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/idecolaborativo/PantallaIniciarSesion.fxml"),rb);
+        Parent root = FXMLLoader.load(getClass().getResource("/GUI/PantallaIniciarSesion.fxml"),rb);
         Scene scene = new Scene(root);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);

@@ -5,6 +5,7 @@
  */
 package idecolaborativo;
 
+import java.util.ResourceBundle;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,10 +20,10 @@ public class IDEColaborativo extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("PantallaIniciarSesion.fxml"));
+        ResourceBundle rb = ResourceBundle.getBundle("recursos.idioma_en_US");
+        Parent root = FXMLLoader.load(getClass().getResource("/GUI/PantallaIniciarSesion.fxml"),rb);
         stage.setTitle("IDE Colaborativo");
         Scene scene = new Scene(root);
-        
         stage.setScene(scene);
         stage.show();
     }

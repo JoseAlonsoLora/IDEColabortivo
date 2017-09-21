@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="372.0" prefWidth="700.0" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.PantallaIniciarSesionController">
+   <children>
+      <ImageView fitHeight="394.0" fitWidth="700.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Imagenes/fondoIncioSesion.png" />
+         </image>
+      </ImageView>
+      <AnchorPane layoutX="201.0" layoutY="14.0" opacity="0.87" prefHeight="318.0" prefWidth="299.0" style="-fx-background-color: #D3D3D3;">
+         <children>
+            <Label fx:id="etiquetaIniciarSesion" layoutX="83.0" layoutY="14.0" text="Inicio de Sesión">
+               <font>
+                  <Font name="System Bold" size="17.0" />
+               </font>
+            </Label>
+            <Label fx:id="etiquetaNombreUsuario" layoutX="39.0" layoutY="56.0" text="Nombre de usuario">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font></Label>
+            <JFXTextField focusColor="LIGHTSTEELBLUE" layoutX="39.0" layoutY="76.0" prefHeight="24.0" prefWidth="229.0" unFocusColor="BLACK" />
+            <JFXPasswordField focusColor="LIGHTSTEELBLUE" layoutX="39.0" layoutY="148.0" prefHeight="24.0" prefWidth="229.0" unFocusColor="BLACK" />
+            <JFXButton fx:id="botonIniciarSesion" layoutX="39.0" layoutY="200.0" prefHeight="26.0" prefWidth="229.0" style="-fx-background-color: #4682B4;" text="Iniciar Sesión">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></JFXButton>
+            <Label fx:id="etiquetaCrearCuenta" layoutX="85.0" layoutY="239.0" onMouseClicked="#lanzarVentanaRegistrarUsuario" text="Crear nueva cuenta" underline="true">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Label>
+            <Label fx:id="etiquetaContraseña" layoutX="39.0" layoutY="126.0" text="Contraseña">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Label>
+            <Label fx:id="etiquetaEspañol" layoutX="171.0" layoutY="296.0" onMouseClicked="#cambiarIdiomaEspañol" text="Español">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Label>
+            <Label layoutX="232.0" layoutY="296.0" text="/" />
+            <Label fx:id="etiquetaEnglish" layoutX="245.0" layoutY="296.0" onMouseClicked="#cambiarIdiomaIngles" text="English">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Label>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

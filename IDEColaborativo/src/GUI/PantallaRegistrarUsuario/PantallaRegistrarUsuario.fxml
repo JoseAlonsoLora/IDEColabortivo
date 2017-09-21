@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXPasswordField?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
@@ -39,9 +40,9 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <JFXTextField layoutX="41.0" layoutY="247.0" prefHeight="24.0" prefWidth="225.0" />
             <JFXButton layoutX="181.0" layoutY="298.0" style="-fx-background-color: #4682B4;" text="Crear cuenta" />
             <JFXButton layoutX="83.0" layoutY="298.0" style="-fx-background-color: #D3D3D3;" text="Cancelar" />
+            <JFXPasswordField layoutX="44.0" layoutY="240.0" prefHeight="24.0" prefWidth="225.0" />
          </children>
       </AnchorPane>
    </children>

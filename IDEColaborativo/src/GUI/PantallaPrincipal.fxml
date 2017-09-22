@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
+<?import de.jensd.fx.glyphs.octicons.OctIconView?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="618.0" prefWidth="984.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.PantallaPrincipalController">
+   <children>
+      <Separator layoutY="38.0" prefHeight="11.0" prefWidth="767.0" />
+      <AnchorPane fx:id="panelCodigo" layoutX="149.0" layoutY="44.0" prefHeight="575.0" prefWidth="835.0" />
+      <AnchorPane fx:id="panelBarraMenu" layoutY="-1.0" prefHeight="45.0" prefWidth="984.0" style="-fx-background-color: #DCDCDC;">
+         <children>
+            <JFXButton fx:id="botonCrearProyecto" alignment="CENTER" layoutX="16.0" layoutY="9.0" ripplerFill="#7c7c7c" text="" textAlignment="CENTER">
+               <graphic>
+                  <FontAwesomeIconView fill="TAN" glyphName="FOLDER" size="20.0" />
+               </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </JFXButton>
+            <JFXButton layoutX="59.0" layoutY="8.0" ripplerFill="#7c7c7c" text="">
+               <graphic>
+                  <MaterialDesignIconView fx:id="botonImportarProyecto" fill="OLIVEDRAB" glyphName="FOLDER_UPLOAD" size="22.0" />
+               </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></JFXButton>
+            <JFXButton fx:id="botonGuardar" layoutX="105.0" layoutY="8.0" ripplerFill="#7c7c7c" text="">
+               <graphic>
+                  <MaterialDesignIconView glyphName="FLOPPY" size="20.0" />
+               </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </JFXButton>
+            <JFXButton fx:id="botonDepurar" layoutX="162.0" layoutY="10.0" ripplerFill="#7c7c7c" text="">
+               <graphic>
+                  <OctIconView fill="TEAL" glyphName="TOOLS" size="17.0" />
+               </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </JFXButton>
+            <JFXButton layoutX="202.0" layoutY="5.0" ripplerFill="#7c7c7c" text="">
+               <graphic>
+                  <MaterialDesignIconView fill="#14c900" glyphName="YOUTUBE_PLAY" size="27" />
+               </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </JFXButton>
+            <JFXButton layoutX="857.0" layoutY="7.0" ripplerFill="#7c7c7c" text="">
+               <graphic>
+                  <MaterialDesignIconView fill="GOLDENROD" glyphName="BELL" size="25" />
+               </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </JFXButton>
+            <MenuButton layoutX="918.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: #DCDCDC;">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Cambiar idioma" />
+                  <MenuItem mnemonicParsing="false" text="Cerrar sesión" />
+              </items>
+               <graphic>
+                  <MaterialDesignIconView fill="DODGERBLUE" glyphName="ACCOUNT" size="20" />
+               </graphic>
+               <effect>
+                  <Glow />
+               </effect>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </MenuButton>
+         </children>
+      </AnchorPane>
+      <Separator layoutX="146.0" layoutY="44.0" orientation="VERTICAL" prefHeight="575.0" prefWidth="4.0" />
+      <AnchorPane fx:id="panelProyectos" layoutY="44.0" prefHeight="575.0" prefWidth="144.0" />
+   </children>
+</AnchorPane>

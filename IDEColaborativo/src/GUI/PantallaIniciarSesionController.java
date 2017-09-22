@@ -3,9 +3,9 @@ package GUI;
 import com.jfoenix.controls.JFXButton;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Locale;
-import java.util.Map;
+
 import java.util.ResourceBundle;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -23,7 +23,7 @@ import javafx.stage.Stage;
 public class PantallaIniciarSesionController implements Initializable {
     
     
-    private ResourceBundle rb;
+    private ResourceBundle recurso;
     
     @FXML
     private Label etiquetaIniciarSesion;
@@ -44,7 +44,7 @@ public class PantallaIniciarSesionController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        this.rb = rb;
+        this.recurso = rb;
         configurarIdioma();
     }
     
@@ -52,7 +52,7 @@ public class PantallaIniciarSesionController implements Initializable {
     @FXML
     private void lanzarVentanaRegistrarUsuario(MouseEvent event) throws IOException {
         
-        Parent root = FXMLLoader.load(getClass().getResource("PantallaRegistrarUsuario.fxml"),rb);
+        Parent root = FXMLLoader.load(getClass().getResource("PantallaRegistrarUsuario.fxml"),recurso);
         
         Scene scene = new Scene(root);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -61,16 +61,16 @@ public class PantallaIniciarSesionController implements Initializable {
     }
     
     public void configurarIdioma(){
-        etiquetaIniciarSesion.setText(rb.getString("etInicioSesion"));
-        etiquetaNombreUsuario.setText(rb.getString("etNombreUsuario"));
-        botonIniciarSesion.setText(rb.getString("btIniciarSesion"));
-        etiquetaCrearCuenta.setText(rb.getString("etCrearNuevaCuenta"));
-        etiquetaContraseña.setText(rb.getString("etContraseña"));
+        etiquetaIniciarSesion.setText(recurso.getString("etInicioSesion"));
+        etiquetaNombreUsuario.setText(recurso.getString("etNombreUsuario"));
+        botonIniciarSesion.setText(recurso.getString("btIniciarSesion"));
+        etiquetaCrearCuenta.setText(recurso.getString("etCrearNuevaCuenta"));
+        etiquetaContraseña.setText(recurso.getString("etContraseña"));
     }
 
     @FXML
     private void cambiarIdiomaEspañol(MouseEvent event) {
-        rb = ResourceBundle.getBundle("recursos.idioma_es_MX");
+        recurso = ResourceBundle.getBundle("recursos.idioma_es_MX");
         configurarIdioma();
         etiquetaEspañol.setOpacity(0.50);
         etiquetaEnglish.setOpacity(1.0);
@@ -78,10 +78,19 @@ public class PantallaIniciarSesionController implements Initializable {
 
     @FXML
     private void cambiarIdiomaIngles(MouseEvent event) {
-        rb = ResourceBundle.getBundle("recursos.idioma_en_US");
+        recurso = ResourceBundle.getBundle("recursos.idioma_en_US");
         configurarIdioma();
         etiquetaEspañol.setOpacity(1.0);
         etiquetaEnglish.setOpacity(0.50);
+    }
+
+    @FXML
+    private void lanzarVentanaPrincipal(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("PantallaPrincipal.fxml"),recurso);
+        
+        Scene scene = new Scene(root);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
     }
 
 }

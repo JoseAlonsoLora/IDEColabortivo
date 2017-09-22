@@ -30,7 +30,7 @@
                </font></Label>
             <JFXTextField focusColor="LIGHTSTEELBLUE" layoutX="39.0" layoutY="76.0" prefHeight="24.0" prefWidth="229.0" unFocusColor="BLACK" />
             <JFXPasswordField focusColor="LIGHTSTEELBLUE" layoutX="39.0" layoutY="148.0" prefHeight="24.0" prefWidth="229.0" unFocusColor="BLACK" />
-            <JFXButton fx:id="botonIniciarSesion" layoutX="39.0" layoutY="200.0" prefHeight="26.0" prefWidth="229.0" style="-fx-background-color: #4682B4;" text="Iniciar Sesión">
+            <JFXButton fx:id="botonIniciarSesion" layoutX="39.0" layoutY="200.0" onAction="#lanzarVentanaPrincipal" prefHeight="26.0" prefWidth="229.0" style="-fx-background-color: #4682B4;" text="Iniciar Sesión">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></JFXButton>

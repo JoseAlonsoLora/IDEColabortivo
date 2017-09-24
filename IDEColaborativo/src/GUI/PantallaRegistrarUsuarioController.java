@@ -25,9 +25,9 @@ import javafx.stage.Stage;
  * @author alonso
  */
 public class PantallaRegistrarUsuarioController implements Initializable {
-    
+
     private ResourceBundle rb;
-    
+
     @FXML
     private Label etiquetaCrearCuenta;
     @FXML
@@ -50,8 +50,8 @@ public class PantallaRegistrarUsuarioController implements Initializable {
         configurarIdioma();
         // TODO
     }
-    
-    public void configurarIdioma(){
+
+    public void configurarIdioma() {
         etiquetaCrearCuenta.setText(rb.getString("etCrearCuenta"));
         etiquetaNombreUsuario.setText(rb.getString("etNombreUsuario"));
         etiquetaEmail.setText(rb.getString("etEmail"));
@@ -59,14 +59,14 @@ public class PantallaRegistrarUsuarioController implements Initializable {
         botonCancelar.setText(rb.getString("btCancelar"));
         botonCrearCuenta.setText(rb.getString("btCrearCuenta"));
     }
-    
+
 
     @FXML
-    private void lanzarPantallaInicioSesion(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/GUI/PantallaIniciarSesion.fxml"),rb);
+    private void botonCancelar(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/GUI/PantallaIniciarSesion.fxml"), rb);
         Scene scene = new Scene(root);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
     }
-    
+
 }

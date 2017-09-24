@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXRadioButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="183.0" prefWidth="342.0" style="-fx-background-color: #DCDCDC;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.PantallaCambiarIdiomaController">
+   <children>
+      <Label fx:id="etiquetaIdiomasDisponibles" layoutX="14.0" layoutY="14.0" text="Idiomas disponibles:">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <JFXRadioButton fx:id="radioEspañol" layoutX="14.0" layoutY="51.0" text="Español(México)" />
+      <JFXRadioButton fx:id="radioEnglish" layoutX="14.0" layoutY="85.0" text="English(United States)" />
+      <JFXButton fx:id="botonAceptar" layoutX="276.0" layoutY="144.0" onAction="#botonAceptar" style="-fx-background-color: #C0C0C0;" text="Aceptar" />
+      <JFXButton fx:id="botonCancelar" layoutX="196.0" layoutY="144.0" onAction="#botonCancelar" style="-fx-background-color: #C0C0C0;" text="Cancelar" />
+   </children>
+</AnchorPane>

@@ -21,10 +21,9 @@ import javafx.stage.Stage;
  * @author alonso
  */
 public class PantallaIniciarSesionController implements Initializable {
-    
-    
+
     private ResourceBundle recurso;
-    
+   
     @FXML
     private Label etiquetaIniciarSesion;
     @FXML
@@ -39,33 +38,22 @@ public class PantallaIniciarSesionController implements Initializable {
     private Label etiquetaEspañol;
     @FXML
     private Label etiquetaEnglish;
+    @FXML
+    private JFXButton botonCancelar;
 
-    
-    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.recurso = rb;
         configurarIdioma();
     }
-    
 
-    @FXML
-    private void lanzarVentanaRegistrarUsuario(MouseEvent event) throws IOException {
-        
-        Parent root = FXMLLoader.load(getClass().getResource("PantallaRegistrarUsuario.fxml"),recurso);
-        
-        Scene scene = new Scene(root);
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-        
-    }
-    
-    public void configurarIdioma(){
+    public void configurarIdioma() {
         etiquetaIniciarSesion.setText(recurso.getString("etInicioSesion"));
         etiquetaNombreUsuario.setText(recurso.getString("etNombreUsuario"));
         botonIniciarSesion.setText(recurso.getString("btIniciarSesion"));
         etiquetaCrearCuenta.setText(recurso.getString("etCrearNuevaCuenta"));
         etiquetaContraseña.setText(recurso.getString("etContraseña"));
+        botonCancelar.setText(recurso.getString("btCancelar"));
     }
 
     @FXML
@@ -85,12 +73,28 @@ public class PantallaIniciarSesionController implements Initializable {
     }
 
     @FXML
-    private void lanzarVentanaPrincipal(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("PantallaPrincipal.fxml"),recurso);
-        
+    private void botonCancelar(ActionEvent event) {
+        Stage ventanaIniciarSesion = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        ventanaIniciarSesion.close();
+    }
+
+    @FXML
+    private void botonIniciarSesion(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("PantallaPrincipal.fxml"), recurso);
+        Scene scene = new Scene(root);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.show();
+    }
+
+    @FXML
+    private void etiquetaCrearCuenta(MouseEvent event) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("PantallaRegistrarUsuario.fxml"), recurso);
         Scene scene = new Scene(root);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
+       
     }
 
 }

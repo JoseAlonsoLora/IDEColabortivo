@@ -22,11 +22,11 @@ public class IDEColaborativo extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         ResourceBundle rb = ResourceBundle.getBundle("recursos.idioma_en_US");
-        Parent root = FXMLLoader.load(getClass().getResource("/GUI/PantallaIniciarSesion.fxml"),rb);
-       
+        Parent root = FXMLLoader.load(getClass().getResource("/GUI/PantallaPrincipal.fxml"),rb);
         stage.setTitle("IDE Colaborativo");
         Scene scene = new Scene(root);
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 

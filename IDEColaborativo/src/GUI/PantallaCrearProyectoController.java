@@ -14,10 +14,12 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -83,16 +85,22 @@ public class PantallaCrearProyectoController implements Initializable {
             fileChooser.setInitialFileName(campoTextoNombreProyecto.getText());
             File file = fileChooser.showSaveDialog(null);
             if (file == null) {
-                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Atención");
                 String s = "Debe elegir una ruta";
                 alert.setContentText(s);
                 alert.show();
-            }else{
+            } else {
                 System.out.println("tallo");
                 campoTextoRuta.setText(file.getPath());
             }
         }
+    }
+
+    @FXML
+    private void botonCancelar(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.close();
     }
 
 }

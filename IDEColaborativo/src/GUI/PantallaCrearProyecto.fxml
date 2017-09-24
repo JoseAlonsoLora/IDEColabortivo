@@ -39,14 +39,14 @@
             </ImageView>
          </graphic>
       </JFXRadioButton>
-      <Label fx:id="etiquetaNombreProyecto" layoutX="15.0" layoutY="105.0" text="Nombre del proyecto:" AnchorPane.rightAnchor="366.0" />
+      <Label fx:id="etiquetaNombreProyecto" layoutX="27.0" layoutY="105.0" text="Nombre del proyecto:" AnchorPane.rightAnchor="379.0" />
       <JFXTextField fx:id="campoTextoNombreProyecto" focusColor="#cdc7c7" layoutX="165.0" layoutY="101.0" prefHeight="24.0" prefWidth="209.0" />
       <Separator layoutX="14.0" layoutY="29.0" prefHeight="8.0" prefWidth="143.0" />
-      <Label fx:id="etiquetaRuta" layoutX="122.0" layoutY="159.0" text="Ruta:" />
+      <Label fx:id="etiquetaRuta" layoutX="118.0" layoutY="159.0" text="Ruta:" />
       <JFXTextField fx:id="campoTextoRuta" focusColor="#cdc7c7" layoutX="168.0" layoutY="155.0" prefHeight="24.0" prefWidth="209.0" />
       <JFXButton fx:id="botonExaminar" layoutX="403.0" layoutY="162.0" onAction="#seleccionarRuta" style="-fx-background-color: #C0C0C0;" text="Examinar" />
       <Separator layoutX="14.0" layoutY="205.0" prefHeight="8.0" prefWidth="466.0" />
       <JFXButton fx:id="botonCrear" layoutX="429.0" layoutY="237.0" style="-fx-background-color: #C0C0C0;" text="Crear" />
-      <JFXButton fx:id="botonCancelar" layoutX="329.0" layoutY="237.0" style="-fx-background-color: #C0C0C0;" text="Cancelar" />
+      <JFXButton fx:id="botonCancelar" layoutX="329.0" layoutY="237.0" onAction="#botonCancelar" style="-fx-background-color: #C0C0C0;" text="Cancelar" />
    </children>
 </AnchorPane>

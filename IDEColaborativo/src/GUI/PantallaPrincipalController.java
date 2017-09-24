@@ -16,6 +16,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -25,8 +26,9 @@ import javafx.stage.Stage;
  * @author raymu
  */
 public class PantallaPrincipalController implements Initializable {
+
     private ResourceBundle recurso;
-    
+
     @FXML
     private AnchorPane panelCodigo;
     @FXML
@@ -41,6 +43,10 @@ public class PantallaPrincipalController implements Initializable {
     private JFXButton botonDepurar;
     @FXML
     private AnchorPane panelProyectos;
+    @FXML
+    private MenuItem iniciarSesion;
+    @FXML
+    private MenuItem cambiarIdioma;
 
     /**
      * Initializes the controller class.
@@ -48,15 +54,42 @@ public class PantallaPrincipalController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         recurso = rb;
-    }    
-
-    @FXML
-    private void lanzarPantallaCrearProyecto(ActionEvent event) throws IOException {
-        Stage stage = new Stage();
-        Parent root = FXMLLoader.load(getClass().getResource("/GUI/PantallaCrearProyecto.fxml"),recurso);
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+        configurarIdioma();
     }
     
+    public void configurarIdioma(){
+        iniciarSesion.setText(recurso.getString("etInicioSesion"));
+        cambiarIdioma.setText(recurso.getString("etCambiarIdioma"));
+    }
+
+    @FXML
+    private void botonCrearProyecto(ActionEvent event) throws IOException {
+        Stage stage = new Stage();
+        Parent root = FXMLLoader.load(getClass().getResource("/GUI/PantallaCrearProyecto.fxml"), recurso);
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.show();
+    }
+
+    @FXML
+    private void botonIniciarSesion(ActionEvent event) throws IOException {
+        Stage stage = new Stage();
+        Parent root = FXMLLoader.load(getClass().getResource("PantallaIniciarSesion.fxml"), recurso);
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.show();
+    }
+
+    @FXML
+    private void botonCambiarIdioma(ActionEvent event) throws IOException {
+        Stage stage = new Stage();
+        Parent root = FXMLLoader.load(getClass().getResource("PantallaCambiarIdioma.fxml"), recurso);
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.show();
+    }
+
 }

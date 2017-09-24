@@ -17,7 +17,7 @@
       <AnchorPane fx:id="panelCodigo" layoutX="149.0" layoutY="44.0" prefHeight="575.0" prefWidth="835.0" />
       <AnchorPane fx:id="panelBarraMenu" layoutY="-1.0" prefHeight="45.0" prefWidth="984.0" style="-fx-background-color: #DCDCDC;">
          <children>
-            <JFXButton fx:id="botonCrearProyecto" alignment="CENTER" layoutX="16.0" layoutY="9.0" onAction="#lanzarPantallaCrearProyecto" ripplerFill="#7c7c7c" text="" textAlignment="CENTER">
+            <JFXButton fx:id="botonCrearProyecto" alignment="CENTER" layoutX="16.0" layoutY="9.0" onAction="#botonCrearProyecto" ripplerFill="#7c7c7c" text="" textAlignment="CENTER">
                <graphic>
                   <FontAwesomeIconView fill="TAN" glyphName="FOLDER" size="20.0" />
                </graphic>
@@ -66,11 +66,11 @@
             </JFXButton>
             <MenuButton layoutX="918.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: #DCDCDC;">
               <items>
-                <MenuItem mnemonicParsing="false" text="Cambiar idioma" />
-                  <MenuItem mnemonicParsing="false" text="Cerrar sesión" />
+                  <MenuItem fx:id="iniciarSesion" mnemonicParsing="false" onAction="#botonIniciarSesion" text="Iniciar Sesion" />
+                <MenuItem fx:id="cambiarIdioma" mnemonicParsing="false" onAction="#botonCambiarIdioma" text="Cambiar idioma" />
               </items>
                <graphic>
-                  <MaterialDesignIconView fill="DODGERBLUE" glyphName="ACCOUNT" size="20" />
+                  <MaterialDesignIconView fill="DODGERBLUE" glyphName="ACCOUNT" size="20" text="" />
                </graphic>
                <effect>
                   <Glow />

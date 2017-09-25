@@ -92,7 +92,8 @@ public class PantallaIniciarSesionController implements Initializable {
     @FXML
     private void etiquetaCrearCuenta(MouseEvent event) throws IOException {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        main.ventanaRegistrarUsuario(recurso, stage);
+        stage.close();
+        main.ventanaRegistrarUsuario(recurso);
     }
 
 }

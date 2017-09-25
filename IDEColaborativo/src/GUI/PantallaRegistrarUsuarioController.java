@@ -27,7 +27,7 @@ import javafx.stage.Stage;
  */
 public class PantallaRegistrarUsuarioController implements Initializable {
     private IDEColaborativo main;
-    private ResourceBundle rb;
+    private ResourceBundle recurso;
 
     @FXML
     private Label etiquetaCrearCuenta;
@@ -47,7 +47,7 @@ public class PantallaRegistrarUsuarioController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        this.rb = rb;
+        this.recurso = rb;
         configurarIdioma();
         // TODO
     }
@@ -57,21 +57,20 @@ public class PantallaRegistrarUsuarioController implements Initializable {
     }
 
     public void configurarIdioma() {
-        etiquetaCrearCuenta.setText(rb.getString("etCrearCuenta"));
-        etiquetaNombreUsuario.setText(rb.getString("etNombreUsuario"));
-        etiquetaEmail.setText(rb.getString("etEmail"));
-        etiquetaContraseña.setText(rb.getString("etContraseña"));
-        botonCancelar.setText(rb.getString("btCancelar"));
-        botonCrearCuenta.setText(rb.getString("btCrearCuenta"));
+        etiquetaCrearCuenta.setText(recurso.getString("etCrearCuenta"));
+        etiquetaNombreUsuario.setText(recurso.getString("etNombreUsuario"));
+        etiquetaEmail.setText(recurso.getString("etEmail"));
+        etiquetaContraseña.setText(recurso.getString("etContraseña"));
+        botonCancelar.setText(recurso.getString("btCancelar"));
+        botonCrearCuenta.setText(recurso.getString("btCrearCuenta"));
     }
 
 
     @FXML
     private void botonCancelar(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/GUI/PantallaIniciarSesion.fxml"), rb);
-        Scene scene = new Scene(root);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
+        stage.close();
+        main.ventanaInicioSesion(recurso);
     }
 
 }

@@ -7,6 +7,7 @@ package GUI;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXRadioButton;
+import idecolaborativo.IDEColaborativo;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -24,7 +25,7 @@ import javafx.stage.Stage;
  * @author raymu
  */
 public class PantallaCambiarIdiomaController implements Initializable {
-
+    private IDEColaborativo main;
     private ResourceBundle recurso;
     private ToggleGroup grupoRadio = new ToggleGroup();
 
@@ -48,6 +49,10 @@ public class PantallaCambiarIdiomaController implements Initializable {
         configurarIdioma();
         radioEnglish.setToggleGroup(grupoRadio);
         radioEspañol.setToggleGroup(grupoRadio);
+    }
+
+    public void setMain(IDEColaborativo main) {
+        this.main = main;
     }
 
     public void configurarIdioma() {

@@ -1,6 +1,7 @@
 package GUI;
 
 import com.jfoenix.controls.JFXButton;
+import idecolaborativo.IDEColaborativo;
 import java.io.IOException;
 import java.net.URL;
 
@@ -21,7 +22,7 @@ import javafx.stage.Stage;
  * @author alonso
  */
 public class PantallaIniciarSesionController implements Initializable {
-
+    private IDEColaborativo main;
     private ResourceBundle recurso;
    
     @FXML
@@ -46,6 +47,11 @@ public class PantallaIniciarSesionController implements Initializable {
         this.recurso = rb;
         configurarIdioma();
     }
+
+    public void setMain(IDEColaborativo main) {
+        this.main = main;
+    }
+    
 
     public void configurarIdioma() {
         etiquetaIniciarSesion.setText(recurso.getString("etInicioSesion"));
@@ -80,21 +86,13 @@ public class PantallaIniciarSesionController implements Initializable {
 
     @FXML
     private void botonIniciarSesion(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("PantallaPrincipal.fxml"), recurso);
-        Scene scene = new Scene(root);
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
+        main.ventanaPrincipal(recurso);
     }
 
     @FXML
     private void etiquetaCrearCuenta(MouseEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("PantallaRegistrarUsuario.fxml"), recurso);
-        Scene scene = new Scene(root);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-       
+        main.ventanaRegistrarUsuario(recurso, stage);
     }
 
 }

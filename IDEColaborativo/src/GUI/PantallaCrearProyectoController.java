@@ -8,6 +8,7 @@ package GUI;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXTextField;
+import idecolaborativo.IDEColaborativo;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -27,7 +28,7 @@ import javafx.stage.Stage;
  * @author alonso
  */
 public class PantallaCrearProyectoController implements Initializable {
-
+    private IDEColaborativo main;
     private ResourceBundle recurso;
 
     private ToggleGroup grupoRadio = new ToggleGroup();
@@ -66,6 +67,10 @@ public class PantallaCrearProyectoController implements Initializable {
         radioCSharp.setToggleGroup(grupoRadio);
         configurarIdioma();
 
+    }
+
+    public void setMain(IDEColaborativo main) {
+        this.main = main;
     }
 
     public void configurarIdioma() {

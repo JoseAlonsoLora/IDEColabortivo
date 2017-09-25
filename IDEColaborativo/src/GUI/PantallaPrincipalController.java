@@ -7,6 +7,7 @@ package GUI;
 
 import com.jfoenix.controls.JFXButton;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
+import idecolaborativo.IDEColaborativo;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -26,9 +27,9 @@ import javafx.stage.Stage;
  * @author raymu
  */
 public class PantallaPrincipalController implements Initializable {
-
+    private IDEColaborativo main;
     private ResourceBundle recurso;
-
+    
     @FXML
     private AnchorPane panelCodigo;
     @FXML
@@ -57,6 +58,10 @@ public class PantallaPrincipalController implements Initializable {
         configurarIdioma();
     }
     
+    public void setMain(IDEColaborativo main){
+        this.main=main;
+    }
+    
     public void configurarIdioma(){
         iniciarSesion.setText(recurso.getString("etInicioSesion"));
         cambiarIdioma.setText(recurso.getString("etCambiarIdioma"));
@@ -64,32 +69,17 @@ public class PantallaPrincipalController implements Initializable {
 
     @FXML
     private void botonCrearProyecto(ActionEvent event) throws IOException {
-        Stage stage = new Stage();
-        Parent root = FXMLLoader.load(getClass().getResource("/GUI/PantallaCrearProyecto.fxml"), recurso);
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
+        main.ventanaCrearProyecto(recurso);
     }
 
     @FXML
     private void botonIniciarSesion(ActionEvent event) throws IOException {
-        Stage stage = new Stage();
-        Parent root = FXMLLoader.load(getClass().getResource("PantallaIniciarSesion.fxml"), recurso);
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
+        main.ventanaInicioSesion(recurso);
     }
 
     @FXML
     private void botonCambiarIdioma(ActionEvent event) throws IOException {
-        Stage stage = new Stage();
-        Parent root = FXMLLoader.load(getClass().getResource("PantallaCambiarIdioma.fxml"), recurso);
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
+       main.ventanaCambiarIdioma(recurso);
     }
 
 }

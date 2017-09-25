@@ -6,6 +6,7 @@
 package GUI;
 
 import com.jfoenix.controls.JFXButton;
+import idecolaborativo.IDEColaborativo;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -25,7 +26,7 @@ import javafx.stage.Stage;
  * @author alonso
  */
 public class PantallaRegistrarUsuarioController implements Initializable {
-
+    private IDEColaborativo main;
     private ResourceBundle rb;
 
     @FXML
@@ -49,6 +50,10 @@ public class PantallaRegistrarUsuarioController implements Initializable {
         this.rb = rb;
         configurarIdioma();
         // TODO
+    }
+
+    public void setMain(IDEColaborativo main) {
+        this.main = main;
     }
 
     public void configurarIdioma() {

@@ -5,9 +5,18 @@
  */
 package idecolaborativo;
 
+import GUI.PantallaCambiarIdiomaController;
+import GUI.PantallaCrearProyectoController;
+import GUI.PantallaIniciarSesionController;
+import GUI.PantallaPrincipalController;
+import GUI.PantallaRegistrarUsuarioController;
+import java.io.IOException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 
@@ -18,16 +27,89 @@ import javafx.stage.Stage;
  * @author alonso
  */
 public class IDEColaborativo extends Application {
-    
+
     @Override
     public void start(Stage stage) throws Exception {
-        ResourceBundle rb = ResourceBundle.getBundle("recursos.idioma_en_US");
-        Parent root = FXMLLoader.load(getClass().getResource("/GUI/PantallaPrincipal.fxml"),rb);
-        stage.setTitle("IDE Colaborativo");
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
+        ResourceBundle recurso = ResourceBundle.getBundle("recursos.idioma_en_US");
+        ventanaPrincipal(recurso);
+    }
+
+    public void ventanaPrincipal(ResourceBundle recurso) {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/GUI/PantallaPrincipal.fxml"), recurso);
+            Parent root = (Parent) loader.load();
+            PantallaPrincipalController control = loader.getController();
+            control.setMain(this);
+            stage.setTitle("IDE Colaborativo");
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void ventanaInicioSesion(ResourceBundle recurso) {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/GUI/PantallaIniciarSesion.fxml"), recurso);
+            Parent root = (Parent) loader.load();
+            PantallaIniciarSesionController control = loader.getController();
+            control.setMain(this);
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void ventanaRegistrarUsuario(ResourceBundle recurso, Stage stage) {
+        try {
+            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/GUI/PantallaRegistrarUsuario.fxml"), recurso);
+            Parent root = (Parent) loader.load();
+            PantallaRegistrarUsuarioController control = loader.getController();
+            control.setMain(this);
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+        } catch (IOException ex) {
+            Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void ventanaCrearProyecto(ResourceBundle recurso){
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/GUI/PantallaCrearProyecto.fxml"), recurso);
+            Parent root = (Parent) loader.load();
+            PantallaCrearProyectoController control = loader.getController();
+            control.setMain(this);
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void ventanaCambiarIdioma(ResourceBundle recurso){
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/GUI/PantallaCambiarIdioma.fxml"), recurso);
+            Parent root = (Parent) loader.load();
+            PantallaCambiarIdiomaController control = loader.getController();
+            control.setMain(this);
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -36,5 +118,5 @@ public class IDEColaborativo extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
+
 }

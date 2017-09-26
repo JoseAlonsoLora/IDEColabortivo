@@ -8,9 +8,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="316.0" prefWidth="299.0" style="-fx-background-color: #DCDCDC;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.PantallaIniciarSesionController">
+<AnchorPane id="AnchorPane" prefHeight="295.0" prefWidth="299.0" style="-fx-background-color: #DCDCDC;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.PantallaIniciarSesionController">
    <children>
-      <Label fx:id="etiquetaIniciarSesion" layoutX="83.0" layoutY="14.0" text="Inicio de Sesión">
+      <Label fx:id="etiquetaIniciarSesion" layoutX="83.0" layoutY="14.0" text="Inicio de Sesión" AnchorPane.leftAnchor="83.0">
          <font>
             <Font name="System Bold" size="17.0" />
          </font>
@@ -20,14 +20,14 @@
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <JFXTextField focusColor="LIGHTSTEELBLUE" layoutX="39.0" layoutY="76.0" prefHeight="24.0" prefWidth="229.0" unFocusColor="BLACK" />
-      <JFXPasswordField focusColor="LIGHTSTEELBLUE" layoutX="39.0" layoutY="148.0" prefHeight="24.0" prefWidth="229.0" unFocusColor="BLACK" />
-      <JFXButton fx:id="botonIniciarSesion" layoutX="132.0" layoutY="200.0" onAction="#botonIniciarSesion" prefHeight="26.0" prefWidth="136.0" style="-fx-background-color: #4682B4;" text="Iniciar Sesión">
+      <JFXTextField focusColor="DARKGRAY" layoutX="39.0" layoutY="76.0" prefHeight="24.0" prefWidth="229.0" unFocusColor="BLACK" />
+      <JFXPasswordField focusColor="DARKGRAY" layoutX="39.0" layoutY="148.0" prefHeight="24.0" prefWidth="229.0" unFocusColor="BLACK" />
+      <JFXButton fx:id="botonIniciarSesion" layoutX="132.0" layoutY="200.0" onAction="#botonIniciarSesion" prefHeight="26.0" prefWidth="136.0" style="-fx-background-color: #4682B4;" text="Iniciar Sesión" AnchorPane.rightAnchor="31.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
       </JFXButton>
-      <Label fx:id="etiquetaCrearCuenta" layoutX="85.0" layoutY="239.0" onMouseClicked="#etiquetaCrearCuenta" text="Crear nueva cuenta" underline="true">
+      <Label fx:id="etiquetaCrearCuenta" layoutX="85.0" layoutY="253.0" onMouseClicked="#etiquetaCrearCuenta" text="Crear nueva cuenta" underline="true">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
@@ -37,17 +37,6 @@
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <Label fx:id="etiquetaEspañol" layoutX="171.0" layoutY="296.0" onMouseClicked="#cambiarIdiomaEspañol" text="Español">
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </Label>
-      <Label layoutX="232.0" layoutY="296.0" text="/" />
-      <Label fx:id="etiquetaEnglish" layoutX="245.0" layoutY="296.0" onMouseClicked="#cambiarIdiomaIngles" text="English">
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </Label>
-      <JFXButton fx:id="botonCancelar" layoutX="39.0" layoutY="201.0" onAction="#botonCancelar" prefHeight="25.0" prefWidth="69.0" style="-fx-background-color: #C0C0C0;" />
+      <JFXButton fx:id="botonCancelar" layoutX="39.0" layoutY="201.0" onAction="#botonCancelar" prefHeight="26.0" prefWidth="84.0" style="-fx-background-color: #C0C0C0;" />
    </children>
 </AnchorPane>

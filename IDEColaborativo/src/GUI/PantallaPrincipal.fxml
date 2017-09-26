@@ -5,6 +5,7 @@
 <?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
 <?import de.jensd.fx.glyphs.octicons.OctIconView?>
 <?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
@@ -64,21 +65,24 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </JFXButton>
-            <MenuButton layoutX="918.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: #DCDCDC;">
+            <MenuButton fx:id="botonConfiguracion" layoutX="918.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: #DCDCDC;">
               <items>
-                  <MenuItem fx:id="iniciarSesion" mnemonicParsing="false" onAction="#botonIniciarSesion" text="Iniciar Sesion" />
                 <MenuItem fx:id="cambiarIdioma" mnemonicParsing="false" onAction="#botonCambiarIdioma" text="Cambiar idioma" />
+                  <MenuItem fx:id="iniciarSesion" mnemonicParsing="false" onAction="#botonIniciarSesion" text="Iniciar Sesion" />
+                  <MenuItem fx:id="cerrarSesion" mnemonicParsing="false" onAction="#cerrarSesion" text="Unspecified Action" />
               </items>
-               <graphic>
-                  <MaterialDesignIconView fill="DODGERBLUE" glyphName="ACCOUNT" size="20" text="" />
-               </graphic>
                <effect>
                   <Glow />
                </effect>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
+               <graphic>
+                  <MaterialDesignIconView fill="DIMGRAY" glyphName="SETTINGS" size="20" />
+               </graphic>
             </MenuButton>
+            <MaterialDesignIconView fx:id="iconoSesionIniciada" fill="DEEPSKYBLUE" glyphName="ACCOUNT_CIRCLE" layoutX="482.0" layoutY="36.0" size="35" />
+            <Label fx:id="etiquetaNombreUsuario" layoutX="523.0" layoutY="16.0" prefHeight="16.0" prefWidth="119.0" />
          </children>
       </AnchorPane>
       <Separator layoutX="146.0" layoutY="44.0" orientation="VERTICAL" prefHeight="575.0" prefWidth="4.0" />

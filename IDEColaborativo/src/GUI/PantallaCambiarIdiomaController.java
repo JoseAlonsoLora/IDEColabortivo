@@ -25,9 +25,11 @@ import javafx.stage.Stage;
  * @author raymu
  */
 public class PantallaCambiarIdiomaController implements Initializable {
+
     private IDEColaborativo main;
     private ResourceBundle recurso;
     private ToggleGroup grupoRadio = new ToggleGroup();
+    private PantallaPrincipalController controlador;
 
     @FXML
     private Label etiquetaIdiomasDisponibles;
@@ -55,6 +57,10 @@ public class PantallaCambiarIdiomaController implements Initializable {
         this.main = main;
     }
 
+    public void setControlador(PantallaPrincipalController controlador) {
+        this.controlador = controlador;
+    }
+
     public void configurarIdioma() {
         etiquetaIdiomasDisponibles.setText(recurso.getString("etIdiomasDisponibles"));
         botonAceptar.setText(recurso.getString("btAceptar"));
@@ -68,17 +74,22 @@ public class PantallaCambiarIdiomaController implements Initializable {
             switch (radioSeleccionado.getText()) {
                 case "Español(México)":
                     recurso = ResourceBundle.getBundle("recursos.idioma_es_MX");
+                    controlador.setRecurso(recurso);
                     break;
                 case "English(United States)":
                     recurso = ResourceBundle.getBundle("recursos.idioma_en_US");
+                    controlador.setRecurso(recurso);
                     break;
             }
-        }else{
-             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                String s = recurso.getString("mensajeIdioma");
-                alert.setContentText(s);
-                alert.show();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.close();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            String s = recurso.getString("mensajeIdioma");
+            alert.setContentText(s);
+            alert.show();
         }
+
     }
 
     @FXML

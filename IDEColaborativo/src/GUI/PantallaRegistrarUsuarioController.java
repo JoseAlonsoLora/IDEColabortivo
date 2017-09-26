@@ -28,7 +28,7 @@ import javafx.stage.Stage;
 public class PantallaRegistrarUsuarioController implements Initializable {
     private IDEColaborativo main;
     private ResourceBundle recurso;
-
+    private PantallaPrincipalController controlador;
     @FXML
     private Label etiquetaCrearCuenta;
     @FXML
@@ -56,6 +56,12 @@ public class PantallaRegistrarUsuarioController implements Initializable {
         this.main = main;
     }
 
+    public void setControlador(PantallaPrincipalController controlador) {
+        this.controlador = controlador;
+    }
+    
+    
+
     public void configurarIdioma() {
         etiquetaCrearCuenta.setText(recurso.getString("etCrearCuenta"));
         etiquetaNombreUsuario.setText(recurso.getString("etNombreUsuario"));
@@ -70,7 +76,7 @@ public class PantallaRegistrarUsuarioController implements Initializable {
     private void botonCancelar(ActionEvent event) throws IOException {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
-        main.ventanaInicioSesion(recurso);
+        main.ventanaInicioSesion(recurso,controlador);
     }
 
 }

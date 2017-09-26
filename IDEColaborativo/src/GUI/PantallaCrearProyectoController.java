@@ -30,7 +30,7 @@ import javafx.stage.Stage;
 public class PantallaCrearProyectoController implements Initializable {
     private IDEColaborativo main;
     private ResourceBundle recurso;
-
+    private PantallaPrincipalController controlador;
     private ToggleGroup grupoRadio = new ToggleGroup();
 
     @FXML
@@ -72,6 +72,12 @@ public class PantallaCrearProyectoController implements Initializable {
     public void setMain(IDEColaborativo main) {
         this.main = main;
     }
+
+    public void setControlador(PantallaPrincipalController controlador) {
+        this.controlador = controlador;
+    }
+    
+    
 
     public void configurarIdioma() {
         etiquetaEligeProyecto.setText(recurso.getString("etEligeProyecto"));

@@ -8,11 +8,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -24,6 +21,7 @@ import javafx.stage.Stage;
 public class PantallaIniciarSesionController implements Initializable {
     private IDEColaborativo main;
     private ResourceBundle recurso;
+    private PantallaPrincipalController controlador;
    
     @FXML
     private Label etiquetaIniciarSesion;
@@ -36,10 +34,6 @@ public class PantallaIniciarSesionController implements Initializable {
     @FXML
     private Label etiquetaContraseña;
     @FXML
-    private Label etiquetaEspañol;
-    @FXML
-    private Label etiquetaEnglish;
-    @FXML
     private JFXButton botonCancelar;
 
     @Override
@@ -51,6 +45,12 @@ public class PantallaIniciarSesionController implements Initializable {
     public void setMain(IDEColaborativo main) {
         this.main = main;
     }
+
+    public void setControlador(PantallaPrincipalController controlador) {
+        this.controlador = controlador;
+    }
+    
+    
     
 
     public void configurarIdioma() {
@@ -63,22 +63,6 @@ public class PantallaIniciarSesionController implements Initializable {
     }
 
     @FXML
-    private void cambiarIdiomaEspañol(MouseEvent event) {
-        recurso = ResourceBundle.getBundle("recursos.idioma_es_MX");
-        configurarIdioma();
-        etiquetaEspañol.setOpacity(0.50);
-        etiquetaEnglish.setOpacity(1.0);
-    }
-
-    @FXML
-    private void cambiarIdiomaIngles(MouseEvent event) {
-        recurso = ResourceBundle.getBundle("recursos.idioma_en_US");
-        configurarIdioma();
-        etiquetaEspañol.setOpacity(1.0);
-        etiquetaEnglish.setOpacity(0.50);
-    }
-
-    @FXML
     private void botonCancelar(ActionEvent event) {
         Stage ventanaIniciarSesion = (Stage) ((Node) event.getSource()).getScene().getWindow();
         ventanaIniciarSesion.close();
@@ -86,14 +70,16 @@ public class PantallaIniciarSesionController implements Initializable {
 
     @FXML
     private void botonIniciarSesion(ActionEvent event) throws IOException {
-        main.ventanaPrincipal(recurso);
+        controlador.sesionIniciada("RayPerez");
+        Stage ventanaIniciarSesion = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        ventanaIniciarSesion.close();
     }
 
     @FXML
     private void etiquetaCrearCuenta(MouseEvent event) throws IOException {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
-        main.ventanaRegistrarUsuario(recurso);
+        main.ventanaRegistrarUsuario(recurso,controlador);
     }
 
 }

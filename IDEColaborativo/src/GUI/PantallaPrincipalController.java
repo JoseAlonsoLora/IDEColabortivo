@@ -17,6 +17,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -27,8 +29,11 @@ import javafx.stage.Stage;
  * @author raymu
  */
 public class PantallaPrincipalController implements Initializable {
+    
     private IDEColaborativo main;
     private ResourceBundle recurso;
+    private PantallaPrincipalController controlador;
+    private String idUsuario;
     
     @FXML
     private AnchorPane panelCodigo;
@@ -48,12 +53,23 @@ public class PantallaPrincipalController implements Initializable {
     private MenuItem iniciarSesion;
     @FXML
     private MenuItem cambiarIdioma;
+    @FXML
+    private MenuItem cerrarSesion;
+    @FXML
+    private MaterialDesignIconView iconoSesionIniciada;
+    @FXML
+    private Label etiquetaNombreUsuario;
+    @FXML
+    private MenuButton botonConfiguracion;
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        iconoSesionIniciada.setVisible(false);
+        etiquetaNombreUsuario.setVisible(false);
+        cerrarSesion.setVisible(false);
         recurso = rb;
         configurarIdioma();
     }
@@ -61,25 +77,57 @@ public class PantallaPrincipalController implements Initializable {
     public void setMain(IDEColaborativo main){
         this.main=main;
     }
+
+    public void setRecurso(ResourceBundle recurso) {
+        this.recurso = recurso;
+        configurarIdioma();
+    }
+    
+    
+
+    public void setControlador(PantallaPrincipalController controlador) {
+        this.controlador = controlador;
+    }
+    
+    
     
     public void configurarIdioma(){
         iniciarSesion.setText(recurso.getString("etInicioSesion"));
         cambiarIdioma.setText(recurso.getString("etCambiarIdioma"));
+        cerrarSesion.setText(recurso.getString("btCerrarSesion"));
     }
 
     @FXML
     private void botonCrearProyecto(ActionEvent event) throws IOException {
-        main.ventanaCrearProyecto(recurso);
+        main.ventanaCrearProyecto(recurso,controlador);
     }
 
     @FXML
     private void botonIniciarSesion(ActionEvent event) throws IOException {
-        main.ventanaInicioSesion(recurso);
+        main.ventanaInicioSesion(recurso,controlador);
     }
 
     @FXML
     private void botonCambiarIdioma(ActionEvent event) throws IOException {
-       main.ventanaCambiarIdioma(recurso);
+       main.ventanaCambiarIdioma(recurso,controlador);
+    }
+
+    @FXML
+    private void cerrarSesion(ActionEvent event) {
+        idUsuario = "";
+        iconoSesionIniciada.setVisible(false);
+        etiquetaNombreUsuario.setVisible(false);
+        cerrarSesion.setVisible(false);
+        iniciarSesion.setVisible(true);
+        
+    }
+    
+    public void sesionIniciada(String nombreUsuario){
+        iconoSesionIniciada.setVisible(true);
+        etiquetaNombreUsuario.setText(nombreUsuario);
+        etiquetaNombreUsuario.setVisible(true);
+        cerrarSesion.setVisible(true);
+        iniciarSesion.setVisible(false);
     }
 
 }

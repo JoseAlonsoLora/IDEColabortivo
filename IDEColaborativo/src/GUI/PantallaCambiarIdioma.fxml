@@ -15,7 +15,7 @@
       </Label>
       <JFXRadioButton fx:id="radioEspañol" layoutX="14.0" layoutY="51.0" text="Español(México)" />
       <JFXRadioButton fx:id="radioEnglish" layoutX="14.0" layoutY="85.0" text="English(United States)" />
-      <JFXButton fx:id="botonAceptar" layoutX="276.0" layoutY="144.0" onAction="#botonAceptar" style="-fx-background-color: #C0C0C0;" text="Aceptar" />
-      <JFXButton fx:id="botonCancelar" layoutX="196.0" layoutY="144.0" onAction="#botonCancelar" style="-fx-background-color: #C0C0C0;" text="Cancelar" />
+      <JFXButton fx:id="botonAceptar" layoutX="251.0" layoutY="144.0" onAction="#botonAceptar" style="-fx-background-color: #4682B4;" text="Aceptar" />
+      <JFXButton fx:id="botonCancelar" layoutX="151.0" layoutY="144.0" onAction="#botonCancelar" style="-fx-background-color: #C0C0C0;" text="Cancelar" AnchorPane.rightAnchor="115.0" />
    </children>
 </AnchorPane>

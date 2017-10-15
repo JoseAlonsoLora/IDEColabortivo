@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="295.0" prefWidth="299.0" style="-fx-background-color: #DCDCDC;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.PantallaIniciarSesionController">
+<AnchorPane id="AnchorPane" prefHeight="295.0" prefWidth="299.0" style="-fx-background-color: #DCDCDC;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.PantallaIniciarSesionController">
    <children>
       <Label fx:id="etiquetaIniciarSesion" layoutX="83.0" layoutY="14.0" text="Inicio de Sesión" AnchorPane.leftAnchor="83.0">
          <font>

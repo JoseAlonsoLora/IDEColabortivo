@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="183.0" prefWidth="342.0" style="-fx-background-color: #DCDCDC;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.PantallaCambiarIdiomaController">
+<AnchorPane id="AnchorPane" prefHeight="183.0" prefWidth="342.0" style="-fx-background-color: #DCDCDC;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.PantallaCambiarIdiomaController">
    <children>
       <Label fx:id="etiquetaIdiomasDisponibles" layoutX="14.0" layoutY="14.0" text="Idiomas disponibles:">
          <font>

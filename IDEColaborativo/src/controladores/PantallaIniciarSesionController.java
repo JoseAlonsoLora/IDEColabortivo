@@ -1,10 +1,9 @@
-package GUI;
+package controladores;
 
 import com.jfoenix.controls.JFXButton;
-import idecolaborativo.IDEColaborativo;
+import static idecolaborativo.IDEColaborativo.ventanaRegistrarUsuario;
 import java.io.IOException;
 import java.net.URL;
-
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,7 +18,6 @@ import javafx.stage.Stage;
  * @author alonso
  */
 public class PantallaIniciarSesionController implements Initializable {
-    private IDEColaborativo main;
     private ResourceBundle recurso;
     private PantallaPrincipalController controlador;
    
@@ -42,9 +40,6 @@ public class PantallaIniciarSesionController implements Initializable {
         configurarIdioma();
     }
 
-    public void setMain(IDEColaborativo main) {
-        this.main = main;
-    }
 
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
@@ -79,7 +74,7 @@ public class PantallaIniciarSesionController implements Initializable {
     private void etiquetaCrearCuenta(MouseEvent event) throws IOException {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
-        main.ventanaRegistrarUsuario(recurso,controlador);
+        ventanaRegistrarUsuario(recurso,controlador);
     }
 
 }

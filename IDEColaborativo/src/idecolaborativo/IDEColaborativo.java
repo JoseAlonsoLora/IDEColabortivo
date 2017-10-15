@@ -5,11 +5,11 @@
  */
 package idecolaborativo;
 
-import GUI.PantallaCambiarIdiomaController;
-import GUI.PantallaCrearProyectoController;
-import GUI.PantallaIniciarSesionController;
-import GUI.PantallaPrincipalController;
-import GUI.PantallaRegistrarUsuarioController;
+import controladores.PantallaCambiarIdiomaController;
+import controladores.PantallaCrearProyectoController;
+import controladores.PantallaIniciarSesionController;
+import controladores.PantallaPrincipalController;
+import controladores.PantallaRegistrarUsuarioController;
 import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -33,13 +33,12 @@ public class IDEColaborativo extends Application {
         ventanaPrincipal(recurso);
     }
 
-    public void ventanaPrincipal(ResourceBundle recurso) {
+    public static void ventanaPrincipal(ResourceBundle recurso) {
         try {
             Stage stage = new Stage();
-            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/GUI/PantallaPrincipal.fxml"), recurso);
+            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaPrincipal.fxml"), recurso);
             Parent root = (Parent) loader.load();
             PantallaPrincipalController control = loader.getController();
-            control.setMain(this);
             control.setControlador(control);
             stage.setTitle("IDE Colaborativo");
             Scene scene = new Scene(root);
@@ -51,13 +50,12 @@ public class IDEColaborativo extends Application {
         }
     }
 
-    public void ventanaInicioSesion(ResourceBundle recurso,PantallaPrincipalController controlador) {
+    public static void ventanaInicioSesion(ResourceBundle recurso,PantallaPrincipalController controlador) {
         try {
             Stage stage = new Stage();
-            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/GUI/PantallaIniciarSesion.fxml"), recurso);
+            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaIniciarSesion.fxml"), recurso);
             Parent root = (Parent) loader.load();
             PantallaIniciarSesionController control = loader.getController();
-            control.setMain(this);
             control.setControlador(controlador);
             Scene scene = new Scene(root);
             stage.setScene(scene);
@@ -68,13 +66,12 @@ public class IDEColaborativo extends Application {
         }
     }
 
-    public void ventanaRegistrarUsuario(ResourceBundle recurso, PantallaPrincipalController controlador) {
+    public static void ventanaRegistrarUsuario(ResourceBundle recurso, PantallaPrincipalController controlador) {
         try {
             Stage stage = new Stage();
-            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/GUI/PantallaRegistrarUsuario.fxml"), recurso);
+            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaRegistrarUsuario.fxml"), recurso);
             Parent root = (Parent) loader.load();
             PantallaRegistrarUsuarioController control = loader.getController();
-            control.setMain(this);
             control.setControlador(controlador);
             Scene scene = new Scene(root);
             stage.setScene(scene);
@@ -85,13 +82,12 @@ public class IDEColaborativo extends Application {
         }
     }
 
-    public void ventanaCrearProyecto(ResourceBundle recurso,PantallaPrincipalController controlador) {
+    public static void ventanaCrearProyecto(ResourceBundle recurso,PantallaPrincipalController controlador) {
         try {
             Stage stage = new Stage();
-            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/GUI/PantallaCrearProyecto.fxml"), recurso);
+            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaCrearProyecto.fxml"), recurso);
             Parent root = (Parent) loader.load();
             PantallaCrearProyectoController control = loader.getController();
-            control.setMain(this);
             control.setControlador(controlador);
             Scene scene = new Scene(root);
             stage.setScene(scene);
@@ -102,13 +98,12 @@ public class IDEColaborativo extends Application {
         }
     }
 
-    public void ventanaCambiarIdioma(ResourceBundle recurso,PantallaPrincipalController controlador) {
+    public static void ventanaCambiarIdioma(ResourceBundle recurso,PantallaPrincipalController controlador) {
         try {
             Stage stage = new Stage();
-            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/GUI/PantallaCambiarIdioma.fxml"), recurso);
+            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaCambiarIdioma.fxml"), recurso);
             Parent root = (Parent) loader.load();
             PantallaCambiarIdiomaController control = loader.getController();
-            control.setMain(this);
             control.setControlador(controlador);
             Scene scene = new Scene(root);
             stage.setScene(scene);

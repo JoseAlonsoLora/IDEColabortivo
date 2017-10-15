@@ -9,13 +9,15 @@
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TreeTableColumn?>
+<?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.effect.Glow?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="618.0" prefWidth="984.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.PantallaPrincipalController">
+<AnchorPane id="AnchorPane" prefHeight="618.0" prefWidth="984.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.PantallaPrincipalController">
    <children>
       <Separator layoutY="38.0" prefHeight="11.0" prefWidth="767.0" />
-      <AnchorPane fx:id="panelCodigo" layoutX="149.0" layoutY="44.0" prefHeight="575.0" prefWidth="835.0" />
+      <AnchorPane fx:id="panelCodigo" layoutX="175.0" layoutY="44.0" prefHeight="575.0" prefWidth="809.0" />
       <AnchorPane fx:id="panelBarraMenu" layoutY="-1.0" prefHeight="45.0" prefWidth="984.0" style="-fx-background-color: #DCDCDC;">
          <children>
             <JFXButton fx:id="botonCrearProyecto" alignment="CENTER" layoutX="16.0" layoutY="9.0" onAction="#botonCrearProyecto" ripplerFill="#7c7c7c" text="" textAlignment="CENTER">
@@ -85,7 +87,14 @@
             <Label fx:id="etiquetaNombreUsuario" layoutX="523.0" layoutY="16.0" prefHeight="16.0" prefWidth="119.0" />
          </children>
       </AnchorPane>
-      <Separator layoutX="146.0" layoutY="44.0" orientation="VERTICAL" prefHeight="575.0" prefWidth="4.0" />
-      <AnchorPane fx:id="panelProyectos" layoutY="44.0" prefHeight="575.0" prefWidth="144.0" />
+      <Separator layoutX="171.0" layoutY="44.0" orientation="VERTICAL" prefHeight="575.0" prefWidth="4.0" />
+      <AnchorPane fx:id="panelProyectos" layoutY="44.0" prefHeight="575.0" prefWidth="171.0">
+         <children>
+            <TreeTableView fx:id="tablaProyectos" prefHeight="568.0" prefWidth="173.0">
+              <columns>
+                <TreeTableColumn fx:id="columnaProyectos" prefWidth="172.0" text="Proyectos" />
+              </columns>
+            </TreeTableView>
+         </children></AnchorPane>
    </children>
 </AnchorPane>

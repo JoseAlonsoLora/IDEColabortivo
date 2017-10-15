@@ -3,11 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package GUI;
+package controladores;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXRadioButton;
-import idecolaborativo.IDEColaborativo;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -26,7 +25,6 @@ import javafx.stage.Stage;
  */
 public class PantallaCambiarIdiomaController implements Initializable {
 
-    private IDEColaborativo main;
     private ResourceBundle recurso;
     private ToggleGroup grupoRadio = new ToggleGroup();
     private PantallaPrincipalController controlador;
@@ -53,9 +51,6 @@ public class PantallaCambiarIdiomaController implements Initializable {
         radioEspañol.setToggleGroup(grupoRadio);
     }
 
-    public void setMain(IDEColaborativo main) {
-        this.main = main;
-    }
 
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;

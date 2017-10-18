@@ -5,6 +5,7 @@
  */
 package idecolaborativo;
 
+import componentes.FormatoCodigo;
 import controladores.PantallaCambiarIdiomaController;
 import controladores.PantallaCrearProyectoController;
 import controladores.PantallaIniciarSesionController;
@@ -42,6 +43,7 @@ public class IDEColaborativo extends Application {
             control.setControlador(control);
             stage.setTitle("IDE Colaborativo");
             Scene scene = new Scene(root);
+            scene.getStylesheets().add(FormatoCodigo.class.getResource("/css/java-keywords.css").toExternalForm());
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();

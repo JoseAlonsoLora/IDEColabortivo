@@ -113,23 +113,22 @@ public class PantallaCrearProyectoController implements Initializable {
     private void botonCrearProyecto(ActionEvent event) {
         if (grupoRadio.getSelectedToggle() != null && !campoTextoRuta.getText().equals("") && !campoTextoNombreProyecto.equals("")) {
             File main;
-            char caracter = saberSistemaOperativo();
             JFXRadioButton radioSeleccionado = (JFXRadioButton) grupoRadio.getSelectedToggle();
             try {
                 switch (radioSeleccionado.getText()) {
                     case "Java":
                         crearArchivo();
-                        main = new File(campoTextoRuta.getText() + caracter + campoTextoNombreProyecto.getText() + ".java");
+                        main = new File(campoTextoRuta.getText() + "/" + campoTextoNombreProyecto.getText() + ".java");
                         main.createNewFile();
                         break;
                     case "C#":
                         crearArchivo();
-                        main = new File(campoTextoRuta.getText() + caracter + campoTextoNombreProyecto.getText() + ".cs");
+                        main = new File(campoTextoRuta.getText() + "/" + campoTextoNombreProyecto.getText() + ".cs");
                         main.createNewFile();
                         break;
                     case "C++":
                         crearArchivo();
-                        main = new File(campoTextoRuta.getText() + caracter + campoTextoNombreProyecto.getText() + ".cpp");
+                        main = new File(campoTextoRuta.getText() + "/" + campoTextoNombreProyecto.getText() + ".cpp");
                         main.createNewFile();
                         break;
                 }
@@ -145,13 +144,7 @@ public class PantallaCrearProyectoController implements Initializable {
         }
     }
 
-    public char saberSistemaOperativo() {
-        char caracter = '/';
-        if (!System.getProperty("os.name").equals("Windows")) {
-            caracter = '\\';
-        }
-        return caracter;
-    }
+    
 
     public void crearArchivo() {
         File carpetaProyecto = new File(campoTextoRuta.getText());

@@ -6,6 +6,7 @@
 package controladores;
 
 import com.jfoenix.controls.JFXButton;
+import componentes.FormatoCodigo;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
 import static idecolaborativo.IDEColaborativo.ventanaCambiarIdioma;
 import static idecolaborativo.IDEColaborativo.ventanaCrearProyecto;
@@ -17,15 +18,17 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 /**
@@ -39,8 +42,6 @@ public class PantallaPrincipalController implements Initializable {
     private PantallaPrincipalController controlador;
     private String idUsuario;
 
-    @FXML
-    private AnchorPane panelCodigo;
     @FXML
     private AnchorPane panelBarraMenu;
     @FXML
@@ -69,9 +70,13 @@ public class PantallaPrincipalController implements Initializable {
     private TreeTableView<String> tablaProyectos;
     @FXML
     private TreeTableColumn<String, String> columnaProyectos;
-
-    private static final Image icon = new Image(PantallaPrincipalController.class.getResourceAsStream("/Imagenes/carpeta.png"));
+    @FXML
+    private TabPane tablaArchivos;
+    
     private static ImageView lenguaje = new ImageView("/Imagenes/java.png");
+    @FXML
+    private Tab tab1;
+    
     /**
      * Initializes the controller class.
      */
@@ -85,8 +90,11 @@ public class PantallaPrincipalController implements Initializable {
         lenguaje.setFitWidth(40);
         configurarIdioma();
         cargarProyectos();
+        FormatoCodigo areaCodigo = new FormatoCodigo();
+        tab1.setContent(areaCodigo.crearAreaCodigo());
     }
 
+    
     public void setRecurso(ResourceBundle recurso) {
         this.recurso = recurso;
         configurarIdioma();
@@ -136,9 +144,9 @@ public class PantallaPrincipalController implements Initializable {
     }
 
     public void cargarProyectos() {
-        TreeItem<String> childNode1 = new TreeItem<>("Child Node 1", new ImageView(icon));
-        TreeItem<String> childNode2 = new TreeItem<>("Child Node 2", new ImageView(icon));
-        TreeItem<String> childNode3 = new TreeItem<>("Child Node 3", new ImageView(icon));
+        TreeItem<String> childNode1 = new TreeItem<>("Child Node 1", crearIconoCarpeta());
+        TreeItem<String> childNode2 = new TreeItem<>("Child Node 2", crearIconoCarpeta());
+        TreeItem<String> childNode3 = new TreeItem<>("Child Node 3", crearIconoCarpeta());
 
         TreeItem<String> root = new TreeItem<>("Root node",lenguaje);
         root.setExpanded(true);
@@ -151,6 +159,14 @@ public class PantallaPrincipalController implements Initializable {
 
         tablaProyectos.setRoot(root);
         tablaProyectos.setShowRoot(true);
+    }
+    
+    public ImageView crearIconoCarpeta(){
+        ImageView carpeta;
+        carpeta = new ImageView("/Imagenes/carpeta_1.png");
+        carpeta.setFitHeight(15);
+        carpeta.setFitWidth(15);
+        return carpeta;
     }
 
 }

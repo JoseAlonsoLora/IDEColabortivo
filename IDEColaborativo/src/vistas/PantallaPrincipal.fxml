@@ -9,6 +9,8 @@
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TreeTableColumn?>
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.effect.Glow?>
@@ -17,7 +19,6 @@
 <AnchorPane id="AnchorPane" prefHeight="618.0" prefWidth="984.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.PantallaPrincipalController">
    <children>
       <Separator layoutY="38.0" prefHeight="11.0" prefWidth="767.0" />
-      <AnchorPane fx:id="panelCodigo" layoutX="175.0" layoutY="44.0" prefHeight="575.0" prefWidth="809.0" />
       <AnchorPane fx:id="panelBarraMenu" layoutY="-1.0" prefHeight="45.0" prefWidth="984.0" style="-fx-background-color: #DCDCDC;">
          <children>
             <JFXButton fx:id="botonCrearProyecto" alignment="CENTER" layoutX="16.0" layoutY="9.0" onAction="#botonCrearProyecto" ripplerFill="#7c7c7c" text="" textAlignment="CENTER">
@@ -96,5 +97,19 @@
               </columns>
             </TreeTableView>
          </children></AnchorPane>
+      <TabPane fx:id="tablaArchivos" layoutX="174.0" layoutY="44.0" prefHeight="575.0" prefWidth="810.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab fx:id="tab1" text="Untitled Tab 1">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="280.0" prefWidth="449.0" />
+            </content>
+          </Tab>
+          <Tab text="Untitled Tab 2">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
    </children>
 </AnchorPane>

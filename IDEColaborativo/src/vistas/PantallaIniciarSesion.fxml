@@ -20,8 +20,8 @@
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <JFXTextField focusColor="DARKGRAY" layoutX="39.0" layoutY="76.0" prefHeight="24.0" prefWidth="229.0" unFocusColor="BLACK" />
-      <JFXPasswordField focusColor="DARKGRAY" layoutX="39.0" layoutY="148.0" prefHeight="24.0" prefWidth="229.0" unFocusColor="BLACK" />
+      <JFXTextField fx:id="campoTextoNombreUsuario" focusColor="DARKGRAY" layoutX="39.0" layoutY="76.0" prefHeight="24.0" prefWidth="229.0" unFocusColor="BLACK" />
+      <JFXPasswordField fx:id="campoTextoContraseña" focusColor="DARKGRAY" layoutX="39.0" layoutY="148.0" prefHeight="24.0" prefWidth="229.0" unFocusColor="BLACK" />
       <JFXButton fx:id="botonIniciarSesion" layoutX="132.0" layoutY="200.0" onAction="#botonIniciarSesion" prefHeight="26.0" prefWidth="136.0" style="-fx-background-color: #4682B4;" text="Iniciar Sesión" AnchorPane.rightAnchor="31.0">
          <cursor>
             <Cursor fx:constant="HAND" />

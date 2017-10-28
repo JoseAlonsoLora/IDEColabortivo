@@ -11,11 +11,10 @@ import java.io.Serializable;
  *
  * @author raymu
  */
-public class Cuenta implements Serializable{
+public class Programador implements Serializable{
     private String nombreUsuario;
     private String contraseña;
-    private Long idUsuario;
-
+    private String correoElectronico;
 
     public String getNombreUsuario() {
         return nombreUsuario;
@@ -33,12 +32,12 @@ public class Cuenta implements Serializable{
         this.contraseña = contraseña;
     }
 
-    public Long getIdUsuario() {
-        return idUsuario;
+    public String getCorreoElectronico() {
+        return correoElectronico;
     }
 
-    public void setIdUsuario(Long idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setCorreoElectronico(String correoElectronico) {
+        this.correoElectronico = correoElectronico;
     }
     
 }

@@ -3,13 +3,10 @@ package controladores;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
-import conexion.operaciones.ICuenta;
+import conexion.operaciones.IProgramador;
 import static idecolaborativo.IDEColaborativo.ventanaRegistrarUsuario;
-import io.socket.client.IO;
-import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.net.ConnectException;
 import java.net.URL;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -28,7 +25,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import modelo.negocio.Cuenta;
+import modelo.negocio.Programador;
 
 /**
  *
@@ -56,7 +53,7 @@ public class PantallaIniciarSesionController implements Initializable {
     @FXML
     private JFXPasswordField campoTextoContraseña;
 
-    private ICuenta stub;
+    private IProgramador stub;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -68,7 +65,7 @@ public class PantallaIniciarSesionController implements Initializable {
     public void inicializarRegistro() {
         try {
             Registry registry = LocateRegistry.getRegistry(null);
-            stub = (ICuenta) registry.lookup("Login");
+            stub = (IProgramador) registry.lookup("AdministrarUsuarios");
         } catch (RemoteException | NotBoundException ex) {
             System.out.println(ex.getMessage());
         }
@@ -95,7 +92,7 @@ public class PantallaIniciarSesionController implements Initializable {
 
     @FXML
     private void botonIniciarSesion(ActionEvent event) throws IOException {
-        Cuenta cuenta = new Cuenta();
+        Programador programador = new Programador();
         if (campoTextoNombreUsuario.getText().isEmpty() || campoTextoContraseña.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText("Atención");
@@ -103,11 +100,11 @@ public class PantallaIniciarSesionController implements Initializable {
             alert.setContentText(s);
             alert.show();
         } else {
-            cuenta.setNombreUsuario(campoTextoNombreUsuario.getText());
-            cuenta.setContraseña(makeHash(campoTextoContraseña.getText()));
+            programador.setNombreUsuario(campoTextoNombreUsuario.getText());
+            programador.setContraseña(makeHash(campoTextoContraseña.getText()));
             try {
 
-                if (stub.iniciarSesion(cuenta)) {
+                if (stub.iniciarSesion(programador)) {
                     controlador.sesionIniciada(campoTextoNombreUsuario.getText());
                     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                     stage.close();
@@ -119,7 +116,7 @@ public class PantallaIniciarSesionController implements Initializable {
                     alert.show();
 
                 }
-            } catch (NullPointerException ex) {
+            } catch (RemoteException ex) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Atención");
                 String s = "Opsss, parece que no me pude conectar al servidor :(";
@@ -137,7 +134,7 @@ public class PantallaIniciarSesionController implements Initializable {
         ventanaRegistrarUsuario(recurso, controlador);
     }
 
-    private String makeHash(String string) {
+    static String makeHash(String string) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
             byte[] hash = messageDigest.digest(string.getBytes());

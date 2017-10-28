@@ -101,8 +101,8 @@ public class PantallaRegistrarUsuarioController implements Initializable {
         Programador programador = new Programador();
         if (campoTextoContraseña.getText().isEmpty() || campoTextoCorreoElectronico.getText().isEmpty() || campoTextoNombreUsuario.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("Atención");
-            String s = "Algunos campos estan vacios";
+            alert.setHeaderText(recurso.getString("atencion"));
+            String s = recurso.getString("mensajeCamposVacios");
             alert.setContentText(s);
             alert.show();
         } else {
@@ -113,24 +113,24 @@ public class PantallaRegistrarUsuarioController implements Initializable {
 
                 if (stub.registrarUsuario(programador)) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setHeaderText("Felicidades");
-                    String s = "Cuenta creada correctamente :)";
+                    alert.setHeaderText(recurso.getString("felicidades"));
+                    String s = recurso.getString("mensajeCuentaCreada");
                     alert.setContentText(s);
                     alert.show();
                     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                     stage.close();
                 } else {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setHeaderText("Atención");
-                    String s = "Su nombre de usuario lo tiene alguen más :O";
+                    alert.setHeaderText(recurso.getString("atencion"));
+                    String s = recurso.getString("mensajeNombreUsuarioExistente");
                     alert.setContentText(s);
                     alert.show();
 
                 }
-            } catch (RemoteException ex) {
+            } catch (RemoteException |java.lang.NullPointerException ex) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setHeaderText("Atención");
-                String s = "Opsss, parece que no me pude conectar al servidor :(";
+                alert.setHeaderText(recurso.getString("atencion"));
+                String s = recurso.getString("mensajeNoConexion");
                 alert.setContentText(s);
                 alert.show();
             }

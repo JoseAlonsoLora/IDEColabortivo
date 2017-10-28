@@ -6,7 +6,6 @@ import com.jfoenix.controls.JFXTextField;
 import conexion.operaciones.IProgramador;
 import static idecolaborativo.IDEColaborativo.ventanaRegistrarUsuario;
 import java.io.IOException;
-import java.net.ConnectException;
 import java.net.URL;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -95,8 +94,8 @@ public class PantallaIniciarSesionController implements Initializable {
         Programador programador = new Programador();
         if (campoTextoNombreUsuario.getText().isEmpty() || campoTextoContraseña.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("Atención");
-            String s = "Algunos campos estan vacios";
+            alert.setHeaderText(recurso.getString("atencion"));
+            String s = recurso.getString("mensajeCamposVacios");
             alert.setContentText(s);
             alert.show();
         } else {
@@ -110,16 +109,16 @@ public class PantallaIniciarSesionController implements Initializable {
                     stage.close();
                 } else {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setHeaderText("Atención");
-                    String s = "Datos incorrectos";
+                    alert.setHeaderText(recurso.getString("atencion"));
+                    String s = recurso.getString("mensajeDatosIncorrectos");
                     alert.setContentText(s);
                     alert.show();
 
                 }
-            } catch (RemoteException ex) {
+            } catch (RemoteException |java.lang.NullPointerException  ex) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setHeaderText("Atención");
-                String s = "Opsss, parece que no me pude conectar al servidor :(";
+                alert.setHeaderText(recurso.getString("atencion"));
+                String s = recurso.getString("mensajeNoConexion");
                 alert.setContentText(s);
                 alert.show();
             }

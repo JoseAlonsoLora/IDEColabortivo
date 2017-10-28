@@ -87,13 +87,12 @@ public class PantallaCrearProyectoController implements Initializable {
     @FXML
     private void seleccionarRuta(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Selecciona ruta");
         fileChooser.setInitialFileName(campoTextoNombreProyecto.getText());
         File file = fileChooser.showSaveDialog(null);
         if (file == null) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("Atención");
-            String s = "Debe elegir una ruta";
+            alert.setHeaderText(recurso.getString("atencion"));
+            String s = recurso.getString("mensajeRuta");
             alert.setContentText(s);
             alert.show();
         } else {
@@ -137,8 +136,8 @@ public class PantallaCrearProyectoController implements Initializable {
             }
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("Atención");
-            String s = "Faltan algunos datos para crear el proyecto";
+            alert.setHeaderText(recurso.getString("atencion"));
+            String s = recurso.getString("mensajeCamposVacios");
             alert.setContentText(s);
             alert.show();
         }
@@ -152,8 +151,8 @@ public class PantallaCrearProyectoController implements Initializable {
             carpetaProyecto.mkdir();
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("Atención");
-            String s = "El proyecto ya existe";
+            alert.setHeaderText(recurso.getString("atencion"));
+            String s = recurso.getString("mensajeProyectoExistente");
             alert.setContentText(s);
             alert.show();
         }

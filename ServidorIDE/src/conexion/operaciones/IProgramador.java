@@ -7,12 +7,13 @@ package conexion.operaciones;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import modelo.negocio.Cuenta;
+import modelo.negocio.Programador;
 
 /**
  *
  * @author raymu
  */
-public interface ICuenta extends Remote{
-    public boolean iniciarSesion(Cuenta cuenta) throws RemoteException;
+public interface IProgramador extends Remote{
+    public boolean iniciarSesion(Programador programador) throws RemoteException;
+    public boolean registrarUsuario(Programador programador) throws RemoteException;
 }

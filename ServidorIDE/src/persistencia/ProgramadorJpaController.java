@@ -16,6 +16,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import persistencia.exceptions.NonexistentEntityException;
+import persistencia.exceptions.PreexistingEntityException;
 
 /**
  *
@@ -32,12 +33,9 @@ public class ProgramadorJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Programador programador) {
+    public void create(Programador programador) throws PreexistingEntityException, Exception {
         if (programador.getDesarrollaCollection() == null) {
             programador.setDesarrollaCollection(new ArrayList<Desarrolla>());
-        }
-        if (programador.getCuentaCollection() == null) {
-            programador.setCuentaCollection(new ArrayList<Cuenta>());
         }
         EntityManager em = null;
         try {
@@ -49,32 +47,22 @@ public class ProgramadorJpaController implements Serializable {
                 attachedDesarrollaCollection.add(desarrollaCollectionDesarrollaToAttach);
             }
             programador.setDesarrollaCollection(attachedDesarrollaCollection);
-            Collection<Cuenta> attachedCuentaCollection = new ArrayList<Cuenta>();
-            for (Cuenta cuentaCollectionCuentaToAttach : programador.getCuentaCollection()) {
-                cuentaCollectionCuentaToAttach = em.getReference(cuentaCollectionCuentaToAttach.getClass(), cuentaCollectionCuentaToAttach.getNombreUsuario());
-                attachedCuentaCollection.add(cuentaCollectionCuentaToAttach);
-            }
-            programador.setCuentaCollection(attachedCuentaCollection);
             em.persist(programador);
             for (Desarrolla desarrollaCollectionDesarrolla : programador.getDesarrollaCollection()) {
-                Programador oldIdUsuarioOfDesarrollaCollectionDesarrolla = desarrollaCollectionDesarrolla.getIdUsuario();
-                desarrollaCollectionDesarrolla.setIdUsuario(programador);
+                Programador oldNombreUsuarioOfDesarrollaCollectionDesarrolla = desarrollaCollectionDesarrolla.getNombreUsuario();
+                desarrollaCollectionDesarrolla.setNombreUsuario(programador);
                 desarrollaCollectionDesarrolla = em.merge(desarrollaCollectionDesarrolla);
-                if (oldIdUsuarioOfDesarrollaCollectionDesarrolla != null) {
-                    oldIdUsuarioOfDesarrollaCollectionDesarrolla.getDesarrollaCollection().remove(desarrollaCollectionDesarrolla);
-                    oldIdUsuarioOfDesarrollaCollectionDesarrolla = em.merge(oldIdUsuarioOfDesarrollaCollectionDesarrolla);
-                }
-            }
-            for (Cuenta cuentaCollectionCuenta : programador.getCuentaCollection()) {
-                Programador oldIdUsuarioOfCuentaCollectionCuenta = cuentaCollectionCuenta.getIdUsuario();
-                cuentaCollectionCuenta.setIdUsuario(programador);
-                cuentaCollectionCuenta = em.merge(cuentaCollectionCuenta);
-                if (oldIdUsuarioOfCuentaCollectionCuenta != null) {
-                    oldIdUsuarioOfCuentaCollectionCuenta.getCuentaCollection().remove(cuentaCollectionCuenta);
-                    oldIdUsuarioOfCuentaCollectionCuenta = em.merge(oldIdUsuarioOfCuentaCollectionCuenta);
+                if (oldNombreUsuarioOfDesarrollaCollectionDesarrolla != null) {
+                    oldNombreUsuarioOfDesarrollaCollectionDesarrolla.getDesarrollaCollection().remove(desarrollaCollectionDesarrolla);
+                    oldNombreUsuarioOfDesarrollaCollectionDesarrolla = em.merge(oldNombreUsuarioOfDesarrollaCollectionDesarrolla);
                 }
             }
             em.getTransaction().commit();
+        } catch (Exception ex) {
+            if (findProgramador(programador.getNombreUsuario()) != null) {
+                throw new PreexistingEntityException("Programador " + programador + " already exists.", ex);
+            }
+            throw ex;
         } finally {
             if (em != null) {
                 em.close();
@@ -87,11 +75,9 @@ public class ProgramadorJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Programador persistentProgramador = em.find(Programador.class, programador.getIdUsuario());
+            Programador persistentProgramador = em.find(Programador.class, programador.getNombreUsuario());
             Collection<Desarrolla> desarrollaCollectionOld = persistentProgramador.getDesarrollaCollection();
             Collection<Desarrolla> desarrollaCollectionNew = programador.getDesarrollaCollection();
-            Collection<Cuenta> cuentaCollectionOld = persistentProgramador.getCuentaCollection();
-            Collection<Cuenta> cuentaCollectionNew = programador.getCuentaCollection();
             Collection<Desarrolla> attachedDesarrollaCollectionNew = new ArrayList<Desarrolla>();
             for (Desarrolla desarrollaCollectionNewDesarrollaToAttach : desarrollaCollectionNew) {
                 desarrollaCollectionNewDesarrollaToAttach = em.getReference(desarrollaCollectionNewDesarrollaToAttach.getClass(), desarrollaCollectionNewDesarrollaToAttach.getIdDesarrolla());
@@ -99,45 +85,21 @@ public class ProgramadorJpaController implements Serializable {
             }
             desarrollaCollectionNew = attachedDesarrollaCollectionNew;
             programador.setDesarrollaCollection(desarrollaCollectionNew);
-            Collection<Cuenta> attachedCuentaCollectionNew = new ArrayList<Cuenta>();
-            for (Cuenta cuentaCollectionNewCuentaToAttach : cuentaCollectionNew) {
-                cuentaCollectionNewCuentaToAttach = em.getReference(cuentaCollectionNewCuentaToAttach.getClass(), cuentaCollectionNewCuentaToAttach.getNombreUsuario());
-                attachedCuentaCollectionNew.add(cuentaCollectionNewCuentaToAttach);
-            }
-            cuentaCollectionNew = attachedCuentaCollectionNew;
-            programador.setCuentaCollection(cuentaCollectionNew);
             programador = em.merge(programador);
             for (Desarrolla desarrollaCollectionOldDesarrolla : desarrollaCollectionOld) {
                 if (!desarrollaCollectionNew.contains(desarrollaCollectionOldDesarrolla)) {
-                    desarrollaCollectionOldDesarrolla.setIdUsuario(null);
+                    desarrollaCollectionOldDesarrolla.setNombreUsuario(null);
                     desarrollaCollectionOldDesarrolla = em.merge(desarrollaCollectionOldDesarrolla);
                 }
             }
             for (Desarrolla desarrollaCollectionNewDesarrolla : desarrollaCollectionNew) {
                 if (!desarrollaCollectionOld.contains(desarrollaCollectionNewDesarrolla)) {
-                    Programador oldIdUsuarioOfDesarrollaCollectionNewDesarrolla = desarrollaCollectionNewDesarrolla.getIdUsuario();
-                    desarrollaCollectionNewDesarrolla.setIdUsuario(programador);
+                    Programador oldNombreUsuarioOfDesarrollaCollectionNewDesarrolla = desarrollaCollectionNewDesarrolla.getNombreUsuario();
+                    desarrollaCollectionNewDesarrolla.setNombreUsuario(programador);
                     desarrollaCollectionNewDesarrolla = em.merge(desarrollaCollectionNewDesarrolla);
-                    if (oldIdUsuarioOfDesarrollaCollectionNewDesarrolla != null && !oldIdUsuarioOfDesarrollaCollectionNewDesarrolla.equals(programador)) {
-                        oldIdUsuarioOfDesarrollaCollectionNewDesarrolla.getDesarrollaCollection().remove(desarrollaCollectionNewDesarrolla);
-                        oldIdUsuarioOfDesarrollaCollectionNewDesarrolla = em.merge(oldIdUsuarioOfDesarrollaCollectionNewDesarrolla);
-                    }
-                }
-            }
-            for (Cuenta cuentaCollectionOldCuenta : cuentaCollectionOld) {
-                if (!cuentaCollectionNew.contains(cuentaCollectionOldCuenta)) {
-                    cuentaCollectionOldCuenta.setIdUsuario(null);
-                    cuentaCollectionOldCuenta = em.merge(cuentaCollectionOldCuenta);
-                }
-            }
-            for (Cuenta cuentaCollectionNewCuenta : cuentaCollectionNew) {
-                if (!cuentaCollectionOld.contains(cuentaCollectionNewCuenta)) {
-                    Programador oldIdUsuarioOfCuentaCollectionNewCuenta = cuentaCollectionNewCuenta.getIdUsuario();
-                    cuentaCollectionNewCuenta.setIdUsuario(programador);
-                    cuentaCollectionNewCuenta = em.merge(cuentaCollectionNewCuenta);
-                    if (oldIdUsuarioOfCuentaCollectionNewCuenta != null && !oldIdUsuarioOfCuentaCollectionNewCuenta.equals(programador)) {
-                        oldIdUsuarioOfCuentaCollectionNewCuenta.getCuentaCollection().remove(cuentaCollectionNewCuenta);
-                        oldIdUsuarioOfCuentaCollectionNewCuenta = em.merge(oldIdUsuarioOfCuentaCollectionNewCuenta);
+                    if (oldNombreUsuarioOfDesarrollaCollectionNewDesarrolla != null && !oldNombreUsuarioOfDesarrollaCollectionNewDesarrolla.equals(programador)) {
+                        oldNombreUsuarioOfDesarrollaCollectionNewDesarrolla.getDesarrollaCollection().remove(desarrollaCollectionNewDesarrolla);
+                        oldNombreUsuarioOfDesarrollaCollectionNewDesarrolla = em.merge(oldNombreUsuarioOfDesarrollaCollectionNewDesarrolla);
                     }
                 }
             }
@@ -145,7 +107,7 @@ public class ProgramadorJpaController implements Serializable {
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Long id = programador.getIdUsuario();
+                String id = programador.getNombreUsuario();
                 if (findProgramador(id) == null) {
                     throw new NonexistentEntityException("The programador with id " + id + " no longer exists.");
                 }
@@ -158,7 +120,7 @@ public class ProgramadorJpaController implements Serializable {
         }
     }
 
-    public void destroy(Long id) throws NonexistentEntityException {
+    public void destroy(String id) throws NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -166,19 +128,14 @@ public class ProgramadorJpaController implements Serializable {
             Programador programador;
             try {
                 programador = em.getReference(Programador.class, id);
-                programador.getIdUsuario();
+                programador.getNombreUsuario();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The programador with id " + id + " no longer exists.", enfe);
             }
             Collection<Desarrolla> desarrollaCollection = programador.getDesarrollaCollection();
             for (Desarrolla desarrollaCollectionDesarrolla : desarrollaCollection) {
-                desarrollaCollectionDesarrolla.setIdUsuario(null);
+                desarrollaCollectionDesarrolla.setNombreUsuario(null);
                 desarrollaCollectionDesarrolla = em.merge(desarrollaCollectionDesarrolla);
-            }
-            Collection<Cuenta> cuentaCollection = programador.getCuentaCollection();
-            for (Cuenta cuentaCollectionCuenta : cuentaCollection) {
-                cuentaCollectionCuenta.setIdUsuario(null);
-                cuentaCollectionCuenta = em.merge(cuentaCollectionCuenta);
             }
             em.remove(programador);
             em.getTransaction().commit();
@@ -213,7 +170,7 @@ public class ProgramadorJpaController implements Serializable {
         }
     }
 
-    public Programador findProgramador(Long id) {
+    public Programador findProgramador(String id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(Programador.class, id);

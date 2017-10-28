@@ -5,13 +5,13 @@
  */
 package servidoride;
 
-import conexion.operaciones.ICuenta;
+import conexion.operaciones.IProgramador;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import modelo.negocio.CuentaDAO;
+import modelo.negocio.ProgramadorDAO;
 
 /**
  *
@@ -24,10 +24,10 @@ public class ServidorIDE {
      */
     public static void main(String[] args) {
         try {
-            CuentaDAO cuenta = new CuentaDAO();
-            ICuenta stub = (ICuenta) UnicastRemoteObject.exportObject(cuenta, 0);
+            ProgramadorDAO programador = new ProgramadorDAO();
+            IProgramador stub = (IProgramador) UnicastRemoteObject.exportObject(programador, 0);
             Registry registry = LocateRegistry.getRegistry();
-            registry.bind("Login", stub);
+            registry.bind("AdministrarUsuarios", stub);
             System.out.println("Servidor corriendo");
         } catch (RemoteException | AlreadyBoundException ex) {
             System.out.println(ex.getMessage());

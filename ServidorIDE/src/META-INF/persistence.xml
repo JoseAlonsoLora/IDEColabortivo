@@ -2,10 +2,9 @@
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
   <persistence-unit name="ServidorIDEPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-    <class>persistencia.Programador</class>
     <class>persistencia.Archivo</class>
     <class>persistencia.Desarrolla</class>
-    <class>persistencia.Cuenta</class>
+    <class>persistencia.Programador</class>
     <class>persistencia.Proyecto</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/IDE?zeroDateTimeBehavior=convertToNull"/>

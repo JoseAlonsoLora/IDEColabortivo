@@ -28,21 +28,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Desarrolla.findAll", query = "SELECT d FROM Desarrolla d")
-    , @NamedQuery(name = "Desarrolla.findByTipoProgramador", query = "SELECT d FROM Desarrolla d WHERE d.tipoProgramador = :tipoProgramador")
-    , @NamedQuery(name = "Desarrolla.findByIdDesarrolla", query = "SELECT d FROM Desarrolla d WHERE d.idDesarrolla = :idDesarrolla")})
+    , @NamedQuery(name = "Desarrolla.findByIdDesarrolla", query = "SELECT d FROM Desarrolla d WHERE d.idDesarrolla = :idDesarrolla")
+    , @NamedQuery(name = "Desarrolla.findByTipoProgramador", query = "SELECT d FROM Desarrolla d WHERE d.tipoProgramador = :tipoProgramador")})
 public class Desarrolla implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Column(name = "tipoProgramador")
-    private String tipoProgramador;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "idDesarrolla")
     private Long idDesarrolla;
-    @JoinColumn(name = "idUsuario", referencedColumnName = "idUsuario")
+    @Column(name = "tipoProgramador")
+    private String tipoProgramador;
+    @JoinColumn(name = "nombreUsuario", referencedColumnName = "nombreUsuario")
     @ManyToOne
-    private Programador idUsuario;
+    private Programador nombreUsuario;
     @JoinColumn(name = "idProyecto", referencedColumnName = "idProyecto")
     @ManyToOne
     private Proyecto idProyecto;
@@ -54,14 +54,6 @@ public class Desarrolla implements Serializable {
         this.idDesarrolla = idDesarrolla;
     }
 
-    public String getTipoProgramador() {
-        return tipoProgramador;
-    }
-
-    public void setTipoProgramador(String tipoProgramador) {
-        this.tipoProgramador = tipoProgramador;
-    }
-
     public Long getIdDesarrolla() {
         return idDesarrolla;
     }
@@ -70,12 +62,20 @@ public class Desarrolla implements Serializable {
         this.idDesarrolla = idDesarrolla;
     }
 
-    public Programador getIdUsuario() {
-        return idUsuario;
+    public String getTipoProgramador() {
+        return tipoProgramador;
     }
 
-    public void setIdUsuario(Programador idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setTipoProgramador(String tipoProgramador) {
+        this.tipoProgramador = tipoProgramador;
+    }
+
+    public Programador getNombreUsuario() {
+        return nombreUsuario;
+    }
+
+    public void setNombreUsuario(Programador nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
     }
 
     public Proyecto getIdProyecto() {

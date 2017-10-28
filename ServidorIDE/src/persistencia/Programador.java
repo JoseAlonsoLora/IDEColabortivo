@@ -10,8 +10,6 @@ import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -29,36 +27,44 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Programador.findAll", query = "SELECT p FROM Programador p")
-    , @NamedQuery(name = "Programador.findByIdUsuario", query = "SELECT p FROM Programador p WHERE p.idUsuario = :idUsuario")
+    , @NamedQuery(name = "Programador.findByNombreUsuario", query = "SELECT p FROM Programador p WHERE p.nombreUsuario = :nombreUsuario")
+    , @NamedQuery(name = "Programador.findByContrasena", query = "SELECT p FROM Programador p WHERE p.contrasena = :contrasena")
     , @NamedQuery(name = "Programador.findByCorreoElectronico", query = "SELECT p FROM Programador p WHERE p.correoElectronico = :correoElectronico")})
 public class Programador implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "idUsuario")
-    private Long idUsuario;
+    @Column(name = "nombreUsuario")
+    private String nombreUsuario;
+    @Column(name = "contrasena")
+    private String contrasena;
     @Column(name = "correoElectronico")
     private String correoElectronico;
-    @OneToMany(mappedBy = "idUsuario")
+    @OneToMany(mappedBy = "nombreUsuario")
     private Collection<Desarrolla> desarrollaCollection;
-    @OneToMany(mappedBy = "idUsuario")
-    private Collection<Cuenta> cuentaCollection;
 
     public Programador() {
     }
 
-    public Programador(Long idUsuario) {
-        this.idUsuario = idUsuario;
+    public Programador(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
     }
 
-    public Long getIdUsuario() {
-        return idUsuario;
+    public String getNombreUsuario() {
+        return nombreUsuario;
     }
 
-    public void setIdUsuario(Long idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
+    }
+
+    public String getContrasena() {
+        return contrasena;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
 
     public String getCorreoElectronico() {
@@ -78,19 +84,10 @@ public class Programador implements Serializable {
         this.desarrollaCollection = desarrollaCollection;
     }
 
-    @XmlTransient
-    public Collection<Cuenta> getCuentaCollection() {
-        return cuentaCollection;
-    }
-
-    public void setCuentaCollection(Collection<Cuenta> cuentaCollection) {
-        this.cuentaCollection = cuentaCollection;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (idUsuario != null ? idUsuario.hashCode() : 0);
+        hash += (nombreUsuario != null ? nombreUsuario.hashCode() : 0);
         return hash;
     }
 
@@ -101,7 +98,7 @@ public class Programador implements Serializable {
             return false;
         }
         Programador other = (Programador) object;
-        if ((this.idUsuario == null && other.idUsuario != null) || (this.idUsuario != null && !this.idUsuario.equals(other.idUsuario))) {
+        if ((this.nombreUsuario == null && other.nombreUsuario != null) || (this.nombreUsuario != null && !this.nombreUsuario.equals(other.nombreUsuario))) {
             return false;
         }
         return true;
@@ -109,7 +106,7 @@ public class Programador implements Serializable {
 
     @Override
     public String toString() {
-        return "persistencia.Programador[ idUsuario=" + idUsuario + " ]";
+        return "persistencia.Programador[ nombreUsuario=" + nombreUsuario + " ]";
     }
     
 }

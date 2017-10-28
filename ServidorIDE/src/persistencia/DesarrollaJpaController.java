@@ -35,10 +35,10 @@ public class DesarrollaJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Programador idUsuario = desarrolla.getIdUsuario();
-            if (idUsuario != null) {
-                idUsuario = em.getReference(idUsuario.getClass(), idUsuario.getIdUsuario());
-                desarrolla.setIdUsuario(idUsuario);
+            Programador nombreUsuario = desarrolla.getNombreUsuario();
+            if (nombreUsuario != null) {
+                nombreUsuario = em.getReference(nombreUsuario.getClass(), nombreUsuario.getNombreUsuario());
+                desarrolla.setNombreUsuario(nombreUsuario);
             }
             Proyecto idProyecto = desarrolla.getIdProyecto();
             if (idProyecto != null) {
@@ -46,9 +46,9 @@ public class DesarrollaJpaController implements Serializable {
                 desarrolla.setIdProyecto(idProyecto);
             }
             em.persist(desarrolla);
-            if (idUsuario != null) {
-                idUsuario.getDesarrollaCollection().add(desarrolla);
-                idUsuario = em.merge(idUsuario);
+            if (nombreUsuario != null) {
+                nombreUsuario.getDesarrollaCollection().add(desarrolla);
+                nombreUsuario = em.merge(nombreUsuario);
             }
             if (idProyecto != null) {
                 idProyecto.getDesarrollaCollection().add(desarrolla);
@@ -68,26 +68,26 @@ public class DesarrollaJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             Desarrolla persistentDesarrolla = em.find(Desarrolla.class, desarrolla.getIdDesarrolla());
-            Programador idUsuarioOld = persistentDesarrolla.getIdUsuario();
-            Programador idUsuarioNew = desarrolla.getIdUsuario();
+            Programador nombreUsuarioOld = persistentDesarrolla.getNombreUsuario();
+            Programador nombreUsuarioNew = desarrolla.getNombreUsuario();
             Proyecto idProyectoOld = persistentDesarrolla.getIdProyecto();
             Proyecto idProyectoNew = desarrolla.getIdProyecto();
-            if (idUsuarioNew != null) {
-                idUsuarioNew = em.getReference(idUsuarioNew.getClass(), idUsuarioNew.getIdUsuario());
-                desarrolla.setIdUsuario(idUsuarioNew);
+            if (nombreUsuarioNew != null) {
+                nombreUsuarioNew = em.getReference(nombreUsuarioNew.getClass(), nombreUsuarioNew.getNombreUsuario());
+                desarrolla.setNombreUsuario(nombreUsuarioNew);
             }
             if (idProyectoNew != null) {
                 idProyectoNew = em.getReference(idProyectoNew.getClass(), idProyectoNew.getIdProyecto());
                 desarrolla.setIdProyecto(idProyectoNew);
             }
             desarrolla = em.merge(desarrolla);
-            if (idUsuarioOld != null && !idUsuarioOld.equals(idUsuarioNew)) {
-                idUsuarioOld.getDesarrollaCollection().remove(desarrolla);
-                idUsuarioOld = em.merge(idUsuarioOld);
+            if (nombreUsuarioOld != null && !nombreUsuarioOld.equals(nombreUsuarioNew)) {
+                nombreUsuarioOld.getDesarrollaCollection().remove(desarrolla);
+                nombreUsuarioOld = em.merge(nombreUsuarioOld);
             }
-            if (idUsuarioNew != null && !idUsuarioNew.equals(idUsuarioOld)) {
-                idUsuarioNew.getDesarrollaCollection().add(desarrolla);
-                idUsuarioNew = em.merge(idUsuarioNew);
+            if (nombreUsuarioNew != null && !nombreUsuarioNew.equals(nombreUsuarioOld)) {
+                nombreUsuarioNew.getDesarrollaCollection().add(desarrolla);
+                nombreUsuarioNew = em.merge(nombreUsuarioNew);
             }
             if (idProyectoOld != null && !idProyectoOld.equals(idProyectoNew)) {
                 idProyectoOld.getDesarrollaCollection().remove(desarrolla);
@@ -126,10 +126,10 @@ public class DesarrollaJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The desarrolla with id " + id + " no longer exists.", enfe);
             }
-            Programador idUsuario = desarrolla.getIdUsuario();
-            if (idUsuario != null) {
-                idUsuario.getDesarrollaCollection().remove(desarrolla);
-                idUsuario = em.merge(idUsuario);
+            Programador nombreUsuario = desarrolla.getNombreUsuario();
+            if (nombreUsuario != null) {
+                nombreUsuario.getDesarrollaCollection().remove(desarrolla);
+                nombreUsuario = em.merge(nombreUsuario);
             }
             Proyecto idProyecto = desarrolla.getIdProyecto();
             if (idProyecto != null) {

@@ -11,14 +11,20 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
 import static idecolaborativo.IDEColaborativo.ventanaCambiarIdioma;
 import static idecolaborativo.IDEColaborativo.ventanaCrearProyecto;
 import static idecolaborativo.IDEColaborativo.ventanaInicioSesion;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
@@ -72,11 +78,11 @@ public class PantallaPrincipalController implements Initializable {
     private TreeTableColumn<String, String> columnaProyectos;
     @FXML
     private TabPane tablaArchivos;
-    
+
     private static ImageView lenguaje = new ImageView("/Imagenes/java.png");
     @FXML
     private Tab tab1;
-    
+
     /**
      * Initializes the controller class.
      */
@@ -94,7 +100,6 @@ public class PantallaPrincipalController implements Initializable {
         tab1.setContent(areaCodigo.crearAreaCodigo());
     }
 
-    
     public void setRecurso(ResourceBundle recurso) {
         this.recurso = recurso;
         configurarIdioma();
@@ -144,29 +149,180 @@ public class PantallaPrincipalController implements Initializable {
     }
 
     public void cargarProyectos() {
-        TreeItem<String> childNode1 = new TreeItem<>("Child Node 1", crearIconoCarpeta());
-        TreeItem<String> childNode2 = new TreeItem<>("Child Node 2", crearIconoCarpeta());
-        TreeItem<String> childNode3 = new TreeItem<>("Child Node 3", crearIconoCarpeta());
+        FileReader fileReader = null;
+        BufferedReader contenido = null;
+        try {
+            File file = new File("/home/alonso/Escritorio/rutas.txt");
+            fileReader = new FileReader(file);
+            contenido = new BufferedReader(fileReader);
+            String ruta;
+            ArrayList<TreeItem<String>> proyectos = new ArrayList();
+            while ((ruta = contenido.readLine()) != null) {
+                String[] rutas = ruta.split(",");
+                TreeItem<String> hijo = new TreeItem<>(rutas[rutas.length - 1], crearIconoLenguaje(rutas[1]));
+                hijo.getChildren().setAll(buscarCarpetas(rutas[0],rutas[1]));
+                proyectos.add(hijo);
+            }
+            TreeItem<String> root = new TreeItem<>("Proyectos");
+            root.getChildren().setAll(proyectos);
+            columnaProyectos.setCellValueFactory((CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
+            tablaProyectos.setRoot(root);
+            tablaProyectos.setShowRoot(true);
 
-        TreeItem<String> root = new TreeItem<>("Root node",lenguaje);
-        root.setExpanded(true);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                fileReader.close();
+                contenido.close();
+            } catch (IOException ex) {
+                Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
 
-        //Adding tree items to the root
-        root.getChildren().setAll(childNode1, childNode2, childNode3);
-
-        columnaProyectos.setCellValueFactory((CellDataFeatures<String, String> p)
-                -> new ReadOnlyStringWrapper(p.getValue().getValue()));
-
-        tablaProyectos.setRoot(root);
-        tablaProyectos.setShowRoot(true);
     }
-    
-    public ImageView crearIconoCarpeta(){
+
+    public ImageView crearIconoCarpeta() {
         ImageView carpeta;
         carpeta = new ImageView("/Imagenes/carpeta_1.png");
         carpeta.setFitHeight(15);
         carpeta.setFitWidth(15);
         return carpeta;
+    }
+
+    public ImageView crearIconoLenguaje(String lenguajeProgramacion) {
+        ImageView lenguaje = null;
+        switch (lenguajeProgramacion) {
+            case "java":
+                lenguaje = new ImageView("/Imagenes/java.png");
+                lenguaje.setFitHeight(35);
+                lenguaje.setFitWidth(35);
+                break;
+            case "c#":
+                lenguaje = new ImageView("/Imagenes/c#.png");
+                lenguaje.setFitHeight(20);
+                lenguaje.setFitWidth(20);
+                break;
+            case "c++":
+                lenguaje = new ImageView("/Imagenes/cpp_logo.png");
+                lenguaje.setFitHeight(15);
+                lenguaje.setFitWidth(15);
+                break;
+        }
+
+        return lenguaje;
+    }
+    
+    public ImageView crearIconoArchivo(String lenguajeProgramacion) {
+        ImageView lenguaje = null;
+        switch (lenguajeProgramacion) {
+            case "java":
+                lenguaje = new ImageView("/Imagenes/archivoJava.png");
+                lenguaje.setFitHeight(20);
+                lenguaje.setFitWidth(20);
+                break;
+            case "c#":
+                lenguaje = new ImageView("/Imagenes/archivoCSharp.png");
+                lenguaje.setFitHeight(20);
+                lenguaje.setFitWidth(20);
+                break;
+            case "c++":
+                lenguaje = new ImageView("/Imagenes/cpp_logo.png");
+                lenguaje.setFitHeight(15);
+                lenguaje.setFitWidth(15);
+                break;
+        }
+
+        return lenguaje;
+    }
+
+    public ArrayList<TreeItem<String>> buscarCarpetas(String ruta, String lenguaje) {
+        ruta += "/codigo";
+        ArrayList<TreeItem<String>> carpetas = new ArrayList();
+        File file = new File(ruta);
+        String[] carpetasCreadas = file.list();
+
+        for (String carpeta : carpetasCreadas) {
+            TreeItem<String> hijo = new TreeItem<>(carpeta, crearIconoCarpeta());
+            hijo.getChildren().addAll(buscarArchivos(ruta + "/" + carpeta, lenguaje));
+            carpetas.add(hijo);
+        }
+
+        return carpetas;
+    }
+
+    public ArrayList<MyTreeItem> buscarArchivos(String ruta, String lenguale) {
+        File file = new File(ruta);
+        String[] archivos = file.list();
+        ArrayList<MyTreeItem> treeArchivos = new ArrayList();
+        for(String archivo: archivos){
+            MyTreeItem hijo = new MyTreeItem(archivo,crearIconoArchivo(lenguale));
+            hijo.setContenido(leerArchivo(ruta+"/"+archivo));
+            hijo.setRuta(ruta+"/"+archivo);
+            treeArchivos.add(hijo);
+        
+        }
+        return treeArchivos;
+    }
+
+    public String leerArchivo(String ruta) {
+        FileReader fileReader = null;
+        String auxiliar = "";
+        String contenidoArchivo = "";
+        BufferedReader contenido = null;
+        try {
+
+            File file = new File(ruta);
+            fileReader = new FileReader(file);
+            contenido = new BufferedReader(fileReader);
+            while ((auxiliar = contenido.readLine()) != null) {
+                contenidoArchivo += auxiliar;
+            }
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                fileReader.close();
+                contenido.close();
+            } catch (IOException ex) {
+                Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return contenidoArchivo;
+    }
+
+    public class MyTreeItem extends TreeItem<String> {
+        private String contenido;
+        private String ruta;
+
+        public MyTreeItem(String nombreNodo,ImageView logo) {
+            super(nombreNodo,logo);
+        }
+
+        public String getRuta() {
+            return ruta;
+        }
+
+        public void setRuta(String ruta) {
+            this.ruta = ruta;
+        }
+        
+        
+
+        public String getContenido() {
+            return contenido;
+        }
+
+        public void setContenido(String contenido) {
+            this.contenido = contenido;
+        }
+
     }
 
 }

@@ -9,7 +9,9 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXTextField;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -117,17 +119,20 @@ public class PantallaCrearProyectoController implements Initializable {
                 switch (radioSeleccionado.getText()) {
                     case "Java":
                         crearArchivo();
-                        main = new File(campoTextoRuta.getText() + "/" + campoTextoNombreProyecto.getText() + ".java");
+                        guardarRuta("java");
+                        main = new File(campoTextoRuta.getText() + "/codigo/"+ campoTextoNombreProyecto.getText() + "/" + campoTextoNombreProyecto.getText() + ".java");
                         main.createNewFile();
                         break;
                     case "C#":
                         crearArchivo();
-                        main = new File(campoTextoRuta.getText() + "/" + campoTextoNombreProyecto.getText() + ".cs");
+                        guardarRuta("c#");
+                        main = new File(campoTextoRuta.getText() + "/codigo/" + campoTextoNombreProyecto.getText() + "/" + campoTextoNombreProyecto.getText() + ".cs");
                         main.createNewFile();
                         break;
                     case "C++":
                         crearArchivo();
-                        main = new File(campoTextoRuta.getText() + "/" + campoTextoNombreProyecto.getText() + ".cpp");
+                        guardarRuta("c++");
+                        main = new File(campoTextoRuta.getText() + "/codigo/"+ campoTextoNombreProyecto.getText() + "/" + campoTextoNombreProyecto.getText() + ".cpp");
                         main.createNewFile();
                         break;
                 }
@@ -149,12 +154,40 @@ public class PantallaCrearProyectoController implements Initializable {
         File carpetaProyecto = new File(campoTextoRuta.getText());
         if (!carpetaProyecto.exists()) {
             carpetaProyecto.mkdir();
+            carpetaProyecto = new File(campoTextoRuta.getText() + "/" + "codigo");
+            carpetaProyecto.mkdir();
+            carpetaProyecto = new File(campoTextoRuta.getText() + "/" + "codigo/"+ campoTextoNombreProyecto.getText());
+            carpetaProyecto.mkdir();
+            carpetaProyecto = new File(campoTextoRuta.getText() + "/" + "clases");
+            carpetaProyecto.mkdir();
+            
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText(recurso.getString("atencion"));
             String s = recurso.getString("mensajeProyectoExistente");
             alert.setContentText(s);
             alert.show();
+        }
+    }
+    
+    public void guardarRuta(String lenguaje){
+        FileWriter fileWriter = null;
+        PrintWriter pw = null;
+        try {
+            File file = new File("/home/alonso/Escritorio/rutas.txt");
+            fileWriter = new FileWriter(file,true);
+            pw = new PrintWriter(fileWriter);
+            pw.append(campoTextoRuta.getText() + ","+lenguaje+","+campoTextoNombreProyecto.getText()+"\n");
+            
+        } catch (IOException ex) {
+            Logger.getLogger(PantallaCrearProyectoController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                fileWriter.close();
+                pw.close();
+            } catch (IOException ex) {
+                Logger.getLogger(PantallaCrearProyectoController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

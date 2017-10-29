@@ -93,7 +93,7 @@
          <children>
             <TreeTableView fx:id="tablaProyectos" prefHeight="568.0" prefWidth="173.0">
               <columns>
-                <TreeTableColumn fx:id="columnaProyectos" prefWidth="172.0" text="Proyectos" />
+                <TreeTableColumn fx:id="columnaProyectos" prefWidth="172.0" />
               </columns>
             </TreeTableView>
          </children></AnchorPane>

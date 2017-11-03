@@ -21,11 +21,11 @@
             </ImageView>
          </graphic>
       </JFXRadioButton>
-      <JFXRadioButton fx:id="radioCSharp" layoutX="143.0" layoutY="43.0" text="C#">
+      <JFXRadioButton fx:id="radioCSharp" layoutX="157.0" layoutY="47.0" text="C#">
          <graphic>
-            <ImageView fitHeight="38.0" fitWidth="59.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="30.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../Imagenes/Csharp.png" />
+                  <Image url="@../Imagenes/c%23.png" />
                </image>
             </ImageView>
          </graphic>

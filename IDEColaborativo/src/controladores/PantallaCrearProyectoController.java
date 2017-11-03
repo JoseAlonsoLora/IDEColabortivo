@@ -174,7 +174,7 @@ public class PantallaCrearProyectoController implements Initializable {
         FileWriter fileWriter = null;
         PrintWriter pw = null;
         try {
-            File file = new File("/home/alonso/Escritorio/rutas.txt");
+            File file = new File("/Users/raymu/Desktop/rutas.txt");
             fileWriter = new FileWriter(file,true);
             pw = new PrintWriter(fileWriter);
             pw.append(campoTextoRuta.getText() + ","+lenguaje+","+campoTextoNombreProyecto.getText()+"\n");
@@ -190,5 +190,5 @@ public class PantallaCrearProyectoController implements Initializable {
             }
         }
     }
-
+    
 }

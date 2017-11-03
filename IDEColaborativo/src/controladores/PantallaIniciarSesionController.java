@@ -90,7 +90,7 @@ public class PantallaIniciarSesionController implements Initializable {
     }
 
     @FXML
-    private void botonIniciarSesion(ActionEvent event) throws IOException {
+    private void botonIniciarSesion(ActionEvent event){
         Programador programador = new Programador();
         if (campoTextoNombreUsuario.getText().isEmpty() || campoTextoContraseña.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -127,13 +127,13 @@ public class PantallaIniciarSesionController implements Initializable {
     }
 
     @FXML
-    private void etiquetaCrearCuenta(MouseEvent event) throws IOException {
+    private void etiquetaCrearCuenta(MouseEvent event){
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
         ventanaRegistrarUsuario(recurso, controlador);
     }
 
-    static String makeHash(String string) {
+    public static String makeHash(String string) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
             byte[] hash = messageDigest.digest(string.getBytes());

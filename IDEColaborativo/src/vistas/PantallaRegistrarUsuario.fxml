@@ -19,13 +19,13 @@
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <JFXTextField fx:id="campoTextoNombreUsuario" focusColor="DARKGRAY" layoutX="39.0" layoutY="95.0" prefHeight="24.0" prefWidth="225.0" unFocusColor="#140000" />
+      <JFXTextField fx:id="campoTextoNombreUsuario" focusColor="DARKGRAY" layoutX="39.0" layoutY="95.0" onKeyTyped="#limitarCaracteresNombreUsuario" prefHeight="24.0" prefWidth="225.0" unFocusColor="#140000" />
       <Label fx:id="etiquetaEmail" layoutX="39.0" layoutY="145.0" text="Correo electrónico">
          <font>
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <JFXTextField fx:id="campoTextoCorreoElectronico" focusColor="DARKGRAY" layoutX="41.0" layoutY="170.0" prefHeight="24.0" prefWidth="225.0" unFocusColor="BLACK" />
+      <JFXTextField fx:id="campoTextoCorreoElectronico" focusColor="DARKGRAY" layoutX="41.0" layoutY="170.0" onKeyTyped="#limitarCaracteresCorreoElectronico" prefHeight="24.0" prefWidth="225.0" unFocusColor="BLACK" />
       <Label fx:id="etiquetaContraseña" layoutX="41.0" layoutY="217.0" text="Contraseña">
          <font>
             <Font name="System Bold" size="13.0" />

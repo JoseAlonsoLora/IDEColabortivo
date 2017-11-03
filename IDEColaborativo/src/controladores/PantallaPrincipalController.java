@@ -22,6 +22,8 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -96,8 +98,25 @@ public class PantallaPrincipalController implements Initializable {
         lenguaje.setFitWidth(40);
         configurarIdioma();
         cargarProyectos();
-        FormatoCodigo areaCodigo = new FormatoCodigo();
-        tab1.setContent(areaCodigo.crearAreaCodigo());
+        
+        handlerTablaProyectos();
+    }
+
+    public void handlerTablaProyectos() {
+        tablaProyectos.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldVal, Object newVal) {
+                if ("class javafx.scene.control.TreeItem".equals(newVal.getClass().toString())){
+                    TreeItem treeItem = (TreeItem) newVal;
+                }else{
+                    MyTreeItem treeItem = (MyTreeItem) newVal;
+                    FormatoCodigo areaCodigo = new FormatoCodigo();
+                    areaCodigo.setSampleCode(treeItem.getContenido());
+                    tab1.setContent(areaCodigo.crearAreaCodigo());
+                }
+
+            }
+        });
     }
 
     public void setRecurso(ResourceBundle recurso) {
@@ -152,7 +171,7 @@ public class PantallaPrincipalController implements Initializable {
         FileReader fileReader = null;
         BufferedReader contenido = null;
         try {
-            File file = new File("/home/alonso/Escritorio/rutas.txt");
+            File file = new File("/Users/raymu/Desktop/rutas.txt");
             fileReader = new FileReader(file);
             contenido = new BufferedReader(fileReader);
             String ruta;
@@ -160,7 +179,7 @@ public class PantallaPrincipalController implements Initializable {
             while ((ruta = contenido.readLine()) != null) {
                 String[] rutas = ruta.split(",");
                 TreeItem<String> hijo = new TreeItem<>(rutas[rutas.length - 1], crearIconoLenguaje(rutas[1]));
-                hijo.getChildren().setAll(buscarCarpetas(rutas[0],rutas[1]));
+                hijo.getChildren().setAll(buscarCarpetas(rutas[0], rutas[1]));
                 proyectos.add(hijo);
             }
             TreeItem<String> root = new TreeItem<>("Proyectos");
@@ -214,7 +233,7 @@ public class PantallaPrincipalController implements Initializable {
 
         return lenguaje;
     }
-    
+
     public ImageView crearIconoArchivo(String lenguajeProgramacion) {
         ImageView lenguaje = null;
         switch (lenguajeProgramacion) {
@@ -257,12 +276,12 @@ public class PantallaPrincipalController implements Initializable {
         File file = new File(ruta);
         String[] archivos = file.list();
         ArrayList<MyTreeItem> treeArchivos = new ArrayList();
-        for(String archivo: archivos){
-            MyTreeItem hijo = new MyTreeItem(archivo,crearIconoArchivo(lenguale));
-            hijo.setContenido(leerArchivo(ruta+"/"+archivo));
-            hijo.setRuta(ruta+"/"+archivo);
+        for (String archivo : archivos) {
+            MyTreeItem hijo = new MyTreeItem(archivo, crearIconoArchivo(lenguale));
+            hijo.setContenido(leerArchivo(ruta + "/" + archivo));
+            hijo.setRuta(ruta + "/" + archivo);
             treeArchivos.add(hijo);
-        
+
         }
         return treeArchivos;
     }
@@ -278,7 +297,7 @@ public class PantallaPrincipalController implements Initializable {
             fileReader = new FileReader(file);
             contenido = new BufferedReader(fileReader);
             while ((auxiliar = contenido.readLine()) != null) {
-                contenidoArchivo += auxiliar;
+                contenidoArchivo += auxiliar + "\n";
             }
 
         } catch (FileNotFoundException ex) {
@@ -298,11 +317,16 @@ public class PantallaPrincipalController implements Initializable {
     }
 
     public class MyTreeItem extends TreeItem<String> {
+
         private String contenido;
         private String ruta;
 
-        public MyTreeItem(String nombreNodo,ImageView logo) {
-            super(nombreNodo,logo);
+        public MyTreeItem() {
+
+        }
+
+        public MyTreeItem(String nombreNodo, ImageView logo) {
+            super(nombreNodo, logo);
         }
 
         public String getRuta() {
@@ -312,8 +336,6 @@ public class PantallaPrincipalController implements Initializable {
         public void setRuta(String ruta) {
             this.ruta = ruta;
         }
-        
-        
 
         public String getContenido() {
             return contenido;

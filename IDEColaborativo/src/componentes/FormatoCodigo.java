@@ -60,7 +60,7 @@ public class FormatoCodigo {
             + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
     );
 
-    private static final String sampleCode = String.join("\n", new String[]{
+    private static String sampleCode = String.join("\n", new String[]{
         "package com.example;",
         "",
         "import java.util.*;",
@@ -89,7 +89,12 @@ public class FormatoCodigo {
     public FormatoCodigo() {
 
     }
-
+    
+    public void setSampleCode(String sampleCode){
+        this.sampleCode = sampleCode;
+    }
+    
+    
     public CodeArea crearAreaCodigo() {
         executor = Executors.newSingleThreadExecutor();
         codeArea = new CodeArea();

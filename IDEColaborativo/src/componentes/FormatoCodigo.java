@@ -14,12 +14,8 @@ import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.concurrent.Task;
-import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
-import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
-import org.fxmisc.richtext.demo.JavaKeywordsAsync;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 
@@ -85,10 +81,25 @@ public class FormatoCodigo {
 
     private CodeArea codeArea;
     private ExecutorService executor;
+    private boolean codigoModificado;
 
     public FormatoCodigo() {
-
+       codigoModificado = false;
     }
+    
+    public CodeArea getCodeArea(){
+        return codeArea;
+    }
+
+    public boolean isCodigoModificado() {
+        return codigoModificado;
+    }
+
+    public void setCodigoModificado(boolean codigoModificado) {
+        this.codigoModificado = codigoModificado;
+    }
+    
+    
     
     public void setSampleCode(String sampleCode){
         this.sampleCode = sampleCode;

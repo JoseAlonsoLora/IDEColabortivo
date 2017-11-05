@@ -5,6 +5,8 @@
  */
 package controladores;
 
+import clasesApoyo.MyTab;
+import clasesApoyo.MyTreeItem;
 import com.jfoenix.controls.JFXButton;
 import componentes.FormatoCodigo;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
@@ -15,9 +17,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,19 +30,26 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
+import org.fxmisc.richtext.CodeArea;
 
 /**
  * FXML Controller class
@@ -45,10 +57,6 @@ import javafx.scene.image.ImageView;
  * @author raymu
  */
 public class PantallaPrincipalController implements Initializable {
-
-    private ResourceBundle recurso;
-    private PantallaPrincipalController controlador;
-    private String idUsuario;
 
     @FXML
     private AnchorPane panelBarraMenu;
@@ -81,38 +89,86 @@ public class PantallaPrincipalController implements Initializable {
     @FXML
     private TabPane tablaArchivos;
 
-    private static ImageView lenguaje = new ImageView("/Imagenes/java.png");
-    @FXML
-    private Tab tab1;
+    private ResourceBundle recurso;
+    private PantallaPrincipalController controlador;
+    private String idUsuario;
+    private ArrayList<MyTreeItem> tabsAbiertos;
+    private TreeItem<String> root;
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        tabsAbiertos = new ArrayList();
         iconoSesionIniciada.setVisible(false);
         etiquetaNombreUsuario.setVisible(false);
         cerrarSesion.setVisible(false);
         recurso = rb;
-        lenguaje.setFitHeight(40);
-        lenguaje.setFitWidth(40);
+        root = new TreeItem<>(recurso.getString("etProyectos"));
         configurarIdioma();
+        tablaArchivos.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
         cargarProyectos();
-        
         handlerTablaProyectos();
+
     }
 
     public void handlerTablaProyectos() {
         tablaProyectos.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldVal, Object newVal) {
-                if ("class javafx.scene.control.TreeItem".equals(newVal.getClass().toString())){
+                if ("class javafx.scene.control.TreeItem".equals(newVal.getClass().toString())) {
                     TreeItem treeItem = (TreeItem) newVal;
-                }else{
+                } else {
+
                     MyTreeItem treeItem = (MyTreeItem) newVal;
-                    FormatoCodigo areaCodigo = new FormatoCodigo();
-                    areaCodigo.setSampleCode(treeItem.getContenido());
-                    tab1.setContent(areaCodigo.crearAreaCodigo());
+                    if (tabsAbiertos.contains(treeItem)) {
+
+                    } else {
+                        MyTab tab = new MyTab(treeItem.getNombreArchivo());
+                        FormatoCodigo areaCodigo = new FormatoCodigo();
+                        areaCodigo.setSampleCode(treeItem.getContenido());
+                        tab.setContent(areaCodigo.crearAreaCodigo());
+                        areaCodigo.getCodeArea().setOnKeyTyped(new EventHandler<KeyEvent>() {
+                            @Override
+                            public void handle(KeyEvent event) {
+                                areaCodigo.setCodigoModificado(true);
+                            }
+                        });
+                        tab.setTreeItem(treeItem);
+
+                        tab.setOnCloseRequest(new EventHandler<Event>() {
+                            @Override
+                            public void handle(Event t) {
+                                if (areaCodigo.isCodigoModificado()) {
+                                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                                    alert.setHeaderText(recurso.getString("atencion"));
+                                    String s = recurso.getString("mensajeDeseaGuardar");
+                                    alert.setContentText(s);
+                                    ButtonType botonGuardar = new ButtonType(recurso.getString("btGuardar"));
+                                    ButtonType botonDescartar = new ButtonType(recurso.getString("btDescartar"));
+                                    ButtonType botonCancelar = new ButtonType(recurso.getString("btCancelar"), ButtonData.CANCEL_CLOSE);
+                                    alert.getButtonTypes().setAll(botonGuardar, botonDescartar, botonCancelar);
+                                    Optional<ButtonType> result = alert.showAndWait();
+                                    if (result.get() == botonGuardar) {
+                                        botonGuardarArchivo(null);
+                                        tabsAbiertos.remove(treeItem);
+                                    } else if (result.get() == botonCancelar) {
+                                        t.consume();
+                                    } else {
+                                        tabsAbiertos.remove(treeItem);
+                                    }
+
+                                } else {
+                                    tabsAbiertos.remove(treeItem);
+                                }
+
+                            }
+                        });
+                        tablaArchivos.getTabs().add(tab);
+                        tabsAbiertos.add(treeItem);
+                    }
+
                 }
 
             }
@@ -171,18 +227,21 @@ public class PantallaPrincipalController implements Initializable {
         FileReader fileReader = null;
         BufferedReader contenido = null;
         try {
-            File file = new File("/Users/raymu/Desktop/rutas.txt");
+            File file = new File("/home/alonso/Escritorio/rutas.txt");
             fileReader = new FileReader(file);
             contenido = new BufferedReader(fileReader);
             String ruta;
+            ArrayList<TreeItem<String>> carpeta;
             ArrayList<TreeItem<String>> proyectos = new ArrayList();
             while ((ruta = contenido.readLine()) != null) {
                 String[] rutas = ruta.split(",");
                 TreeItem<String> hijo = new TreeItem<>(rutas[rutas.length - 1], crearIconoLenguaje(rutas[1]));
-                hijo.getChildren().setAll(buscarCarpetas(rutas[0], rutas[1]));
-                proyectos.add(hijo);
+                carpeta = buscarCarpetas(rutas[0], rutas[1]);
+                if (carpeta != null) {
+                    hijo.getChildren().setAll(carpeta);
+                    proyectos.add(hijo);
+                }
             }
-            TreeItem<String> root = new TreeItem<>("Proyectos");
             root.getChildren().setAll(proyectos);
             columnaProyectos.setCellValueFactory((CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
             tablaProyectos.setRoot(root);
@@ -200,6 +259,17 @@ public class PantallaPrincipalController implements Initializable {
                 Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+
+    }
+
+    public void cargarNuevoProyecto(String ruta, String lenguaje, String nombreProyecto) {
+
+        TreeItem<String> hijo = new TreeItem<>(nombreProyecto, crearIconoLenguaje(lenguaje));
+        hijo.getChildren().setAll(buscarCarpetas(ruta, lenguaje));
+        root.getChildren().add(hijo);
+        columnaProyectos.setCellValueFactory((CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
+        tablaProyectos.setRoot(root);
+        tablaProyectos.setShowRoot(true);
 
     }
 
@@ -261,14 +331,17 @@ public class PantallaPrincipalController implements Initializable {
         ruta += "/codigo";
         ArrayList<TreeItem<String>> carpetas = new ArrayList();
         File file = new File(ruta);
-        String[] carpetasCreadas = file.list();
+        if (file.exists()) {
+            String[] carpetasCreadas = file.list();
 
-        for (String carpeta : carpetasCreadas) {
-            TreeItem<String> hijo = new TreeItem<>(carpeta, crearIconoCarpeta());
-            hijo.getChildren().addAll(buscarArchivos(ruta + "/" + carpeta, lenguaje));
-            carpetas.add(hijo);
+            for (String carpeta : carpetasCreadas) {
+                TreeItem<String> hijo = new TreeItem<>(carpeta, crearIconoCarpeta());
+                hijo.getChildren().addAll(buscarArchivos(ruta + "/" + carpeta, lenguaje));
+                carpetas.add(hijo);
+            }
+        } else {
+            carpetas = null;
         }
-
         return carpetas;
     }
 
@@ -280,6 +353,7 @@ public class PantallaPrincipalController implements Initializable {
             MyTreeItem hijo = new MyTreeItem(archivo, crearIconoArchivo(lenguale));
             hijo.setContenido(leerArchivo(ruta + "/" + archivo));
             hijo.setRuta(ruta + "/" + archivo);
+            hijo.setNombreArchivo(archivo);
             treeArchivos.add(hijo);
 
         }
@@ -316,33 +390,27 @@ public class PantallaPrincipalController implements Initializable {
         return contenidoArchivo;
     }
 
-    public class MyTreeItem extends TreeItem<String> {
-
-        private String contenido;
-        private String ruta;
-
-        public MyTreeItem() {
-
-        }
-
-        public MyTreeItem(String nombreNodo, ImageView logo) {
-            super(nombreNodo, logo);
-        }
-
-        public String getRuta() {
-            return ruta;
-        }
-
-        public void setRuta(String ruta) {
-            this.ruta = ruta;
-        }
-
-        public String getContenido() {
-            return contenido;
-        }
-
-        public void setContenido(String contenido) {
-            this.contenido = contenido;
+    @FXML
+    private void botonGuardarArchivo(ActionEvent event) {
+        FileWriter fileWriter = null;
+        PrintWriter printWriter = null;
+        CodeArea area = (CodeArea) tablaArchivos.getSelectionModel().getSelectedItem().getContent();
+        MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
+        try {
+            File file = new File(tabSeleccionado.getTreeItem().getRuta());
+            fileWriter = new FileWriter(file);
+            printWriter = new PrintWriter(fileWriter);
+            printWriter.write(area.getText());
+            tabSeleccionado.getTreeItem().setContenido(area.getText());
+        } catch (IOException ex) {
+            Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                fileWriter.close();
+                printWriter.close();
+            } catch (IOException ex) {
+                Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
     }

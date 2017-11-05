@@ -120,22 +120,27 @@ public class PantallaCrearProyectoController implements Initializable {
                     case "Java":
                         crearArchivo();
                         guardarRuta("java");
-                        main = new File(campoTextoRuta.getText() + "/codigo/"+ campoTextoNombreProyecto.getText() + "/" + campoTextoNombreProyecto.getText() + ".java");
+                        main = new File(campoTextoRuta.getText() + "/codigo/" + campoTextoNombreProyecto.getText() + "/" + campoTextoNombreProyecto.getText() + ".java");
                         main.createNewFile();
+                        controlador.cargarNuevoProyecto(campoTextoRuta.getText(), "java", campoTextoNombreProyecto.getText());
                         break;
                     case "C#":
                         crearArchivo();
                         guardarRuta("c#");
                         main = new File(campoTextoRuta.getText() + "/codigo/" + campoTextoNombreProyecto.getText() + "/" + campoTextoNombreProyecto.getText() + ".cs");
                         main.createNewFile();
+                        controlador.cargarNuevoProyecto(campoTextoRuta.getText(), "c#", campoTextoNombreProyecto.getText());
                         break;
                     case "C++":
                         crearArchivo();
                         guardarRuta("c++");
-                        main = new File(campoTextoRuta.getText() + "/codigo/"+ campoTextoNombreProyecto.getText() + "/" + campoTextoNombreProyecto.getText() + ".cpp");
+                        main = new File(campoTextoRuta.getText() + "/codigo/" + campoTextoNombreProyecto.getText() + "/" + campoTextoNombreProyecto.getText() + ".cpp");
                         main.createNewFile();
+                        controlador.cargarNuevoProyecto(campoTextoRuta.getText(), "c++", campoTextoNombreProyecto.getText());
                         break;
                 }
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                stage.close();
             } catch (IOException ex) {
                 Logger.getLogger(PantallaCrearProyectoController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -148,19 +153,17 @@ public class PantallaCrearProyectoController implements Initializable {
         }
     }
 
-    
-
     public void crearArchivo() {
         File carpetaProyecto = new File(campoTextoRuta.getText());
         if (!carpetaProyecto.exists()) {
             carpetaProyecto.mkdir();
             carpetaProyecto = new File(campoTextoRuta.getText() + "/" + "codigo");
             carpetaProyecto.mkdir();
-            carpetaProyecto = new File(campoTextoRuta.getText() + "/" + "codigo/"+ campoTextoNombreProyecto.getText());
+            carpetaProyecto = new File(campoTextoRuta.getText() + "/" + "codigo/" + campoTextoNombreProyecto.getText());
             carpetaProyecto.mkdir();
             carpetaProyecto = new File(campoTextoRuta.getText() + "/" + "clases");
             carpetaProyecto.mkdir();
-            
+
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText(recurso.getString("atencion"));
@@ -169,16 +172,16 @@ public class PantallaCrearProyectoController implements Initializable {
             alert.show();
         }
     }
-    
-    public void guardarRuta(String lenguaje){
+
+    public void guardarRuta(String lenguaje) {
         FileWriter fileWriter = null;
         PrintWriter pw = null;
         try {
-            File file = new File("/Users/raymu/Desktop/rutas.txt");
-            fileWriter = new FileWriter(file,true);
+            File file = new File("/home/alonso/Escritorio/rutas.txt");
+            fileWriter = new FileWriter(file, true);
             pw = new PrintWriter(fileWriter);
-            pw.append(campoTextoRuta.getText() + ","+lenguaje+","+campoTextoNombreProyecto.getText()+"\n");
-            
+            pw.append(campoTextoRuta.getText() + "," + lenguaje + "," + campoTextoNombreProyecto.getText() + "\n");
+
         } catch (IOException ex) {
             Logger.getLogger(PantallaCrearProyectoController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -190,5 +193,5 @@ public class PantallaCrearProyectoController implements Initializable {
             }
         }
     }
-    
+
 }

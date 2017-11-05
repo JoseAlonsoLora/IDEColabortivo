@@ -9,7 +9,6 @@
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TreeTableColumn?>
 <?import javafx.scene.control.TreeTableView?>
@@ -36,7 +35,7 @@
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></JFXButton>
-            <JFXButton fx:id="botonGuardar" layoutX="105.0" layoutY="8.0" ripplerFill="#7c7c7c" text="">
+            <JFXButton fx:id="botonGuardar" layoutX="105.0" layoutY="8.0" onAction="#botonGuardarArchivo" ripplerFill="#7c7c7c" text="">
                <graphic>
                   <MaterialDesignIconView glyphName="FLOPPY" size="20.0" />
                </graphic>
@@ -97,19 +96,6 @@
               </columns>
             </TreeTableView>
          </children></AnchorPane>
-      <TabPane fx:id="tablaArchivos" layoutX="174.0" layoutY="44.0" prefHeight="575.0" prefWidth="810.0" tabClosingPolicy="UNAVAILABLE">
-        <tabs>
-          <Tab fx:id="tab1" text="Untitled Tab 1">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="280.0" prefWidth="449.0" />
-            </content>
-          </Tab>
-          <Tab text="Untitled Tab 2">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-            </content>
-          </Tab>
-        </tabs>
-      </TabPane>
+      <TabPane fx:id="tablaArchivos" layoutX="174.0" layoutY="44.0" prefHeight="575.0" prefWidth="810.0" tabClosingPolicy="UNAVAILABLE" />
    </children>
 </AnchorPane>

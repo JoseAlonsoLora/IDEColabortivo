@@ -7,6 +7,7 @@ package clasesApoyo;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
+import modelo.negocio.Archivo;
 
 /**
  *
@@ -14,9 +15,7 @@ import javafx.scene.image.ImageView;
  */
     public class MyTreeItem extends TreeItem<String> {
 
-        private String contenido;
-        private String ruta;
-        private String nombreArchivo;
+        private Archivo archivo;
 
         public MyTreeItem() {
 
@@ -26,28 +25,13 @@ import javafx.scene.image.ImageView;
             super(nombreNodo, logo);
         }
 
-        public String getNombreArchivo() {
-            return nombreArchivo;
-        }
+    public Archivo getArchivo() {
+        return archivo;
+    }
 
-        public void setNombreArchivo(String nombreArchivo) {
-            this.nombreArchivo = nombreArchivo;
-        }
+    public void setArchivo(Archivo archivo) {
+        this.archivo = archivo;
+    }
 
-        public String getRuta() {
-            return ruta;
-        }
-
-        public void setRuta(String ruta) {
-            this.ruta = ruta;
-        }
-
-        public String getContenido() {
-            return contenido;
-        }
-
-        public void setContenido(String contenido) {
-            this.contenido = contenido;
-        }
-
+       
     }

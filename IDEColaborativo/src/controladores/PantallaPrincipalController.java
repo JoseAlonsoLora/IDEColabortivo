@@ -13,19 +13,11 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
 import static idecolaborativo.IDEColaborativo.ventanaCambiarIdioma;
 import static idecolaborativo.IDEColaborativo.ventanaCrearProyecto;
 import static idecolaborativo.IDEColaborativo.ventanaInicioSesion;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -49,6 +41,9 @@ import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import modelo.negocio.Archivo;
+import modelo.negocio.Carpeta;
+import modelo.negocio.Proyecto;
 import org.fxmisc.richtext.CodeArea;
 
 /**
@@ -57,17 +52,13 @@ import org.fxmisc.richtext.CodeArea;
  * @author raymu
  */
 public class PantallaPrincipalController implements Initializable {
-
+    
     @FXML
     private AnchorPane panelBarraMenu;
     @FXML
     private JFXButton botonCrearProyecto;
     @FXML
-    private MaterialDesignIconView botonImportarProyecto;
-    @FXML
     private JFXButton botonGuardar;
-    @FXML
-    private JFXButton botonDepurar;
     @FXML
     private AnchorPane panelProyectos;
     @FXML
@@ -88,12 +79,16 @@ public class PantallaPrincipalController implements Initializable {
     private TreeTableColumn<String, String> columnaProyectos;
     @FXML
     private TabPane tablaArchivos;
-
+    
     private ResourceBundle recurso;
     private PantallaPrincipalController controlador;
     private String idUsuario;
     private ArrayList<MyTreeItem> tabsAbiertos;
     private TreeItem<String> root;
+    @FXML
+    private JFXButton botonCompilar;
+    @FXML
+    private JFXButton botonEjecutar;
 
     /**
      * Initializes the controller class.
@@ -110,9 +105,9 @@ public class PantallaPrincipalController implements Initializable {
         tablaArchivos.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
         cargarProyectos();
         handlerTablaProyectos();
-
+        
     }
-
+    
     public void handlerTablaProyectos() {
         tablaProyectos.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
@@ -120,14 +115,14 @@ public class PantallaPrincipalController implements Initializable {
                 if ("class javafx.scene.control.TreeItem".equals(newVal.getClass().toString())) {
                     TreeItem treeItem = (TreeItem) newVal;
                 } else {
-
+                    
                     MyTreeItem treeItem = (MyTreeItem) newVal;
                     if (tabsAbiertos.contains(treeItem)) {
-
+                        
                     } else {
-                        MyTab tab = new MyTab(treeItem.getNombreArchivo());
+                        MyTab tab = new MyTab(treeItem.getArchivo().getNombreArchivo());
                         FormatoCodigo areaCodigo = new FormatoCodigo();
-                        areaCodigo.setSampleCode(treeItem.getContenido());
+                        areaCodigo.setSampleCode(treeItem.getArchivo().getContenido());
                         tab.setContent(areaCodigo.crearAreaCodigo());
                         areaCodigo.getCodeArea().setOnKeyTyped(new EventHandler<KeyEvent>() {
                             @Override
@@ -136,7 +131,7 @@ public class PantallaPrincipalController implements Initializable {
                             }
                         });
                         tab.setTreeItem(treeItem);
-
+                        
                         tab.setOnCloseRequest(new EventHandler<Event>() {
                             @Override
                             public void handle(Event t) {
@@ -158,53 +153,53 @@ public class PantallaPrincipalController implements Initializable {
                                     } else {
                                         tabsAbiertos.remove(treeItem);
                                     }
-
+                                    
                                 } else {
                                     tabsAbiertos.remove(treeItem);
                                 }
-
+                                
                             }
                         });
                         tablaArchivos.getTabs().add(tab);
                         tabsAbiertos.add(treeItem);
                     }
-
+                    
                 }
-
+                
             }
         });
     }
-
+    
     public void setRecurso(ResourceBundle recurso) {
         this.recurso = recurso;
         configurarIdioma();
     }
-
+    
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
     }
-
+    
     public void configurarIdioma() {
         iniciarSesion.setText(recurso.getString("etInicioSesion"));
         cambiarIdioma.setText(recurso.getString("etCambiarIdioma"));
         cerrarSesion.setText(recurso.getString("btCerrarSesion"));
     }
-
+    
     @FXML
     private void botonCrearProyecto(ActionEvent event) throws IOException {
         ventanaCrearProyecto(recurso, controlador);
     }
-
+    
     @FXML
     private void botonIniciarSesion(ActionEvent event) throws IOException {
         ventanaInicioSesion(recurso, controlador);
     }
-
+    
     @FXML
     private void botonCambiarIdioma(ActionEvent event) throws IOException {
         ventanaCambiarIdioma(recurso, controlador);
     }
-
+    
     @FXML
     private void cerrarSesion(ActionEvent event) {
         idUsuario = "";
@@ -212,9 +207,9 @@ public class PantallaPrincipalController implements Initializable {
         etiquetaNombreUsuario.setVisible(false);
         cerrarSesion.setVisible(false);
         iniciarSesion.setVisible(true);
-
+        
     }
-
+    
     public void sesionIniciada(String nombreUsuario) {
         iconoSesionIniciada.setVisible(true);
         etiquetaNombreUsuario.setText(nombreUsuario);
@@ -222,57 +217,38 @@ public class PantallaPrincipalController implements Initializable {
         cerrarSesion.setVisible(true);
         iniciarSesion.setVisible(false);
     }
-
+    
     public void cargarProyectos() {
-        FileReader fileReader = null;
-        BufferedReader contenido = null;
-        try {
-            File file = new File("/home/alonso/Escritorio/rutas.txt");
-            fileReader = new FileReader(file);
-            contenido = new BufferedReader(fileReader);
-            String ruta;
-            ArrayList<TreeItem<String>> carpeta;
-            ArrayList<TreeItem<String>> proyectos = new ArrayList();
-            while ((ruta = contenido.readLine()) != null) {
-                String[] rutas = ruta.split(",");
-                TreeItem<String> hijo = new TreeItem<>(rutas[rutas.length - 1], crearIconoLenguaje(rutas[1]));
-                carpeta = buscarCarpetas(rutas[0], rutas[1]);
-                if (carpeta != null) {
-                    hijo.getChildren().setAll(carpeta);
-                    proyectos.add(hijo);
-                }
-            }
-            root.getChildren().setAll(proyectos);
-            columnaProyectos.setCellValueFactory((CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
-            tablaProyectos.setRoot(root);
-            tablaProyectos.setShowRoot(true);
-
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                fileReader.close();
-                contenido.close();
-            } catch (IOException ex) {
-                Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        Proyecto proyecto = new Proyecto();
+        ArrayList<Proyecto> proyectos = proyecto.cargarProyectos();
+        String ruta;
+        ArrayList<TreeItem<String>> carpetas;
+        ArrayList<TreeItem<String>> proyectosArbol = new ArrayList();
+        for (Proyecto proyecto1 : proyectos) {
+            TreeItem<String> hijo = new TreeItem<>(proyecto1.getNombreProyecto(),
+                    crearIconoLenguaje(proyecto1.getLenguaje()));
+            carpetas = agregarCarpetasArbol(proyecto1);
+            hijo.getChildren().setAll(carpetas);
+            proyectosArbol.add(hijo);
+            
         }
-
+        root.getChildren().setAll(proyectosArbol);
+        columnaProyectos.setCellValueFactory((CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
+        tablaProyectos.setRoot(root);
+        tablaProyectos.setShowRoot(true);
+        
     }
-
-    public void cargarNuevoProyecto(String ruta, String lenguaje, String nombreProyecto) {
-
-        TreeItem<String> hijo = new TreeItem<>(nombreProyecto, crearIconoLenguaje(lenguaje));
-        hijo.getChildren().setAll(buscarCarpetas(ruta, lenguaje));
+    
+    public void cargarNuevoProyecto(Proyecto proyecto) {
+        TreeItem<String> hijo = new TreeItem<>(proyecto.getNombreProyecto(), crearIconoLenguaje(proyecto.getLenguaje()));
+        hijo.getChildren().setAll(agregarCarpetasArbol(proyecto));
         root.getChildren().add(hijo);
         columnaProyectos.setCellValueFactory((CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
         tablaProyectos.setRoot(root);
         tablaProyectos.setShowRoot(true);
-
+        
     }
-
+    
     public ImageView crearIconoCarpeta() {
         ImageView carpeta;
         carpeta = new ImageView("/Imagenes/carpeta_1.png");
@@ -280,7 +256,7 @@ public class PantallaPrincipalController implements Initializable {
         carpeta.setFitWidth(15);
         return carpeta;
     }
-
+    
     public ImageView crearIconoLenguaje(String lenguajeProgramacion) {
         ImageView lenguaje = null;
         switch (lenguajeProgramacion) {
@@ -300,10 +276,10 @@ public class PantallaPrincipalController implements Initializable {
                 lenguaje.setFitWidth(15);
                 break;
         }
-
+        
         return lenguaje;
     }
-
+    
     public ImageView crearIconoArchivo(String lenguajeProgramacion) {
         ImageView lenguaje = null;
         switch (lenguajeProgramacion) {
@@ -323,96 +299,49 @@ public class PantallaPrincipalController implements Initializable {
                 lenguaje.setFitWidth(15);
                 break;
         }
-
+        
         return lenguaje;
     }
-
-    public ArrayList<TreeItem<String>> buscarCarpetas(String ruta, String lenguaje) {
-        ruta += "/codigo";
+    
+    public ArrayList<TreeItem<String>> agregarCarpetasArbol(Proyecto proyecto) {
+        ArrayList<Carpeta> carpetasProyecto = proyecto.getCarpetas();
         ArrayList<TreeItem<String>> carpetas = new ArrayList();
-        File file = new File(ruta);
-        if (file.exists()) {
-            String[] carpetasCreadas = file.list();
-
-            for (String carpeta : carpetasCreadas) {
-                TreeItem<String> hijo = new TreeItem<>(carpeta, crearIconoCarpeta());
-                hijo.getChildren().addAll(buscarArchivos(ruta + "/" + carpeta, lenguaje));
-                carpetas.add(hijo);
-            }
-        } else {
-            carpetas = null;
+        for (Carpeta carpeta : carpetasProyecto) {
+            TreeItem<String> hijo = new TreeItem<>(carpeta.getNombreCarpeta(), crearIconoCarpeta());
+            hijo.getChildren().addAll(agregarArchivosArbol(carpeta, proyecto.getLenguaje()));
+            carpetas.add(hijo);
         }
+        
         return carpetas;
     }
-
-    public ArrayList<MyTreeItem> buscarArchivos(String ruta, String lenguale) {
-        File file = new File(ruta);
-        String[] archivos = file.list();
+    
+    public ArrayList<MyTreeItem> agregarArchivosArbol(Carpeta carpeta, String lenguaje) {
+        ArrayList<Archivo> archivos = carpeta.getArchivos();
         ArrayList<MyTreeItem> treeArchivos = new ArrayList();
-        for (String archivo : archivos) {
-            MyTreeItem hijo = new MyTreeItem(archivo, crearIconoArchivo(lenguale));
-            hijo.setContenido(leerArchivo(ruta + "/" + archivo));
-            hijo.setRuta(ruta + "/" + archivo);
-            hijo.setNombreArchivo(archivo);
+        for (Archivo archivo : archivos) {
+            MyTreeItem hijo = new MyTreeItem(archivo.getNombreArchivo(), crearIconoArchivo(lenguaje));
+            hijo.setArchivo(archivo);
             treeArchivos.add(hijo);
-
+            
         }
         return treeArchivos;
     }
-
-    public String leerArchivo(String ruta) {
-        FileReader fileReader = null;
-        String auxiliar = "";
-        String contenidoArchivo = "";
-        BufferedReader contenido = null;
-        try {
-
-            File file = new File(ruta);
-            fileReader = new FileReader(file);
-            contenido = new BufferedReader(fileReader);
-            while ((auxiliar = contenido.readLine()) != null) {
-                contenidoArchivo += auxiliar + "\n";
-            }
-
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                fileReader.close();
-                contenido.close();
-            } catch (IOException ex) {
-                Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-        return contenidoArchivo;
-    }
-
+    
     @FXML
     private void botonGuardarArchivo(ActionEvent event) {
-        FileWriter fileWriter = null;
-        PrintWriter printWriter = null;
         CodeArea area = (CodeArea) tablaArchivos.getSelectionModel().getSelectedItem().getContent();
         MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
-        try {
-            File file = new File(tabSeleccionado.getTreeItem().getRuta());
-            fileWriter = new FileWriter(file);
-            printWriter = new PrintWriter(fileWriter);
-            printWriter.write(area.getText());
-            tabSeleccionado.getTreeItem().setContenido(area.getText());
-        } catch (IOException ex) {
-            Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                fileWriter.close();
-                printWriter.close();
-            } catch (IOException ex) {
-                Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
+        Archivo archivo = tabSeleccionado.getTreeItem().getArchivo();
+        archivo.setContenido(area.getText());
+        archivo.guardarArchivo(archivo);     
     }
-
+    
+    @FXML
+    private void botonCompilar(ActionEvent event) {
+    }
+    
+    @FXML
+    private void botonEjecutar(ActionEvent event) {
+    }
+    
 }

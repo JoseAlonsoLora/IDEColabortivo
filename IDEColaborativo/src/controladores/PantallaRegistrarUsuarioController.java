@@ -9,6 +9,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import conexion.operaciones.IProgramador;
+import static idecolaborativo.IDEColaborativo.mensajeAlert;
 import static idecolaborativo.IDEColaborativo.ventanaInicioSesion;
 import java.io.IOException;
 import java.net.URL;
@@ -23,7 +24,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
@@ -106,11 +106,7 @@ public class PantallaRegistrarUsuarioController implements Initializable {
     private void botonCrearCuenta(ActionEvent event) {
         Programador programador = new Programador();
         if (campoTextoContraseña.getText().isEmpty() || campoTextoCorreoElectronico.getText().isEmpty() || campoTextoNombreUsuario.getText().isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText(recurso.getString("atencion"));
-            String s = recurso.getString("mensajeCamposVacios");
-            alert.setContentText(s);
-            alert.show();
+            mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeCamposVacios"));       
         } else {
             if (validarCorreo(campoTextoCorreoElectronico.getText())) {
                 programador.setNombreUsuario(campoTextoNombreUsuario.getText());
@@ -120,34 +116,18 @@ public class PantallaRegistrarUsuarioController implements Initializable {
                 try {
 
                     if (stub.registrarUsuario(programador)) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setHeaderText(recurso.getString("felicidades"));
-                        String s = recurso.getString("mensajeCuentaCreada");
-                        alert.setContentText(s);
-                        alert.show();
+                        mensajeAlert(recurso.getString("felicidades"), recurso.getString("mensajeCuentaCreada"));       
                         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                         stage.close();
                     } else {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setHeaderText(recurso.getString("atencion"));
-                        String s = recurso.getString("mensajeNombreUsuarioExistente");
-                        alert.setContentText(s);
-                        alert.show();
+                        mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeNombreUsuarioExistente"));
 
                     }
                 } catch (RemoteException | java.lang.NullPointerException ex) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setHeaderText(recurso.getString("atencion"));
-                    String s = recurso.getString("mensajeNoConexion");
-                    alert.setContentText(s);
-                    alert.show();
+                    mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeNoConexion"));
                 }
             } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setHeaderText(recurso.getString("atencion"));
-                String s = recurso.getString("mensajeCorreoInvalido");
-                alert.setContentText(s);
-                alert.show();
+                mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeCorreoInvalido"));
             }
         }
     }

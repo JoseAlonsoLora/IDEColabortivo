@@ -4,8 +4,8 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import conexion.operaciones.IProgramador;
+import static idecolaborativo.IDEColaborativo.mensajeAlert;
 import static idecolaborativo.IDEColaborativo.ventanaRegistrarUsuario;
-import java.io.IOException;
 import java.net.URL;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -20,7 +20,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -93,11 +92,7 @@ public class PantallaIniciarSesionController implements Initializable {
     private void botonIniciarSesion(ActionEvent event){
         Programador programador = new Programador();
         if (campoTextoNombreUsuario.getText().isEmpty() || campoTextoContraseña.getText().isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText(recurso.getString("atencion"));
-            String s = recurso.getString("mensajeCamposVacios");
-            alert.setContentText(s);
-            alert.show();
+            mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeCamposVacios"));
         } else {
             programador.setNombreUsuario(campoTextoNombreUsuario.getText());
             programador.setContraseña(makeHash(campoTextoContraseña.getText()));
@@ -108,19 +103,10 @@ public class PantallaIniciarSesionController implements Initializable {
                     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                     stage.close();
                 } else {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setHeaderText(recurso.getString("atencion"));
-                    String s = recurso.getString("mensajeDatosIncorrectos");
-                    alert.setContentText(s);
-                    alert.show();
-
+                    mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeDatosIncorrectos"));
                 }
             } catch (RemoteException |java.lang.NullPointerException  ex) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setHeaderText(recurso.getString("atencion"));
-                String s = recurso.getString("mensajeNoConexion");
-                alert.setContentText(s);
-                alert.show();
+                mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeNoConexion"));
             }
         }
 

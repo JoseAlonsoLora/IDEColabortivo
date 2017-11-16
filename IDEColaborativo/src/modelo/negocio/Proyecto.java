@@ -5,6 +5,7 @@
  */
 package modelo.negocio;
 
+import static com.sun.javafx.PlatformUtil.isWindows;
 import controladores.PantallaCrearProyectoController;
 import controladores.PantallaPrincipalController;
 import java.io.BufferedReader;
@@ -103,20 +104,24 @@ public class Proyecto {
     public void guardarRuta() {
         FileWriter fileWriter = null;
         PrintWriter pw = null;
+        String rutaArchivoProyectos;
         try {
-            File file = new File("C:/Users/raymu/Desktop/rutas.txt");
+            if(isWindows())
+                rutaArchivoProyectos = "/Users/"+System.getProperty("user.name")+"/rutas.ide";
+            else
+                rutaArchivoProyectos = "/home/"+System.getProperty("user.name")+"/.rutas.ide";
+            File file = new File(rutaArchivoProyectos);
             fileWriter = new FileWriter(file, true);
             pw = new PrintWriter(fileWriter);
             pw.append(rutaProyecto + "," + lenguaje + "," + nombreProyecto + "\n");
-
         } catch (IOException ex) {
             Logger.getLogger(PantallaCrearProyectoController.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
+        }finally{
             try {
                 fileWriter.close();
                 pw.close();
-            } catch (IOException ex) {
-                Logger.getLogger(PantallaCrearProyectoController.class.getName()).log(Level.SEVERE, null, ex);
+            }catch (IOException ex) {
+                Logger.getLogger(Archivo.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -125,9 +130,14 @@ public class Proyecto {
         FileReader fileReader = null;
         BufferedReader contenido = null;
         ArrayList<Proyecto> proyectos = null;
+        String rutaArchivoProyectos;
         try {
             proyectos = new ArrayList();
-            File file = new File("C:/Users/raymu/Desktop/rutas.txt");
+            if(isWindows())
+                rutaArchivoProyectos = "/Users/"+System.getProperty("user.name")+"/rutas.ide";
+            else
+                rutaArchivoProyectos = "/home/"+System.getProperty("user.name")+"/.rutas.ide";
+            File file = new File(rutaArchivoProyectos);
             fileReader = new FileReader(file);
             contenido = new BufferedReader(fileReader);
             String ruta;
@@ -142,17 +152,19 @@ public class Proyecto {
                     proyectos.add(proyecto);
                 }
             }
+            
         } catch (FileNotFoundException ex) {
             Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
+        }finally{
             try {
                 fileReader.close();
                 contenido.close();
             } catch (IOException ex) {
-                Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
         }
         return proyectos;
     }
@@ -209,13 +221,14 @@ public class Proyecto {
             Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
+        }finally{
             try {
                 fileReader.close();
                 contenido.close();
             } catch (IOException ex) {
-                Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
         }
 
         return contenidoArchivo;
@@ -225,7 +238,6 @@ public class Proyecto {
         if ((new File(proyecto.getRutaProyecto())).exists()) {
             proyecto.setCarpetas(buscarCarpetas(proyecto.getRutaProyecto()));
         }
-
         return proyecto;
     }
 
@@ -236,6 +248,25 @@ public class Proyecto {
 
     public ArrayList<Programador> mostrarColaboradores() {
         return null;
+    }
+    
+    public static void crearArchivoRutas(){ 
+        File file;
+        String ruta;
+        if(isWindows()){
+            ruta = "/Users/"+System.getProperty("user.name")+"/rutas.ide";           
+        }else{
+           ruta = "/home/"+System.getProperty("user.name")+"/.rutas.ide";          
+        }
+        file = new File(ruta);
+            if(!file.exists()){
+                try {
+                    file.createNewFile();
+                } catch (IOException ex) {
+                    Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+     
     }
 
 }

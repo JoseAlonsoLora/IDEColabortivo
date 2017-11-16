@@ -8,6 +8,7 @@ package controladores;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXTextField;
+import static idecolaborativo.IDEColaborativo.mensajeAlert;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -15,7 +16,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.FileChooser;
@@ -88,14 +88,11 @@ public class PantallaCrearProyectoController implements Initializable {
         fileChooser.setInitialFileName(campoTextoNombreProyecto.getText());
         File file = fileChooser.showSaveDialog(null);
         if (file == null) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText(recurso.getString("atencion"));
-            String s = recurso.getString("mensajeRuta");
-            alert.setContentText(s);
-            alert.show();
+            mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeRuta"));
         } else {
             campoTextoRuta.setText(file.getPath());
             campoTextoNombreProyecto.setText(file.getName());
+            campoTextoNombreProyecto.setEditable(false);
         }
 
     }
@@ -128,11 +125,7 @@ public class PantallaCrearProyectoController implements Initializable {
             stage.close();
 
         } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText(recurso.getString("atencion"));
-            String s = recurso.getString("mensajeCamposVacios");
-            alert.setContentText(s);
-            alert.show();
+            mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeCamposVacios"));
         }
     }
 
@@ -142,11 +135,7 @@ public class PantallaCrearProyectoController implements Initializable {
         proyecto.setRutaProyecto(campoTextoRuta.getText());
         proyecto.setLenguaje(lenguaje);
         if (!proyecto.crearProyecto()) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText(recurso.getString("atencion"));
-            String s = recurso.getString("mensajeProyectoNoCreado");
-            alert.setContentText(s);
-            alert.show();
+            mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeProyectoNoCreado"));
         }
         
         return proyecto;

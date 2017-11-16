@@ -19,6 +19,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 
 import javafx.stage.Stage;
 
@@ -52,7 +53,7 @@ public class IDEColaborativo extends Application {
         }
     }
 
-    public static void ventanaInicioSesion(ResourceBundle recurso,PantallaPrincipalController controlador) {
+    public static void ventanaInicioSesion(ResourceBundle recurso, PantallaPrincipalController controlador) {
         try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaIniciarSesion.fxml"), recurso);
@@ -84,7 +85,7 @@ public class IDEColaborativo extends Application {
         }
     }
 
-    public static void ventanaCrearProyecto(ResourceBundle recurso,PantallaPrincipalController controlador) {
+    public static void ventanaCrearProyecto(ResourceBundle recurso, PantallaPrincipalController controlador) {
         try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaCrearProyecto.fxml"), recurso);
@@ -100,7 +101,7 @@ public class IDEColaborativo extends Application {
         }
     }
 
-    public static void ventanaCambiarIdioma(ResourceBundle recurso,PantallaPrincipalController controlador) {
+    public static void ventanaCambiarIdioma(ResourceBundle recurso, PantallaPrincipalController controlador) {
         try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaCambiarIdioma.fxml"), recurso);
@@ -114,6 +115,13 @@ public class IDEColaborativo extends Application {
         } catch (IOException ex) {
             Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public static void mensajeAlert(String encabezado, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(encabezado);
+        alert.setContentText(mensaje);
+        alert.show();
     }
 
     /**

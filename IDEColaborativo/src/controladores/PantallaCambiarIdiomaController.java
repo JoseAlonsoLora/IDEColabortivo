@@ -7,13 +7,13 @@ package controladores;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXRadioButton;
+import static idecolaborativo.IDEColaborativo.mensajeAlert;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
@@ -79,10 +79,7 @@ public class PantallaCambiarIdiomaController implements Initializable {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.close();
         } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            String s = recurso.getString("mensajeIdioma");
-            alert.setContentText(s);
-            alert.show();
+            mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeIdioma"));
         }
 
     }

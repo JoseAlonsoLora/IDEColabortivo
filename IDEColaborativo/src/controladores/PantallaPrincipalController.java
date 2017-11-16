@@ -44,6 +44,7 @@ import javafx.scene.input.KeyEvent;
 import modelo.negocio.Archivo;
 import modelo.negocio.Carpeta;
 import modelo.negocio.Proyecto;
+import static modelo.negocio.Proyecto.crearArchivoRutas;
 import org.fxmisc.richtext.CodeArea;
 
 /**
@@ -52,7 +53,7 @@ import org.fxmisc.richtext.CodeArea;
  * @author raymu
  */
 public class PantallaPrincipalController implements Initializable {
-    
+
     @FXML
     private AnchorPane panelBarraMenu;
     @FXML
@@ -79,7 +80,7 @@ public class PantallaPrincipalController implements Initializable {
     private TreeTableColumn<String, String> columnaProyectos;
     @FXML
     private TabPane tablaArchivos;
-    
+
     private ResourceBundle recurso;
     private PantallaPrincipalController controlador;
     private String idUsuario;
@@ -95,6 +96,7 @@ public class PantallaPrincipalController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        crearArchivoRutas();
         tabsAbiertos = new ArrayList();
         iconoSesionIniciada.setVisible(false);
         etiquetaNombreUsuario.setVisible(false);
@@ -105,9 +107,9 @@ public class PantallaPrincipalController implements Initializable {
         tablaArchivos.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
         cargarProyectos();
         handlerTablaProyectos();
-        
+
     }
-    
+
     public void handlerTablaProyectos() {
         tablaProyectos.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
@@ -115,10 +117,10 @@ public class PantallaPrincipalController implements Initializable {
                 if ("class javafx.scene.control.TreeItem".equals(newVal.getClass().toString())) {
                     TreeItem treeItem = (TreeItem) newVal;
                 } else {
-                    
+
                     MyTreeItem treeItem = (MyTreeItem) newVal;
                     if (tabsAbiertos.contains(treeItem)) {
-                        
+
                     } else {
                         MyTab tab = new MyTab(treeItem.getArchivo().getNombreArchivo());
                         FormatoCodigo areaCodigo = new FormatoCodigo();
@@ -131,7 +133,7 @@ public class PantallaPrincipalController implements Initializable {
                             }
                         });
                         tab.setTreeItem(treeItem);
-                        
+
                         tab.setOnCloseRequest(new EventHandler<Event>() {
                             @Override
                             public void handle(Event t) {
@@ -153,53 +155,53 @@ public class PantallaPrincipalController implements Initializable {
                                     } else {
                                         tabsAbiertos.remove(treeItem);
                                     }
-                                    
+
                                 } else {
                                     tabsAbiertos.remove(treeItem);
                                 }
-                                
+
                             }
                         });
                         tablaArchivos.getTabs().add(tab);
                         tabsAbiertos.add(treeItem);
                     }
-                    
+
                 }
-                
+
             }
         });
     }
-    
+
     public void setRecurso(ResourceBundle recurso) {
         this.recurso = recurso;
         configurarIdioma();
     }
-    
+
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
     }
-    
+
     public void configurarIdioma() {
         iniciarSesion.setText(recurso.getString("etInicioSesion"));
         cambiarIdioma.setText(recurso.getString("etCambiarIdioma"));
         cerrarSesion.setText(recurso.getString("btCerrarSesion"));
     }
-    
+
     @FXML
     private void botonCrearProyecto(ActionEvent event) throws IOException {
         ventanaCrearProyecto(recurso, controlador);
     }
-    
+
     @FXML
     private void botonIniciarSesion(ActionEvent event) throws IOException {
         ventanaInicioSesion(recurso, controlador);
     }
-    
+
     @FXML
     private void botonCambiarIdioma(ActionEvent event) throws IOException {
         ventanaCambiarIdioma(recurso, controlador);
     }
-    
+
     @FXML
     private void cerrarSesion(ActionEvent event) {
         idUsuario = "";
@@ -207,9 +209,9 @@ public class PantallaPrincipalController implements Initializable {
         etiquetaNombreUsuario.setVisible(false);
         cerrarSesion.setVisible(false);
         iniciarSesion.setVisible(true);
-        
+
     }
-    
+
     public void sesionIniciada(String nombreUsuario) {
         iconoSesionIniciada.setVisible(true);
         etiquetaNombreUsuario.setText(nombreUsuario);
@@ -217,11 +219,10 @@ public class PantallaPrincipalController implements Initializable {
         cerrarSesion.setVisible(true);
         iniciarSesion.setVisible(false);
     }
-    
+
     public void cargarProyectos() {
         Proyecto proyecto = new Proyecto();
         ArrayList<Proyecto> proyectos = proyecto.cargarProyectos();
-        String ruta;
         ArrayList<TreeItem<String>> carpetas;
         ArrayList<TreeItem<String>> proyectosArbol = new ArrayList();
         for (Proyecto proyecto1 : proyectos) {
@@ -230,15 +231,15 @@ public class PantallaPrincipalController implements Initializable {
             carpetas = agregarCarpetasArbol(proyecto1);
             hijo.getChildren().setAll(carpetas);
             proyectosArbol.add(hijo);
-            
+
         }
         root.getChildren().setAll(proyectosArbol);
         columnaProyectos.setCellValueFactory((CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
         tablaProyectos.setRoot(root);
         tablaProyectos.setShowRoot(true);
-        
+
     }
-    
+
     public void cargarNuevoProyecto(Proyecto proyecto) {
         TreeItem<String> hijo = new TreeItem<>(proyecto.getNombreProyecto(), crearIconoLenguaje(proyecto.getLenguaje()));
         hijo.getChildren().setAll(agregarCarpetasArbol(proyecto));
@@ -246,9 +247,9 @@ public class PantallaPrincipalController implements Initializable {
         columnaProyectos.setCellValueFactory((CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
         tablaProyectos.setRoot(root);
         tablaProyectos.setShowRoot(true);
-        
+
     }
-    
+
     public ImageView crearIconoCarpeta() {
         ImageView carpeta;
         carpeta = new ImageView("/Imagenes/carpeta_1.png");
@@ -256,7 +257,7 @@ public class PantallaPrincipalController implements Initializable {
         carpeta.setFitWidth(15);
         return carpeta;
     }
-    
+
     public ImageView crearIconoLenguaje(String lenguajeProgramacion) {
         ImageView lenguaje = null;
         switch (lenguajeProgramacion) {
@@ -276,10 +277,10 @@ public class PantallaPrincipalController implements Initializable {
                 lenguaje.setFitWidth(15);
                 break;
         }
-        
+
         return lenguaje;
     }
-    
+
     public ImageView crearIconoArchivo(String lenguajeProgramacion) {
         ImageView lenguaje = null;
         switch (lenguajeProgramacion) {
@@ -299,10 +300,10 @@ public class PantallaPrincipalController implements Initializable {
                 lenguaje.setFitWidth(15);
                 break;
         }
-        
+
         return lenguaje;
     }
-    
+
     public ArrayList<TreeItem<String>> agregarCarpetasArbol(Proyecto proyecto) {
         ArrayList<Carpeta> carpetasProyecto = proyecto.getCarpetas();
         ArrayList<TreeItem<String>> carpetas = new ArrayList();
@@ -311,10 +312,10 @@ public class PantallaPrincipalController implements Initializable {
             hijo.getChildren().addAll(agregarArchivosArbol(carpeta, proyecto.getLenguaje()));
             carpetas.add(hijo);
         }
-        
+
         return carpetas;
     }
-    
+
     public ArrayList<MyTreeItem> agregarArchivosArbol(Carpeta carpeta, String lenguaje) {
         ArrayList<Archivo> archivos = carpeta.getArchivos();
         ArrayList<MyTreeItem> treeArchivos = new ArrayList();
@@ -322,26 +323,33 @@ public class PantallaPrincipalController implements Initializable {
             MyTreeItem hijo = new MyTreeItem(archivo.getNombreArchivo(), crearIconoArchivo(lenguaje));
             hijo.setArchivo(archivo);
             treeArchivos.add(hijo);
-            
+
         }
         return treeArchivos;
     }
-    
+
     @FXML
     private void botonGuardarArchivo(ActionEvent event) {
-        CodeArea area = (CodeArea) tablaArchivos.getSelectionModel().getSelectedItem().getContent();
-        MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
-        Archivo archivo = tabSeleccionado.getTreeItem().getArchivo();
-        archivo.setContenido(area.getText());
-        archivo.guardarArchivo(archivo);     
+        if (tablaArchivos.getSelectionModel().getSelectedItem() != null) {
+            CodeArea area = (CodeArea) tablaArchivos.getSelectionModel().getSelectedItem().getContent();
+            MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
+            Archivo archivo = tabSeleccionado.getTreeItem().getArchivo();
+            archivo.setContenido(area.getText());
+            archivo.guardarArchivo(archivo);
+        }
     }
-    
+
     @FXML
     private void botonCompilar(ActionEvent event) {
+        if (tablaArchivos.getSelectionModel().getSelectedItem() != null) {
+            MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
+            Archivo archivo = tabSeleccionado.getTreeItem().getArchivo();
+            System.out.println(archivo.compilarArchivo(archivo));
+        }
     }
-    
+
     @FXML
     private void botonEjecutar(ActionEvent event) {
     }
-    
+
 }

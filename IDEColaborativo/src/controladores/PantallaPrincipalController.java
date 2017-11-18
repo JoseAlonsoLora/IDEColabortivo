@@ -10,6 +10,8 @@ import clasesApoyo.MyTreeItem;
 import com.jfoenix.controls.JFXButton;
 import componentes.FormatoCodigo;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
+import static idecolaborativo.IDEColaborativo.mensajeAlert;
+import static idecolaborativo.IDEColaborativo.resultadoCompilacion;
 import static idecolaborativo.IDEColaborativo.ventanaCambiarIdioma;
 import static idecolaborativo.IDEColaborativo.ventanaCrearProyecto;
 import static idecolaborativo.IDEColaborativo.ventanaInicioSesion;
@@ -341,10 +343,15 @@ public class PantallaPrincipalController implements Initializable {
 
     @FXML
     private void botonCompilar(ActionEvent event) {
+        String resultado="";
         if (tablaArchivos.getSelectionModel().getSelectedItem() != null) {
             MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
             Archivo archivo = tabSeleccionado.getTreeItem().getArchivo();
-            System.out.println(archivo.compilarArchivo(archivo));
+            if(!"".equals(resultado = archivo.compilarArchivo(archivo))){
+            resultadoCompilacion(resultado,recurso);
+            }else{
+                mensajeAlert(recurso.getString("felicidades"),recurso.getString("mensajeCompilacionExitosa"));
+            }
         }
     }
 

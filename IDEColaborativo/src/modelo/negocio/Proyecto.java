@@ -102,44 +102,32 @@ public class Proyecto {
     }
 
     public void guardarRuta() {
-        FileWriter fileWriter = null;
-        PrintWriter pw = null;
         String rutaArchivoProyectos;
-        try {
-            if(isWindows())
-                rutaArchivoProyectos = "/Users/"+System.getProperty("user.name")+"/rutas.ide";
-            else
-                rutaArchivoProyectos = "/home/"+System.getProperty("user.name")+"/.rutas.ide";
-            File file = new File(rutaArchivoProyectos);
-            fileWriter = new FileWriter(file, true);
-            pw = new PrintWriter(fileWriter);
+        if (isWindows()) {
+            rutaArchivoProyectos = "/Users/" + System.getProperty("user.name") + "/rutas.ide";
+        } else {
+            rutaArchivoProyectos = "/home/" + System.getProperty("user.name") + "/.rutas.ide";
+        }
+        File file = new File(rutaArchivoProyectos);
+        try (FileWriter fileWriter = new FileWriter(file, true);
+                PrintWriter pw = new PrintWriter(fileWriter)) {
             pw.append(rutaProyecto + "," + lenguaje + "," + nombreProyecto + "\n");
         } catch (IOException ex) {
             Logger.getLogger(PantallaCrearProyectoController.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
-            try {
-                fileWriter.close();
-                pw.close();
-            }catch (IOException ex) {
-                Logger.getLogger(Archivo.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
 
     public ArrayList<Proyecto> cargarProyectos() {
-        FileReader fileReader = null;
-        BufferedReader contenido = null;
-        ArrayList<Proyecto> proyectos = null;
+        ArrayList<Proyecto> proyectos = new ArrayList();
         String rutaArchivoProyectos;
-        try {
-            proyectos = new ArrayList();
-            if(isWindows())
-                rutaArchivoProyectos = "/Users/"+System.getProperty("user.name")+"/rutas.ide";
-            else
-                rutaArchivoProyectos = "/home/"+System.getProperty("user.name")+"/.rutas.ide";
-            File file = new File(rutaArchivoProyectos);
-            fileReader = new FileReader(file);
-            contenido = new BufferedReader(fileReader);
+        if (isWindows()) {
+            rutaArchivoProyectos = "/Users/" + System.getProperty("user.name") + "/rutas.ide";
+        } else {
+            rutaArchivoProyectos = "/home/" + System.getProperty("user.name") + "/.rutas.ide";
+        }
+        File file = new File(rutaArchivoProyectos);
+        try (FileReader fileReader = new FileReader(file);
+                BufferedReader contenido = new BufferedReader(fileReader)) {
             String ruta;
             while ((ruta = contenido.readLine()) != null) {
                 String[] informacionProyecto = ruta.split(",");
@@ -152,19 +140,11 @@ public class Proyecto {
                     proyectos.add(proyecto);
                 }
             }
-            
+
         } catch (FileNotFoundException ex) {
             Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
-            try {
-                fileReader.close();
-                contenido.close();
-            } catch (IOException ex) {
-                Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
         }
         return proyectos;
     }
@@ -203,16 +183,13 @@ public class Proyecto {
         return archivos;
     }
 
-    public String leerArchivo(String ruta) {
-        FileReader fileReader = null;
+    public String leerArchivo(String ruta) {        
         String auxiliar = "";
         String contenidoArchivo = "";
-        BufferedReader contenido = null;
-        try {
-
-            File file = new File(ruta);
-            fileReader = new FileReader(file);
-            contenido = new BufferedReader(fileReader);
+        
+        File file = new File(ruta);
+        try (FileReader fileReader =new FileReader(file);
+                BufferedReader contenido = new BufferedReader(fileReader)){            
             while ((auxiliar = contenido.readLine()) != null) {
                 contenidoArchivo += auxiliar + "\n";
             }
@@ -221,16 +198,7 @@ public class Proyecto {
             Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
-            try {
-                fileReader.close();
-                contenido.close();
-            } catch (IOException ex) {
-                Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
         }
-
         return contenidoArchivo;
     }
 
@@ -249,24 +217,24 @@ public class Proyecto {
     public ArrayList<Programador> mostrarColaboradores() {
         return null;
     }
-    
-    public static void crearArchivoRutas(){ 
+
+    public static void crearArchivoRutas() {
         File file;
         String ruta;
-        if(isWindows()){
-            ruta = "/Users/"+System.getProperty("user.name")+"/rutas.ide";           
-        }else{
-           ruta = "/home/"+System.getProperty("user.name")+"/.rutas.ide";          
+        if (isWindows()) {
+            ruta = "/Users/" + System.getProperty("user.name") + "/rutas.ide";
+        } else {
+            ruta = "/home/" + System.getProperty("user.name") + "/.rutas.ide";
         }
         file = new File(ruta);
-            if(!file.exists()){
-                try {
-                    file.createNewFile();
-                } catch (IOException ex) {
-                    Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
-                }
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException ex) {
+                Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
             }
-     
+        }
+
     }
 
 }

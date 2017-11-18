@@ -20,6 +20,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 
 import javafx.stage.Stage;
 
@@ -122,6 +127,33 @@ public class IDEColaborativo extends Application {
         alert.setHeaderText(encabezado);
         alert.setContentText(mensaje);
         alert.show();
+    }
+
+    public static void resultadoCompilacion(String resultado, ResourceBundle recurso) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle(recurso.getString("errorCompilacion"));
+        alert.setHeaderText(recurso.getString("etErrorCompilacion"));
+       // alert.setContentText("Could not find file blabla.txt!");
+
+       // Label label = new Label("The exception stacktrace was:");
+
+        TextArea textArea = new TextArea(resultado);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+
+        textArea.setMaxWidth(Double.MAX_VALUE);
+        textArea.setMaxHeight(Double.MAX_VALUE);
+        GridPane.setVgrow(textArea, Priority.ALWAYS);
+        GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+        GridPane expContent = new GridPane();
+        expContent.setMaxWidth(Double.MAX_VALUE);
+        //expContent.add(label, 0, 0);
+        expContent.add(textArea, 0, 1);
+
+        alert.getDialogPane().setExpandableContent(expContent);
+
+        alert.showAndWait();
     }
 
     /**

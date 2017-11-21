@@ -16,6 +16,7 @@ import modelo.negocio.Archivo;
     public class MyTreeItem extends TreeItem<String> {
 
         private Archivo archivo;
+        private boolean modificado;
 
         public MyTreeItem() {
 
@@ -32,6 +33,16 @@ import modelo.negocio.Archivo;
     public void setArchivo(Archivo archivo) {
         this.archivo = archivo;
     }
+
+    public boolean isModificado() {
+        return modificado;
+    }
+
+    public void setModificado(boolean modificado) {
+        this.modificado = modificado;
+    }
+    
+    
 
        
     }

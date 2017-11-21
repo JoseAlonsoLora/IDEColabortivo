@@ -26,6 +26,24 @@ public class Archivo {
     private String contenido;
     private String nombreArchivo;
     private String ruta;
+    private String rutaClases;
+    private String paquete;
+
+    public String getPaquete() {
+        return paquete;
+    }
+
+    public void setPaquete(String paquete) {
+        this.paquete = paquete;
+    }
+
+    public String getRutaClases() {
+        return rutaClases;
+    }
+
+    public void setRutaClases(String rutaClases) {
+        this.rutaClases = rutaClases;
+    }
 
     public String getContenido() {
         return contenido;
@@ -61,49 +79,60 @@ public class Archivo {
             case "cs":
                 break;
             case "cpp":
+                resultado = complilarCPlusPlus(archivo,lenguaje[0]);
+                break;
+            default:
                 break;
         }
         return resultado;
 
     }
 
-    public String compilarJava(Archivo archivo) {
-        String resultado = "";
+    public String compilador(String comando) {
+        StringBuilder resultadoCompilacion = new StringBuilder();
+        ProcessBuilder procesoCompilar;
         try {
-            String ruta = archivo.getRuta().replace("/" + archivo.getNombreArchivo(), "");
-            String[] rutaClasesDividida = archivo.getRuta().split("/");
-            String rutaClase = "";
-            for (int i = 0; i < rutaClasesDividida.length - 3; i++) {
-                rutaClase += rutaClasesDividida[i] + "/";
-            }
-            rutaClase += "clases";
-            ProcessBuilder procesoCompilar;
-            String comando = "javac -d " + rutaClase + " " + archivo.getNombreArchivo();
             if (isWindows()) {
                 procesoCompilar = new ProcessBuilder("cmd.exe", "/c", comando);
             } else {
                 procesoCompilar = new ProcessBuilder("bash", "-c", comando);
             }
-            procesoCompilar.directory(new File(ruta));
+            procesoCompilar.directory(new File(ruta));          
             procesoCompilar.redirectErrorStream(true);
             Process process = procesoCompilar.start();
             InputStream out = process.getInputStream();
-            BufferedReader lector;
             String auxiliar;
-            lector = new BufferedReader(new InputStreamReader(out));
-
-            while ((auxiliar = lector.readLine()) != null) {
-                resultado = resultado + auxiliar + "\n";
-            }
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
+            try (BufferedReader lector = new BufferedReader(new InputStreamReader(out))) {
+                while ((auxiliar = lector.readLine()) != null) {
+                    resultadoCompilacion.append(auxiliar).append("\n");
+                }
             }
 
         } catch (IOException ex) {
             Logger.getLogger(Archivo.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return resultado;
+        return resultadoCompilacion.toString();
+    }
+
+    public String compilarJava(Archivo archivo) {
+        String rutaClase = rutaClases + paquete;       
+        File file = new File(rutaClase);
+        if(!file.exists()){
+            file.mkdir();
+        }
+        String comando = "javac -d " + rutaClase + " " + archivo.getNombreArchivo();
+        return compilador(comando);
+    }
+
+    public String complilarCPlusPlus(Archivo archivo,String nombre) {
+        String rutaClase = rutaClases + paquete;       
+        File file = new File(rutaClase);
+        if(!file.exists()){
+            file.mkdir();
+        }
+        rutaClase+= "/" + nombre;
+        String comando = "g++ -o " + rutaClase + " " + archivo.getNombreArchivo();
+        return compilador(comando);
     }
 
     public static boolean isAlive(Process p) {
@@ -132,7 +161,8 @@ public class Archivo {
 
     public boolean guardarArchivo(Archivo archivo) {
         boolean seGuardo = false;
-        File file = new File(archivo.getRuta());
+        String rutaArchivo = archivo.getRuta() + "/" + archivo.getNombreArchivo();
+        File file = new File(rutaArchivo);
         try (FileWriter fileWriter = new FileWriter(file);
                 PrintWriter printWriter = new PrintWriter(fileWriter)) {
             printWriter.write(archivo.getContenido());

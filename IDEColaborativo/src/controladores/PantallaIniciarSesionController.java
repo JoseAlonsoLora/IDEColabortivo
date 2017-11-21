@@ -52,6 +52,7 @@ public class PantallaIniciarSesionController implements Initializable {
     private JFXPasswordField campoTextoContraseña;
 
     private IProgramador stub;
+    private final String mensajeAtencion = "atencion";
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -92,7 +93,7 @@ public class PantallaIniciarSesionController implements Initializable {
     private void botonIniciarSesion(ActionEvent event){
         Programador programador = new Programador();
         if (campoTextoNombreUsuario.getText().isEmpty() || campoTextoContraseña.getText().isEmpty()) {
-            mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeCamposVacios"));
+            mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeCamposVacios"));
         } else {
             programador.setNombreUsuario(campoTextoNombreUsuario.getText());
             programador.setContraseña(makeHash(campoTextoContraseña.getText()));
@@ -103,10 +104,10 @@ public class PantallaIniciarSesionController implements Initializable {
                     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                     stage.close();
                 } else {
-                    mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeDatosIncorrectos"));
+                    mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeDatosIncorrectos"));
                 }
             } catch (RemoteException |java.lang.NullPointerException  ex) {
-                mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeNoConexion"));
+                mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeNoConexion"));
             }
         }
 

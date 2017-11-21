@@ -2,5 +2,5 @@ projectKey=my:projectIDE
 serverUrl=http://localhost:9000
 serverVersion=6.7.0.33306
 dashboardUrl=http://localhost:9000/dashboard/index/my:projectIDE
-ceTaskId=AV-8ZDib-ucRcGCiKHaN
-ceTaskUrl=http://localhost:9000/api/ce/task?id=AV-8ZDib-ucRcGCiKHaN
+ceTaskId=AV_Sr_2Tc4XpzGICCBHL
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AV_Sr_2Tc4XpzGICCBHL

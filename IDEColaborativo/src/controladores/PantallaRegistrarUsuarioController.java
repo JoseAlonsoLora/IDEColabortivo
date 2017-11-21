@@ -61,7 +61,8 @@ public class PantallaRegistrarUsuarioController implements Initializable {
 
     private static final String PATTERN_EMAIL = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-
+    private final String mensajeAtencion = "atencion";
+    
     /**
      * Initializes the controller class.
      */
@@ -70,7 +71,6 @@ public class PantallaRegistrarUsuarioController implements Initializable {
         this.recurso = rb;
         configurarIdioma();
         inicializarRegistro();
-        // TODO
     }
 
     public void inicializarRegistro() {
@@ -106,7 +106,7 @@ public class PantallaRegistrarUsuarioController implements Initializable {
     private void botonCrearCuenta(ActionEvent event) {
         Programador programador = new Programador();
         if (campoTextoContraseña.getText().isEmpty() || campoTextoCorreoElectronico.getText().isEmpty() || campoTextoNombreUsuario.getText().isEmpty()) {
-            mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeCamposVacios"));       
+            mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeCamposVacios"));       
         } else {
             if (validarCorreo(campoTextoCorreoElectronico.getText())) {
                 programador.setNombreUsuario(campoTextoNombreUsuario.getText());
@@ -120,14 +120,14 @@ public class PantallaRegistrarUsuarioController implements Initializable {
                         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                         stage.close();
                     } else {
-                        mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeNombreUsuarioExistente"));
+                        mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeNombreUsuarioExistente"));
 
                     }
                 } catch (RemoteException | java.lang.NullPointerException ex) {
-                    mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeNoConexion"));
+                    mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeNoConexion"));
                 }
             } else {
-                mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeCorreoInvalido"));
+                mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeCorreoInvalido"));
             }
         }
     }

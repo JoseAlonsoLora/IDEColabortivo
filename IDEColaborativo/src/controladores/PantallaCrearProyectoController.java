@@ -55,6 +55,8 @@ public class PantallaCrearProyectoController implements Initializable {
     private JFXRadioButton radioCPlusPlus;
     @FXML
     private JFXRadioButton radioCSharp;
+    
+    private final String mensajeAtencion = "atencion";
 
     /**
      * Initializes the controller class.
@@ -88,7 +90,7 @@ public class PantallaCrearProyectoController implements Initializable {
         fileChooser.setInitialFileName(campoTextoNombreProyecto.getText());
         File file = fileChooser.showSaveDialog(null);
         if (file == null) {
-            mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeRuta"));
+            mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeRuta"));
         } else {
             campoTextoRuta.setText(file.getPath());
             campoTextoNombreProyecto.setText(file.getName());
@@ -118,6 +120,8 @@ public class PantallaCrearProyectoController implements Initializable {
                 case "C++":
                     proyecto = crearProyecto("c++");
                     break;
+                default:
+                    break;
             }
             proyecto = proyecto.cargarNuevoProyecto(proyecto);
             controlador.cargarNuevoProyecto(proyecto);
@@ -125,7 +129,7 @@ public class PantallaCrearProyectoController implements Initializable {
             stage.close();
 
         } else {
-            mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeCamposVacios"));
+            mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeCamposVacios"));
         }
     }
 
@@ -135,7 +139,7 @@ public class PantallaCrearProyectoController implements Initializable {
         proyecto.setRutaProyecto(campoTextoRuta.getText());
         proyecto.setLenguaje(lenguaje);
         if (!proyecto.crearProyecto()) {
-            mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeProyectoNoCreado"));
+            mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeProyectoNoCreado"));
         }
         
         return proyecto;

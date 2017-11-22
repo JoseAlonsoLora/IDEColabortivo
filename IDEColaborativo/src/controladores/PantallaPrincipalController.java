@@ -11,6 +11,7 @@ import com.jfoenix.controls.JFXButton;
 import componentes.FormatoCodigo;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
 import static idecolaborativo.IDEColaborativo.mensajeAlert;
+import static idecolaborativo.IDEColaborativo.ventanaEjecutar;
 import static idecolaborativo.IDEColaborativo.resultadoCompilacion;
 import static idecolaborativo.IDEColaborativo.ventanaCambiarIdioma;
 import static idecolaborativo.IDEColaborativo.ventanaCrearProyecto;
@@ -159,6 +160,7 @@ public class PantallaPrincipalController implements Initializable {
                     t.consume();
                 } else {
                     tabsAbiertos.remove(treeItem);
+                    treeItem.setModificado(false);
                 }
             } else {
                 tabsAbiertos.remove(treeItem);
@@ -341,22 +343,33 @@ public class PantallaPrincipalController implements Initializable {
     }
     
     @FXML
-    private void botonCompilar(ActionEvent event) {
-        
+    private boolean botonCompilar(ActionEvent event) {
+        boolean compilo = false;
         if (tablaArchivos.getSelectionModel().getSelectedItem() != null) {
+            botonGuardarArchivo(null);
             MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
             Archivo archivo = tabSeleccionado.getTreeItem().getArchivo();
             String resultado = archivo.compilarArchivo(archivo);
             if (resultado.isEmpty()) {
-                 mensajeAlert(recurso.getString("felicidades"), recurso.getString("mensajeCompilacionExitosa"));             
+                compilo = true;
+                if(event != null)
+                    mensajeAlert(recurso.getString("felicidades"), recurso.getString("mensajeCompilacionExitosa"));             
             } else {
                resultadoCompilacion(resultado, recurso);
             }
         }
+        return compilo;
     }
     
     @FXML
     private void botonEjecutar(ActionEvent event) {
+        if (tablaArchivos.getSelectionModel().getSelectedItem() != null) {
+            if(botonCompilar(null)){
+                MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
+                ventanaEjecutar(recurso,tabSeleccionado.getTreeItem().getArchivo());
+            }
+        
+        }
     }
     
 }

@@ -79,7 +79,7 @@ public class Archivo {
             case "cs":
                 break;
             case "cpp":
-                resultado = complilarCPlusPlus(archivo,lenguaje[0]);
+                resultado = complilarCPlusPlus(archivo, lenguaje[0]);
                 break;
             default:
                 break;
@@ -88,7 +88,7 @@ public class Archivo {
 
     }
 
-    public String compilador(String comando) {
+    public String compilador(String comando, String ruta) {
         StringBuilder resultadoCompilacion = new StringBuilder();
         ProcessBuilder procesoCompilar;
         try {
@@ -97,7 +97,7 @@ public class Archivo {
             } else {
                 procesoCompilar = new ProcessBuilder("bash", "-c", comando);
             }
-            procesoCompilar.directory(new File(ruta));          
+            procesoCompilar.directory(new File(ruta));
             procesoCompilar.redirectErrorStream(true);
             Process process = procesoCompilar.start();
             InputStream out = process.getInputStream();
@@ -115,38 +115,108 @@ public class Archivo {
     }
 
     public String compilarJava(Archivo archivo) {
-        String rutaClase = rutaClases + paquete;       
+        String rutaClase = rutaClases;
         File file = new File(rutaClase);
-        if(!file.exists()){
+        if (!file.exists()) {
             file.mkdir();
         }
         String comando = "javac -d " + rutaClase + " " + archivo.getNombreArchivo();
-        return compilador(comando);
+        return compilador(comando, archivo.getRuta());
     }
 
-    public String complilarCPlusPlus(Archivo archivo,String nombre) {
-        String rutaClase = rutaClases + paquete;       
+    public String complilarCPlusPlus(Archivo archivo, String nombre) {
+        String rutaClase = rutaClases;
         File file = new File(rutaClase);
-        if(!file.exists()){
+        if (!file.exists()) {
             file.mkdir();
         }
-        rutaClase+= "/" + nombre;
+        rutaClase += "/" + nombre;
         String comando = "g++ -o " + rutaClase + " " + archivo.getNombreArchivo();
-        return compilador(comando);
+        return compilador(comando, archivo.getRuta());
     }
 
-    public static boolean isAlive(Process p) {
-        try {
-            p.exitValue();
-            return false;
-        } catch (IllegalThreadStateException e) {
-            return true;
+    public String ejecutarArchivo(Archivo archivo) {
+        String resultado = "";
+        String[] lenguaje = archivo.getNombreArchivo().split("\\.");
+        switch (lenguaje[1]) {
+            case "java":
+                resultado = ejecutarJava(archivo, lenguaje[0], false);
+                break;
+            case "cs":
+                break;
+            case "cpp":
+                resultado = ejecutarCPlusPlus(archivo, lenguaje[0], false);
+                break;
+            default:
+                break;
         }
+        return resultado;
     }
 
-    public String ejecutarArchivo(File archivo) {
-        return null;
+    public String ejecutarArchivo(Archivo archivo, String parametros) {
+        String resultado = "";
+        String[] lenguaje = archivo.getNombreArchivo().split("\\.");
+        crearArchivoParametros(archivo.getRutaClases(), parametros);
+        switch (lenguaje[1]) {
+            case "java":
+                resultado = ejecutarJava(archivo, lenguaje[0], true);
+                break;
+            case "cs":
+                break;
+            case "cpp":
+                resultado = ejecutarCPlusPlus(archivo, lenguaje[0], true);
+                break;
+            default:
+                break;
+        }
+        return resultado;
+    }
 
+    public void crearArchivoParametros(String ruta, String parametros) {
+        ruta += "archivoParametros";
+        File file = new File(ruta);
+        try {
+            file.createNewFile();
+            try (FileWriter fileWriter = new FileWriter(file);
+                    PrintWriter printWriter = new PrintWriter(fileWriter)) {
+                String[] parametrosDivididos = parametros.split(",");
+                for (String parametro : parametrosDivididos) {
+                    printWriter.append(parametro + "\n");
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Archivo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public String ejecutarJava(Archivo archivo, String nombre, boolean tieneParametros) {
+        StringBuilder comando = new StringBuilder();
+        if (tieneParametros) {
+            comando.append("java ").append(archivo.getPaquete()).append(".").append(nombre).append(" < ").append("archivoParametros");
+        } else {
+            comando.append("java ").append(archivo.getPaquete()).append(".").append(nombre);
+        }
+        return compilador(comando.toString(), archivo.getRutaClases());
+    }
+
+    public String ejecutarCPlusPlus(Archivo archivo, String nombre, boolean tieneParametros) {
+        StringBuilder comando = new StringBuilder();
+        if (tieneParametros) {
+            if (isWindows()) {
+                comando.append(nombre).append(".exe").append(" < ").append("archivoParametros");
+            } else {
+                comando.append("./").append(nombre).append(" < ").append("archivoParametros");
+            }
+        } else {
+            if (isWindows()) {
+                comando.append(nombre).append(".exe");
+            } else {
+                comando.append("./").append(nombre);
+            }
+        }
+
+        return compilador(comando.toString(), archivo.getRutaClases());
     }
 
     public boolean crearArchivo(String nombre) {
@@ -161,6 +231,7 @@ public class Archivo {
 
     public boolean guardarArchivo(Archivo archivo) {
         boolean seGuardo = false;
+        agregarPaquete(archivo);
         String rutaArchivo = archivo.getRuta() + "/" + archivo.getNombreArchivo();
         File file = new File(rutaArchivo);
         try (FileWriter fileWriter = new FileWriter(file);
@@ -172,6 +243,24 @@ public class Archivo {
                     .getName()).log(Level.SEVERE, null, ex);
         }
         return seGuardo;
+
+    }
+
+    public void agregarPaquete(Archivo archivo) {
+        String[] lenguaje = archivo.getNombreArchivo().split("\\.");
+        switch (lenguaje[1]) {
+            case "java":
+                if (!archivo.getContenido().contains("package " + archivo.getPaquete() + ";")) {
+                    StringBuilder auxiliar = new StringBuilder();
+                    auxiliar.append("package ").append(archivo.getPaquete()).append(";\n").append(archivo.getContenido());
+                    archivo.setContenido(auxiliar.toString());
+                }
+                break;
+            case "cs":
+                break;
+            default:
+                break;
+        }
 
     }
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXRadioButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="414.0" prefWidth="578.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.PantallaEjecutarController">
+   <children>
+      <JFXRadioButton fx:id="radioConParametros" layoutX="15.0" layoutY="29.0" onAction="#radioSeleccionOpciones" text="Con parametros" />
+      <JFXRadioButton fx:id="radioSinParametros" layoutX="16.0" layoutY="62.0" onAction="#radioSeleccionOpciones" text="Sin parametros" />
+      <Label fx:id="etiquetaParametros" layoutX="166.0" layoutY="41.0" text="Parametros:" />
+      <JFXTextField fx:id="campoTextoParametros" layoutX="236.0" layoutY="37.0" onKeyTyped="#campoTextoParametros" prefHeight="25.0" prefWidth="242.0" text="param1, param2, param3, paramN" />
+      <Separator layoutX="5.0" layoutY="118.0" prefHeight="3.0" prefWidth="569.0" />
+      <JFXButton fx:id="botonEjecutar" layoutX="506.0" layoutY="78.0" onAction="#botonEjecutar" style="-fx-background-color: #C0C0C0};" text="Ejecutar" />
+      <TextArea fx:id="areaTextoResultadoEjecucion" editable="false" layoutX="13.0" layoutY="137.0" prefHeight="227.0" prefWidth="553.0" />
+      <JFXButton fx:id="botonSalir" layoutX="503.0" layoutY="375.0" onAction="#botonSalir" prefHeight="25.0" prefWidth="63.0" style="-fx-background-color: #C0C0C0;" text="Salir" />
+   </children>
+</AnchorPane>

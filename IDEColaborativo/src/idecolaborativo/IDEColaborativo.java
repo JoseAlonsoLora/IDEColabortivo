@@ -8,6 +8,7 @@ package idecolaborativo;
 import componentes.FormatoCodigo;
 import controladores.PantallaCambiarIdiomaController;
 import controladores.PantallaCrearProyectoController;
+import controladores.PantallaEjecutarController;
 import controladores.PantallaIniciarSesionController;
 import controladores.PantallaPrincipalController;
 import controladores.PantallaRegistrarUsuarioController;
@@ -26,6 +27,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
 import javafx.stage.Stage;
+import modelo.negocio.Archivo;
 
 /**
  *
@@ -144,6 +146,22 @@ public class IDEColaborativo extends Application {
         expContent.add(textArea, 0, 1);
         alert.getDialogPane().setExpandableContent(expContent);
         alert.showAndWait();
+    }
+
+    public static void ventanaEjecutar(ResourceBundle recurso, Archivo archivo) {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaEjecutar.fxml"), recurso);
+            Parent root = (Parent) loader.load();
+            PantallaEjecutarController control = loader.getController();
+            control.setArchivo(archivo);
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

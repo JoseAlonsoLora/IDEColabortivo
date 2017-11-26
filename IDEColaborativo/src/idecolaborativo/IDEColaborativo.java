@@ -10,8 +10,10 @@ import controladores.PantallaCambiarIdiomaController;
 import controladores.PantallaCrearProyectoController;
 import controladores.PantallaEjecutarController;
 import controladores.PantallaIniciarSesionController;
+import controladores.PantallaInvitarColaboradorController;
 import controladores.PantallaPrincipalController;
 import controladores.PantallaRegistrarUsuarioController;
+import io.socket.client.Socket;
 import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -164,12 +166,14 @@ public class IDEColaborativo extends Application {
         }
     }
     
-    public static void ventanaInvitarColaborador(ResourceBundle recurso, String nombreUsuario){
+    public static void ventanaInvitarColaborador(ResourceBundle recurso, String nombreUsuario,Socket socket){
          try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaInvitarColaborador.fxml"), recurso);
             Parent root = (Parent) loader.load();
-            PantallaCambiarIdiomaController control = loader.getController();
+            PantallaInvitarColaboradorController control = loader.getController();
+            control.setSocket(socket);
+            control.setNombreUsuario(nombreUsuario);
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setResizable(false);

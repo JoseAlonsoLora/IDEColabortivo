@@ -3,6 +3,7 @@ package controladores;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
+import conexion.node.ConexionNode;
 import conexion.operaciones.IProgramador;
 import static idecolaborativo.IDEColaborativo.mensajeAlert;
 import static idecolaborativo.IDEColaborativo.ventanaRegistrarUsuario;
@@ -100,7 +101,10 @@ public class PantallaIniciarSesionController implements Initializable {
             try {
 
                 if (stub.iniciarSesion(programador)) {
+                    ConexionNode conexionNode = new ConexionNode(controlador);
+                    conexionNode.getSocket().emit("agregarNombre", campoTextoNombreUsuario.getText());
                     controlador.sesionIniciada(campoTextoNombreUsuario.getText());
+                    controlador.setSocket(conexionNode.getSocket());
                     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                     stage.close();
                 } else {

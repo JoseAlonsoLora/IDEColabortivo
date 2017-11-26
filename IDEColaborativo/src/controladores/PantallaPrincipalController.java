@@ -10,7 +10,6 @@ import clasesApoyo.MyTreeItem;
 import com.jfoenix.controls.JFXButton;
 import componentes.FormatoCodigo;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
-import idecolaborativo.IDEColaborativo;
 import static idecolaborativo.IDEColaborativo.mensajeAlert;
 import static idecolaborativo.IDEColaborativo.ventanaEjecutar;
 import static idecolaborativo.IDEColaborativo.resultadoCompilacion;
@@ -18,6 +17,7 @@ import static idecolaborativo.IDEColaborativo.ventanaCambiarIdioma;
 import static idecolaborativo.IDEColaborativo.ventanaCrearProyecto;
 import static idecolaborativo.IDEColaborativo.ventanaInicioSesion;
 import static idecolaborativo.IDEColaborativo.ventanaInvitarColaborador;
+import io.socket.client.Socket;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -32,6 +32,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -57,7 +58,7 @@ import org.fxmisc.richtext.CodeArea;
  * @author raymu
  */
 public class PantallaPrincipalController implements Initializable {
-    
+
     @FXML
     private AnchorPane panelBarraMenu;
     @FXML
@@ -84,7 +85,7 @@ public class PantallaPrincipalController implements Initializable {
     private TreeTableColumn<String, String> columnaProyectos;
     @FXML
     private TabPane tablaArchivos;
-    
+
     private ResourceBundle recurso;
     private PantallaPrincipalController controlador;
     private ArrayList<MyTreeItem> tabsAbiertos;
@@ -95,6 +96,8 @@ public class PantallaPrincipalController implements Initializable {
     private JFXButton botonEjecutar;
     @FXML
     private JFXButton botonInvitarColaborador;
+
+    private Socket socket;
 
     /**
      * Initializes the controller class.
@@ -114,9 +117,9 @@ public class PantallaPrincipalController implements Initializable {
         tablaArchivos.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
         cargarProyectos();
         handlerTablaProyectos();
-        
+
     }
-    
+
     public void handlerTablaProyectos() {
         tablaProyectos.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
@@ -124,7 +127,7 @@ public class PantallaPrincipalController implements Initializable {
                 if ("class javafx.scene.control.TreeItem".equals(newVal.getClass().toString())) {
                     TreeItem treeItem = (TreeItem) newVal;
                 } else {
-                    
+
                     MyTreeItem treeItem = (MyTreeItem) newVal;
                     if (!tabsAbiertos.contains(treeItem)) {
                         MyTab tab = new MyTab(treeItem.getArchivo().getNombreArchivo());
@@ -139,13 +142,13 @@ public class PantallaPrincipalController implements Initializable {
                         });
                         tab.setTreeItem(treeItem);
                         handlerCerrarProyectoTab(tab, treeItem);
-                    }                   
+                    }
                 }
-                
+
             }
         });
     }
-    
+
     public void handlerCerrarProyectoTab(MyTab tab, MyTreeItem treeItem) {
         tab.setOnCloseRequest((Event t) -> {
             if (treeItem.isModificado()) {
@@ -174,37 +177,41 @@ public class PantallaPrincipalController implements Initializable {
         tablaArchivos.getTabs().add(tab);
         tabsAbiertos.add(treeItem);
     }
-    
+
     public void setRecurso(ResourceBundle recurso) {
         this.recurso = recurso;
         configurarIdioma();
     }
-    
+
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
     }
-    
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
+
     public void configurarIdioma() {
         iniciarSesion.setText(recurso.getString("etInicioSesion"));
         cambiarIdioma.setText(recurso.getString("etCambiarIdioma"));
         cerrarSesion.setText(recurso.getString("btCerrarSesion"));
     }
-    
+
     @FXML
     private void botonCrearProyecto(ActionEvent event) throws IOException {
         ventanaCrearProyecto(recurso, controlador);
     }
-    
+
     @FXML
     private void botonIniciarSesion(ActionEvent event) throws IOException {
         ventanaInicioSesion(recurso, controlador);
     }
-    
+
     @FXML
     private void botonCambiarIdioma(ActionEvent event) throws IOException {
         ventanaCambiarIdioma(recurso, controlador);
     }
-    
+
     @FXML
     private void cerrarSesion(ActionEvent event) {
         iconoSesionIniciada.setVisible(false);
@@ -212,9 +219,9 @@ public class PantallaPrincipalController implements Initializable {
         etiquetaNombreUsuario.setText("");
         cerrarSesion.setVisible(false);
         iniciarSesion.setVisible(true);
-        
+
     }
-    
+
     public void sesionIniciada(String nombreUsuario) {
         iconoSesionIniciada.setVisible(true);
         etiquetaNombreUsuario.setText(nombreUsuario);
@@ -222,7 +229,25 @@ public class PantallaPrincipalController implements Initializable {
         cerrarSesion.setVisible(true);
         iniciarSesion.setVisible(false);
     }
-    
+
+    public void invitacionEnviada(String lobby, String nombreColaborador) {
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setContentText(nombreColaborador +" "+recurso.getString("mensajeInvitacion"));
+        ButtonType botonAceptar = new ButtonType(recurso.getString("btAceptar"));
+        ButtonType botonCancelar = new ButtonType(recurso.getString("btRechazar"), ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(botonAceptar, botonCancelar);
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == botonAceptar) {
+            socket.emit("conectarseALobby", lobby);
+        }
+
+    }
+
+    public void invitacionErronea() {
+        mensajeAlert(recurso.getString("atencion"),recurso.getString("mensajeColaboradorNoEncontrado"));
+    }
+
     public void cargarProyectos() {
         Proyecto proyecto = new Proyecto();
         ArrayList<Proyecto> proyectos = proyecto.cargarProyectos();
@@ -234,15 +259,15 @@ public class PantallaPrincipalController implements Initializable {
             carpetas = agregarCarpetasArbol(proyecto1);
             hijo.getChildren().setAll(carpetas);
             proyectosArbol.add(hijo);
-            
+
         }
         root.getChildren().setAll(proyectosArbol);
         columnaProyectos.setCellValueFactory((CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
         tablaProyectos.setRoot(root);
         tablaProyectos.setShowRoot(true);
-        
+
     }
-    
+
     public void cargarNuevoProyecto(Proyecto proyecto) {
         TreeItem<String> hijo = new TreeItem<>(proyecto.getNombreProyecto(), crearIconoLenguaje(proyecto.getLenguaje()));
         hijo.getChildren().setAll(agregarCarpetasArbol(proyecto));
@@ -250,9 +275,9 @@ public class PantallaPrincipalController implements Initializable {
         columnaProyectos.setCellValueFactory((CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
         tablaProyectos.setRoot(root);
         tablaProyectos.setShowRoot(true);
-        
+
     }
-    
+
     public ImageView crearIconoCarpeta() {
         ImageView carpeta;
         carpeta = new ImageView("/Imagenes/carpeta_1.png");
@@ -260,7 +285,7 @@ public class PantallaPrincipalController implements Initializable {
         carpeta.setFitWidth(15);
         return carpeta;
     }
-    
+
     public ImageView crearIconoLenguaje(String lenguajeProgramacion) {
         ImageView lenguaje = null;
         switch (lenguajeProgramacion) {
@@ -282,10 +307,10 @@ public class PantallaPrincipalController implements Initializable {
             default:
                 break;
         }
-        
+
         return lenguaje;
     }
-    
+
     public ImageView crearIconoArchivo(String lenguajeProgramacion) {
         ImageView lenguaje = null;
         switch (lenguajeProgramacion) {
@@ -307,10 +332,10 @@ public class PantallaPrincipalController implements Initializable {
             default:
                 break;
         }
-        
+
         return lenguaje;
     }
-    
+
     public ArrayList<TreeItem<String>> agregarCarpetasArbol(Proyecto proyecto) {
         ArrayList<Carpeta> carpetasProyecto = proyecto.getCarpetas();
         ArrayList<TreeItem<String>> carpetas = new ArrayList();
@@ -319,10 +344,10 @@ public class PantallaPrincipalController implements Initializable {
             hijo.getChildren().addAll(agregarArchivosArbol(carpeta, proyecto.getLenguaje()));
             carpetas.add(hijo);
         }
-        
+
         return carpetas;
     }
-    
+
     public ArrayList<MyTreeItem> agregarArchivosArbol(Carpeta carpeta, String lenguaje) {
         ArrayList<Archivo> archivos = carpeta.getArchivos();
         ArrayList<MyTreeItem> treeArchivos = new ArrayList();
@@ -330,11 +355,11 @@ public class PantallaPrincipalController implements Initializable {
             MyTreeItem hijo = new MyTreeItem(archivo.getNombreArchivo(), crearIconoArchivo(lenguaje));
             hijo.setArchivo(archivo);
             treeArchivos.add(hijo);
-            
+
         }
         return treeArchivos;
     }
-    
+
     @FXML
     private void botonGuardarArchivo(ActionEvent event) {
         if (tablaArchivos.getSelectionModel().getSelectedItem() != null) {
@@ -346,7 +371,7 @@ public class PantallaPrincipalController implements Initializable {
             tabSeleccionado.getTreeItem().setModificado(false);
         }
     }
-    
+
     @FXML
     private boolean botonCompilar(ActionEvent event) {
         boolean compilo = false;
@@ -357,30 +382,34 @@ public class PantallaPrincipalController implements Initializable {
             String resultado = archivo.compilarArchivo(archivo);
             if (resultado.isEmpty()) {
                 compilo = true;
-                if(event != null)
-                    mensajeAlert(recurso.getString("felicidades"), recurso.getString("mensajeCompilacionExitosa"));             
+                if (event != null) {
+                    mensajeAlert(recurso.getString("felicidades"), recurso.getString("mensajeCompilacionExitosa"));
+                }
             } else {
-               resultadoCompilacion(resultado, recurso);
+                resultadoCompilacion(resultado, recurso);
             }
         }
         return compilo;
     }
-    
+
     @FXML
     private void botonEjecutar(ActionEvent event) {
         if (tablaArchivos.getSelectionModel().getSelectedItem() != null) {
-            if(botonCompilar(null)){
+            if (botonCompilar(null)) {
                 MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
-                ventanaEjecutar(recurso,tabSeleccionado.getTreeItem().getArchivo());
+                ventanaEjecutar(recurso, tabSeleccionado.getTreeItem().getArchivo());
             }
-        
+
         }
     }
 
-
     @FXML
     private void invitarColaborador(ActionEvent event) {
-        ventanaInvitarColaborador(recurso, "");
+        if(!etiquetaNombreUsuario.getText().isEmpty()){
+        ventanaInvitarColaborador(recurso, etiquetaNombreUsuario.getText(), socket);
+        }else{
+            mensajeAlert(recurso.getString("atencion"), "Debes iniciar secion para invitar un colaborador");
+        }
     }
-    
+
 }

@@ -10,12 +10,14 @@ import clasesApoyo.MyTreeItem;
 import com.jfoenix.controls.JFXButton;
 import componentes.FormatoCodigo;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
+import idecolaborativo.IDEColaborativo;
 import static idecolaborativo.IDEColaborativo.mensajeAlert;
 import static idecolaborativo.IDEColaborativo.ventanaEjecutar;
 import static idecolaborativo.IDEColaborativo.resultadoCompilacion;
 import static idecolaborativo.IDEColaborativo.ventanaCambiarIdioma;
 import static idecolaborativo.IDEColaborativo.ventanaCrearProyecto;
 import static idecolaborativo.IDEColaborativo.ventanaInicioSesion;
+import static idecolaborativo.IDEColaborativo.ventanaInvitarColaborador;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -91,6 +93,8 @@ public class PantallaPrincipalController implements Initializable {
     private JFXButton botonCompilar;
     @FXML
     private JFXButton botonEjecutar;
+    @FXML
+    private JFXButton botonInvitarColaborador;
 
     /**
      * Initializes the controller class.
@@ -104,6 +108,7 @@ public class PantallaPrincipalController implements Initializable {
         etiquetaNombreUsuario.setVisible(false);
         cerrarSesion.setVisible(false);
         recurso = rb;
+        etiquetaNombreUsuario.setText("");
         root = new TreeItem<>(recurso.getString("etProyectos"));
         configurarIdioma();
         tablaArchivos.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
@@ -370,6 +375,12 @@ public class PantallaPrincipalController implements Initializable {
             }
         
         }
+    }
+
+
+    @FXML
+    private void invitarColaborador(ActionEvent event) {
+        ventanaInvitarColaborador(recurso, "");
     }
     
 }

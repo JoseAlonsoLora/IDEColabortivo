@@ -163,6 +163,21 @@ public class IDEColaborativo extends Application {
             Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public static void ventanaInvitarColaborador(ResourceBundle recurso, String nombreUsuario){
+         try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaInvitarColaborador.fxml"), recurso);
+            Parent root = (Parent) loader.load();
+            PantallaCambiarIdiomaController control = loader.getController();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     /**
      * @param args the command line arguments

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane id="AnchorPane" prefHeight="146.0" prefWidth="376.0" style="-fx-background-color: #DCDCDC;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="controladores.PantallaInvitarColaboradorController">
+   <children>
+      <Label fx:id="etiquetaNombreColaborador" layoutX="14.0" layoutY="40.0" text="Nombre del colaborador:" />
+      <JFXTextField fx:id="campoTextoNombreColaborador" layoutX="195.0" layoutY="28.0" />
+      <JFXButton fx:id="botonInvitar" layoutX="290.0" layoutY="106.0" onAction="#invitarColaborador" style="-fx-background-color: #4682B4;" text="Invitar" />
+      <JFXButton fx:id="botonCancelar" layoutX="188.0" layoutY="106.0" onAction="#cancelar" style="-fx-background-color: #C0C0C0;" text="Cancelar" />
+   </children>
+</AnchorPane>

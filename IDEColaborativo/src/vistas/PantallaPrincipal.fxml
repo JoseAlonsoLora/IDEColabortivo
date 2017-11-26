@@ -52,14 +52,6 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </JFXButton>
-            <JFXButton layoutX="857.0" layoutY="7.0" ripplerFill="#7c7c7c" text="">
-               <graphic>
-                  <MaterialDesignIconView fill="GOLDENROD" glyphName="BELL" size="25" />
-               </graphic>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </JFXButton>
             <MenuButton fx:id="botonConfiguracion" layoutX="918.0" layoutY="10.0" mnemonicParsing="false" style="-fx-background-color: #DCDCDC;">
               <items>
                 <MenuItem fx:id="cambiarIdioma" mnemonicParsing="false" onAction="#botonCambiarIdioma" text="Cambiar idioma" />
@@ -78,6 +70,11 @@
             </MenuButton>
             <MaterialDesignIconView fx:id="iconoSesionIniciada" fill="DEEPSKYBLUE" glyphName="ACCOUNT_CIRCLE" layoutX="482.0" layoutY="36.0" size="35" />
             <Label fx:id="etiquetaNombreUsuario" layoutX="523.0" layoutY="16.0" prefHeight="16.0" prefWidth="119.0" />
+            <JFXButton fx:id="botonInvitarColaborador" layoutX="854.0" layoutY="7.0" onAction="#invitarColaborador" prefHeight="35.0" prefWidth="45.0" ripplerFill="#7c7c7c" text="">
+               <graphic>
+                  <FontAwesomeIconView fill="#c69011" glyphName="USER_PLUS" size="20" />
+               </graphic>
+            </JFXButton>
          </children>
       </AnchorPane>
       <Separator layoutX="171.0" layoutY="44.0" orientation="VERTICAL" prefHeight="575.0" prefWidth="4.0" />

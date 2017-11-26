@@ -5,6 +5,7 @@
  */
 package clasesApoyo;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -33,6 +34,7 @@ public class ArchivoConfiguracion {
         } catch (IOException ex) {
             Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
+        ClassLoader.getSystemResource("properties/config.properties");
     }
 
     public String getRutaProyectosLinux() {

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TreeTableColumn?>
+<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane id="AnchorPane" prefHeight="618.0" prefWidth="984.0" style="-fx-background-color: #DCDCDC;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.141" fx:controller="controladores.PantallaInvitadoController">
+   <children>
+      <TreeTableView prefHeight="618.0" prefWidth="200.0">
+        <columns>
+          <TreeTableColumn fx:id="arbolProyecto" prefWidth="199.0" />
+        </columns>
+      </TreeTableView>
+      <TabPane fx:id="tablaArchivos" layoutX="200.0" layoutY="42.0" prefHeight="576.0" prefWidth="785.0" tabClosingPolicy="UNAVAILABLE" />
+      <Separator layoutX="200.0" layoutY="40.0" prefWidth="785.0" />
+      <JFXButton fx:id="botonCancelarColaboracion" layoutX="886.0" layoutY="9.0" onAction="#cancelarColaboracion" text="">
+         <graphic>
+            <FontAwesomeIconView fill="#20a11e" glyphName="SIGN_OUT" size="20" />
+         </graphic>
+      </JFXButton>
+   </children>
+</AnchorPane>

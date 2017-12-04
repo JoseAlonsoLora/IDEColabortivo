@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView?>
+<?import de.jensd.fx.glyphs.octicons.OctIconView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TreeTableColumn?>
+<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane id="AnchorPane" prefHeight="631.0" prefWidth="984.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.141" fx:controller="controladores.PantallaHostController">
+   <children>
+      <TreeTableView layoutX="-1.0" prefHeight="631.0" prefWidth="208.0">
+        <columns>
+          <TreeTableColumn fx:id="tablaProyecto" prefWidth="206.0" text="C1" />
+        </columns>
+      </TreeTableView>
+      <Separator layoutX="207.0" layoutY="51.0" prefHeight="0.0" prefWidth="776.0" />
+      <JFXButton fx:id="botonGuardar" layoutX="247.0" layoutY="12.0" onAction="#guardarArchivo" text="hola">
+         <graphic>
+            <MaterialDesignIconView glyphName="FLOPPY" size="25" />
+         </graphic>
+      </JFXButton>
+      <JFXButton fx:id="botonCompilar" layoutX="340.0" layoutY="15.0" onAction="#compilar" text="hola">
+         <graphic>
+            <OctIconView glyphName="TOOLS" size="20" />
+         </graphic>
+      </JFXButton>
+      <JFXButton fx:id="botonEjecutar" layoutX="432.0" layoutY="12.0" onAction="#ejecutar" text="hola">
+         <graphic>
+            <FontAwesomeIconView glyphName="PLAY_CIRCLE" size="25" />
+         </graphic>
+      </JFXButton>
+      <TabPane fx:id="tablaArchivos" layoutX="207.0" layoutY="51.0" prefHeight="580.0" prefWidth="776.0" tabClosingPolicy="UNAVAILABLE" />
+   </children>
+</AnchorPane>

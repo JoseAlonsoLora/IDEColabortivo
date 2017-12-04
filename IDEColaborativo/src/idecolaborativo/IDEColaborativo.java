@@ -15,6 +15,7 @@ import controladores.PantallaPrincipalController;
 import controladores.PantallaRegistrarUsuarioController;
 import io.socket.client.Socket;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +31,7 @@ import javafx.scene.layout.Priority;
 
 import javafx.stage.Stage;
 import modelo.negocio.Archivo;
+import modelo.negocio.Proyecto;
 
 /**
  *
@@ -166,14 +168,13 @@ public class IDEColaborativo extends Application {
         }
     }
     
-    public static void ventanaInvitarColaborador(ResourceBundle recurso, String nombreUsuario,Socket socket){
+    public static void ventanaInvitarColaborador(ResourceBundle recurso,Socket socket,ArrayList<Proyecto> proyectos){
          try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaInvitarColaborador.fxml"), recurso);
             Parent root = (Parent) loader.load();
             PantallaInvitarColaboradorController control = loader.getController();
             control.setSocket(socket);
-            control.setNombreUsuario(nombreUsuario);
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setResizable(false);

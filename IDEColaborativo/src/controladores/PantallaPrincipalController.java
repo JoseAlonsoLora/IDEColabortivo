@@ -9,6 +9,7 @@ import clasesApoyo.MyTab;
 import clasesApoyo.MyTreeItem;
 import com.jfoenix.controls.JFXButton;
 import componentes.FormatoCodigo;
+import static controladores.PantallaInvitarColaboradorController.crearObjetoJSON;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
 import static idecolaborativo.IDEColaborativo.mensajeAlert;
 import static idecolaborativo.IDEColaborativo.ventanaEjecutar;
@@ -98,6 +99,8 @@ public class PantallaPrincipalController implements Initializable {
     private JFXButton botonInvitarColaborador;
 
     private Socket socket;
+    
+    private ArrayList<Proyecto> proyectos;
 
     /**
      * Initializes the controller class.
@@ -250,7 +253,7 @@ public class PantallaPrincipalController implements Initializable {
 
     public void cargarProyectos() {
         Proyecto proyecto = new Proyecto();
-        ArrayList<Proyecto> proyectos = proyecto.cargarProyectos();
+        proyectos = proyecto.cargarProyectos();
         ArrayList<TreeItem<String>> carpetas;
         ArrayList<TreeItem<String>> proyectosArbol = new ArrayList();
         for (Proyecto proyecto1 : proyectos) {
@@ -265,6 +268,8 @@ public class PantallaPrincipalController implements Initializable {
         columnaProyectos.setCellValueFactory((CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
         tablaProyectos.setRoot(root);
         tablaProyectos.setShowRoot(true);
+        
+        crearObjetoJSON(proyectos.get(0));
 
     }
 
@@ -406,9 +411,9 @@ public class PantallaPrincipalController implements Initializable {
     @FXML
     private void invitarColaborador(ActionEvent event) {
         if(!etiquetaNombreUsuario.getText().isEmpty()){
-        ventanaInvitarColaborador(recurso, etiquetaNombreUsuario.getText(), socket);
+        ventanaInvitarColaborador(recurso, socket,proyectos);
         }else{
-            mensajeAlert(recurso.getString("atencion"), "Debes iniciar secion para invitar un colaborador");
+            mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeDebesIniciarSesion"));
         }
     }
 

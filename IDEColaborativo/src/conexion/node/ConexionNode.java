@@ -5,6 +5,9 @@
  */
 package conexion.node;
 
+import static controladores.PantallaHostController.colaboradorConectado;
+import static controladores.PantallaInvitarColaboradorController.invitacionErronea;
+import static controladores.PantallaInvitarColaboradorController.mostrarVentanaHost;
 import controladores.PantallaPrincipalController;
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -13,6 +16,7 @@ import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import org.json.JSONObject;
 
 /**
  *
@@ -25,7 +29,7 @@ public class ConexionNode {
     public ConexionNode(PantallaPrincipalController controlador){
         this.controlador = controlador;
          try {
-             socket = IO.socket("http://localhost:9000");
+             socket = IO.socket("http://192.168.100.17:9000");
              socket.on("saludoDelBarrio", new Emitter.Listener() {
             @Override
             public void call(Object... os) {
@@ -37,14 +41,28 @@ public class ConexionNode {
             @Override
             public void call(Object... os) {
                 Platform.runLater(() -> {
-                    controlador.invitacionErronea();
+                    invitacionErronea();
                 });
             }
         }).on("mostrarInvitaion", new Emitter.Listener() {
             @Override
             public void call(Object... os) {
                 Platform.runLater(() -> {
-                   controlador.invitacionEnviada((String) os[0],(String) os[1]);
+                   controlador.invitacionEnviada((String) os[0],(String) os[1],(JSONObject) os[2]);
+                });
+            }
+        }).on("colaboradorConectado", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                Platform.runLater(() -> {
+                  colaboradorConectado((String)os[0]);
+                });
+            }
+        }).on("colaboradorEncontrado", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                Platform.runLater(() -> {
+                  mostrarVentanaHost();
                 });
             }
         });

@@ -9,7 +9,9 @@ import componentes.FormatoCodigo;
 import controladores.PantallaCambiarIdiomaController;
 import controladores.PantallaCrearProyectoController;
 import controladores.PantallaEjecutarController;
+import controladores.PantallaHostController;
 import controladores.PantallaIniciarSesionController;
+import controladores.PantallaInvitadoController;
 import controladores.PantallaInvitarColaboradorController;
 import controladores.PantallaPrincipalController;
 import controladores.PantallaRegistrarUsuarioController;
@@ -32,6 +34,7 @@ import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import modelo.negocio.Archivo;
 import modelo.negocio.Proyecto;
+import org.json.JSONObject;
 
 /**
  *
@@ -58,6 +61,7 @@ public class IDEColaborativo extends Application {
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
+            control.setStagePantallaPrincipal(stage);
         } catch (IOException ex) {
             Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -168,17 +172,58 @@ public class IDEColaborativo extends Application {
         }
     }
     
-    public static void ventanaInvitarColaborador(ResourceBundle recurso,Socket socket,ArrayList<Proyecto> proyectos){
+    public static void ventanaInvitarColaborador(ResourceBundle recurso,Socket socket,ArrayList<Proyecto> proyectos,PantallaPrincipalController controlador){
          try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaInvitarColaborador.fxml"), recurso);
             Parent root = (Parent) loader.load();
             PantallaInvitarColaboradorController control = loader.getController();
             control.setSocket(socket);
+            control.setProyectos(proyectos);
+            control.setControlador(controlador);
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
+            control.setStagePantallaInivitar(stage);
+        } catch (IOException ex) {
+            Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static void ventanaHost(ResourceBundle recurso,Proyecto proyecto,PantallaPrincipalController controlador){
+         try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaHost.fxml"), recurso);
+            Parent root = (Parent) loader.load();
+            PantallaHostController control = loader.getController();
+            control.setProyecto(proyecto);
+            control.setControlador(controlador);
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+            control.setStagePantallaHost(stage);
+            control.cargarProyecto();
+        } catch (IOException ex) {
+            Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static void ventanaInvitado(ResourceBundle recurso,JSONObject proyecto,PantallaPrincipalController controlador){
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaInvitado.fxml"), recurso);
+            Parent root = (Parent) loader.load();
+            PantallaInvitadoController control = loader.getController();
+            control.setProyecto(proyecto);
+            control.setControlador(controlador);
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+            control.setStagePantallaInvitado(stage);
+            control.cargarProyecto();
         } catch (IOException ex) {
             Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
         }

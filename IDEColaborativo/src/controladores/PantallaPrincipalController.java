@@ -9,7 +9,6 @@ import clasesApoyo.MyTab;
 import clasesApoyo.MyTreeItem;
 import com.jfoenix.controls.JFXButton;
 import componentes.FormatoCodigo;
-import static controladores.PantallaInvitarColaboradorController.crearObjetoJSON;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
 import static idecolaborativo.IDEColaborativo.mensajeAlert;
 import static idecolaborativo.IDEColaborativo.ventanaEjecutar;
@@ -17,6 +16,7 @@ import static idecolaborativo.IDEColaborativo.resultadoCompilacion;
 import static idecolaborativo.IDEColaborativo.ventanaCambiarIdioma;
 import static idecolaborativo.IDEColaborativo.ventanaCrearProyecto;
 import static idecolaborativo.IDEColaborativo.ventanaInicioSesion;
+import static idecolaborativo.IDEColaborativo.ventanaInvitado;
 import static idecolaborativo.IDEColaborativo.ventanaInvitarColaborador;
 import io.socket.client.Socket;
 import java.io.IOException;
@@ -48,10 +48,12 @@ import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
 import modelo.negocio.Archivo;
 import modelo.negocio.Carpeta;
 import modelo.negocio.Proyecto;
 import org.fxmisc.richtext.CodeArea;
+import org.json.JSONObject;
 
 /**
  * FXML Controller class
@@ -101,6 +103,8 @@ public class PantallaPrincipalController implements Initializable {
     private Socket socket;
     
     private ArrayList<Proyecto> proyectos;
+    
+    private Stage stagePantallaPrincipal;
 
     /**
      * Initializes the controller class.
@@ -119,11 +123,11 @@ public class PantallaPrincipalController implements Initializable {
         configurarIdioma();
         tablaArchivos.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
         cargarProyectos();
-        handlerTablaProyectos();
+        handlerTablaProyectos(tablaProyectos,tabsAbiertos,tablaArchivos);
 
     }
 
-    public void handlerTablaProyectos() {
+    public void handlerTablaProyectos(TreeTableView<String> tablaProyectos,ArrayList<MyTreeItem> tabsAbiertos,TabPane tablaArchivos) {
         tablaProyectos.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldVal, Object newVal) {
@@ -144,7 +148,7 @@ public class PantallaPrincipalController implements Initializable {
                             }
                         });
                         tab.setTreeItem(treeItem);
-                        handlerCerrarProyectoTab(tab, treeItem);
+                        handlerCerrarProyectoTab(tab, treeItem,tabsAbiertos,tablaArchivos);
                     }
                 }
 
@@ -152,7 +156,7 @@ public class PantallaPrincipalController implements Initializable {
         });
     }
 
-    public void handlerCerrarProyectoTab(MyTab tab, MyTreeItem treeItem) {
+    public void handlerCerrarProyectoTab(MyTab tab, MyTreeItem treeItem,ArrayList<MyTreeItem> tabsAbiertos,TabPane tablaArchivos) {
         tab.setOnCloseRequest((Event t) -> {
             if (treeItem.isModificado()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -180,6 +184,11 @@ public class PantallaPrincipalController implements Initializable {
         tablaArchivos.getTabs().add(tab);
         tabsAbiertos.add(treeItem);
     }
+
+    public void setStagePantallaPrincipal(Stage stagePantallaPrincipal) {
+        this.stagePantallaPrincipal = stagePantallaPrincipal;
+    }
+    
 
     public void setRecurso(ResourceBundle recurso) {
         this.recurso = recurso;
@@ -233,7 +242,7 @@ public class PantallaPrincipalController implements Initializable {
         iniciarSesion.setVisible(false);
     }
 
-    public void invitacionEnviada(String lobby, String nombreColaborador) {
+    public void invitacionEnviada(String lobby, String nombreColaborador,JSONObject proyecto) {
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setContentText(nombreColaborador +" "+recurso.getString("mensajeInvitacion"));
@@ -243,13 +252,14 @@ public class PantallaPrincipalController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == botonAceptar) {
             socket.emit("conectarseALobby", lobby);
+            stagePantallaPrincipal.hide();
+            ventanaInvitado(recurso,proyecto,controlador);
+            
         }
 
     }
 
-    public void invitacionErronea() {
-        mensajeAlert(recurso.getString("atencion"),recurso.getString("mensajeColaboradorNoEncontrado"));
-    }
+    
 
     public void cargarProyectos() {
         Proyecto proyecto = new Proyecto();
@@ -268,8 +278,6 @@ public class PantallaPrincipalController implements Initializable {
         columnaProyectos.setCellValueFactory((CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
         tablaProyectos.setRoot(root);
         tablaProyectos.setShowRoot(true);
-        
-        crearObjetoJSON(proyectos.get(0));
 
     }
 
@@ -411,10 +419,17 @@ public class PantallaPrincipalController implements Initializable {
     @FXML
     private void invitarColaborador(ActionEvent event) {
         if(!etiquetaNombreUsuario.getText().isEmpty()){
-        ventanaInvitarColaborador(recurso, socket,proyectos);
+        ventanaInvitarColaborador(recurso, socket,proyectos,controlador);
         }else{
             mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeDebesIniciarSesion"));
         }
     }
-
+    
+    public void hacerVisiblePantallaprincipal(){
+        stagePantallaPrincipal.show();
+    }
+    
+    public void hacerInvisiblePantallaprincipal(){
+        stagePantallaPrincipal.hide();
+    }
 }

@@ -7,11 +7,13 @@ package controladores;
 
 import clasesApoyo.MyTreeItem;
 import com.jfoenix.controls.JFXButton;
+import static idecolaborativo.IDEColaborativo.mensajeAlert;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TabPane;
@@ -19,6 +21,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import modelo.negocio.Archivo;
 import modelo.negocio.Carpeta;
 import modelo.negocio.Proyecto;
@@ -38,8 +41,8 @@ public class PantallaInvitadoController implements Initializable {
 
     private JSONObject proyecto;
 
-    private PantallaPrincipalController controlador;
-    private Stage stagePantallaInvitado;
+    private static PantallaPrincipalController controlador;
+    private static Stage stagePantallaInvitado;
     @FXML
     private TreeTableView<String> tablaProyecto;
     @FXML
@@ -62,6 +65,12 @@ public class PantallaInvitadoController implements Initializable {
 
     public void setStagePantallaInvitado(Stage stagePantallaInvitado) {
         this.stagePantallaInvitado = stagePantallaInvitado;
+        this.stagePantallaInvitado.setOnCloseRequest(new EventHandler<WindowEvent>(){
+            @Override public void handle(WindowEvent event) {
+                controlador.hacerVisiblePantallaprincipal();
+                controlador.getSocket().emit("terminarSesionInvitado");
+            }  
+        });
     }
 
     @Override
@@ -110,5 +119,12 @@ public class PantallaInvitadoController implements Initializable {
         proyectoNegocio.setCarpetas(carpetas);
 
         return proyectoNegocio;
+    }
+    
+        
+    public static void finalizarSesion(){
+        stagePantallaInvitado.close();
+        mensajeAlert("Sesión terminado", "El host ha terminado la sesión");
+        controlador.getSocket().emit("terminarSesion");
     }
 }

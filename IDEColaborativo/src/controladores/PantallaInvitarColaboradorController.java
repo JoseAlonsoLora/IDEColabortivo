@@ -85,7 +85,6 @@ public class PantallaInvitarColaboradorController implements Initializable {
     
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
-        controlador.hacerInvisiblePantallaprincipal();
     }
     
     
@@ -188,8 +187,4 @@ public class PantallaInvitarColaboradorController implements Initializable {
         return proyectoJSON;
     }
 
-    public static void crearArbolProyecto(JSONObject proyecto) {
-
-
-    }
 }

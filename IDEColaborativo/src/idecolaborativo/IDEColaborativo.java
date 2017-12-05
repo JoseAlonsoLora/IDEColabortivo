@@ -200,6 +200,7 @@ public class IDEColaborativo extends Application {
             control.setProyecto(proyecto);
             control.setControlador(controlador);
             Scene scene = new Scene(root);
+            scene.getStylesheets().add(FormatoCodigo.class.getResource("/css/java-keywords.css").toExternalForm());
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
@@ -219,6 +220,7 @@ public class IDEColaborativo extends Application {
             control.setProyecto(proyecto);
             control.setControlador(controlador);
             Scene scene = new Scene(root);
+            scene.getStylesheets().add(FormatoCodigo.class.getResource("/css/java-keywords.css").toExternalForm());
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();

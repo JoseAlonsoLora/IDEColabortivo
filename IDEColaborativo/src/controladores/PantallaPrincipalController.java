@@ -203,6 +203,10 @@ public class PantallaPrincipalController implements Initializable {
         this.socket = socket;
     }
 
+    public Socket getSocket() {
+        return socket;
+    }
+    
     public void configurarIdioma() {
         iniciarSesion.setText(recurso.getString("etInicioSesion"));
         cambiarIdioma.setText(recurso.getString("etCambiarIdioma"));
@@ -419,6 +423,7 @@ public class PantallaPrincipalController implements Initializable {
     @FXML
     private void invitarColaborador(ActionEvent event) {
         if(!etiquetaNombreUsuario.getText().isEmpty()){
+        stagePantallaPrincipal.hide();
         ventanaInvitarColaborador(recurso, socket,proyectos,controlador);
         }else{
             mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeDebesIniciarSesion"));
@@ -429,7 +434,4 @@ public class PantallaPrincipalController implements Initializable {
         stagePantallaPrincipal.show();
     }
     
-    public void hacerInvisiblePantallaprincipal(){
-        stagePantallaPrincipal.hide();
-    }
 }

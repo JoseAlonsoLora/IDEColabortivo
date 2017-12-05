@@ -8,6 +8,8 @@ package conexion.node;
 import static controladores.PantallaHostController.colaboradorConectado;
 import static controladores.PantallaInvitarColaboradorController.invitacionErronea;
 import static controladores.PantallaInvitarColaboradorController.mostrarVentanaHost;
+import static controladores.PantallaInvitadoController.finalizarSesion;
+import static controladores.PantallaHostController.colaboradorDesconectado;
 import controladores.PantallaPrincipalController;
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -63,6 +65,20 @@ public class ConexionNode {
             public void call(Object... os) {
                 Platform.runLater(() -> {
                   mostrarVentanaHost();
+                });
+            }
+        }).on("mensajeSalida", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                Platform.runLater(() -> {
+                  colaboradorDesconectado();
+                });
+            }
+        }).on("terminarSesion2", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                Platform.runLater(() -> {
+                  finalizarSesion();
                 });
             }
         });

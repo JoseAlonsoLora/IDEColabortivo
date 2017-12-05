@@ -91,7 +91,7 @@ public class PantallaIniciarSesionController implements Initializable {
     }
 
     @FXML
-    private void botonIniciarSesion(ActionEvent event){
+    private void botonIniciarSesion(ActionEvent event) {
         Programador programador = new Programador();
         if (campoTextoNombreUsuario.getText().isEmpty() || campoTextoContraseña.getText().isEmpty()) {
             mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeCamposVacios"));
@@ -99,18 +99,23 @@ public class PantallaIniciarSesionController implements Initializable {
             programador.setNombreUsuario(campoTextoNombreUsuario.getText());
             programador.setContraseña(makeHash(campoTextoContraseña.getText()));
             try {
-
-                if (stub.iniciarSesion(programador)) {
-                    ConexionNode conexionNode = new ConexionNode(controlador);
-                    conexionNode.getSocket().emit("agregarNombre", campoTextoNombreUsuario.getText());
-                    controlador.sesionIniciada(campoTextoNombreUsuario.getText());
-                    controlador.setSocket(conexionNode.getSocket());
-                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    stage.close();
-                } else {
-                    mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeDatosIncorrectos"));
+                switch (stub.iniciarSesion(programador)) {
+                    case DatosValidos:
+                        ConexionNode conexionNode = new ConexionNode(controlador);
+                        conexionNode.getSocket().emit("agregarNombre", campoTextoNombreUsuario.getText());
+                        controlador.sesionIniciada(campoTextoNombreUsuario.getText());
+                        controlador.setSocket(conexionNode.getSocket());
+                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                        stage.close();
+                        break;
+                    case DatosInvalidos:
+                         mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeDatosIncorrectos"));
+                        break;
+                    case SesionIniciada:
+                        mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeSesionIniciada"));
+                        break;
                 }
-            } catch (RemoteException |java.lang.NullPointerException  ex) {
+            } catch (RemoteException | java.lang.NullPointerException ex) {
                 mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeNoConexion"));
             }
         }
@@ -118,7 +123,7 @@ public class PantallaIniciarSesionController implements Initializable {
     }
 
     @FXML
-    private void etiquetaCrearCuenta(MouseEvent event){
+    private void etiquetaCrearCuenta(MouseEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
         ventanaRegistrarUsuario(recurso, controlador);

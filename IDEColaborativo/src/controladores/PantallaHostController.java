@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TabPane;
@@ -20,6 +21,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import modelo.negocio.Proyecto;
 
 /**
@@ -39,7 +41,7 @@ public class PantallaHostController implements Initializable {
     private JFXButton botonEjecutar;
     @FXML
     private TabPane tablaArchivos;
-    private ResourceBundle recurso;
+    private static ResourceBundle recurso;
     private Proyecto proyecto;
     private PantallaPrincipalController controlador;
     private Stage stagePantallaHost;
@@ -67,6 +69,12 @@ public class PantallaHostController implements Initializable {
 
     public void setStagePantallaHost(Stage stagePantallaHost) {
         this.stagePantallaHost = stagePantallaHost;
+        this.stagePantallaHost.setOnCloseRequest(new EventHandler<WindowEvent>(){
+            @Override public void handle(WindowEvent event) {
+                controlador.hacerVisiblePantallaprincipal();
+                controlador.getSocket().emit("terminarSesionHost");
+            }  
+        });
     }
     
     
@@ -84,7 +92,7 @@ public class PantallaHostController implements Initializable {
     }
     
     public static void colaboradorConectado(String nombre){
-        mensajeAlert("",nombre +" se ha conectado");
+        mensajeAlert("",nombre +" "+recurso.getString("mensajeConectado"));
     }
     
     public void cargarProyecto(){
@@ -95,5 +103,9 @@ public class PantallaHostController implements Initializable {
         tablaProyecto.setRoot(root);
         tablaProyecto.setShowRoot(true);
         controlador.handlerTablaProyectos(tablaProyecto, tabsAbiertos, tablaArchivos);
+    }
+   
+    public static void colaboradorDesconectado(){
+        mensajeAlert("Colaborador desconectado", "El invitado se ha desconectado ");
     }
 }

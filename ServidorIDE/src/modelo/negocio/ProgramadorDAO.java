@@ -10,6 +10,7 @@ import java.rmi.RemoteException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import persistencia.ProgramadorJpaController;
+import servidoride.ServidorIDE;
 
 /**
  *
@@ -18,8 +19,8 @@ import persistencia.ProgramadorJpaController;
 public class ProgramadorDAO implements IProgramador {
 
     @Override
-    public boolean iniciarSesion(Programador programador) throws RemoteException {
-        boolean inicioSesion = false;
+    public InformacionInicioSesion iniciarSesion(Programador programador) throws RemoteException {
+        InformacionInicioSesion inicioSesion = InformacionInicioSesion.DatosInvalidos;
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("ServidorIDEPU", null);
 
         ProgramadorJpaController controlador = new ProgramadorJpaController(entityManagerFactory);
@@ -27,7 +28,14 @@ public class ProgramadorDAO implements IProgramador {
 
         try {
             programadorBD = controlador.findProgramador(programador.getNombreUsuario());
-            inicioSesion = programadorBD != null && programador.getContraseña().equals(programadorBD.getContrasena());
+            if(programadorBD != null && programador.getContraseña().equals(programadorBD.getContrasena())){
+                inicioSesion = InformacionInicioSesion.DatosValidos;
+                if(ServidorIDE.buscarColaborador(programador.getNombreUsuario())){
+                    inicioSesion = InformacionInicioSesion.SesionIniciada;
+                }else{
+                    ServidorIDE.agregarColaborador(programador.getNombreUsuario());
+                }
+            }
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }

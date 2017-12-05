@@ -42,7 +42,7 @@ public class ProgramadorDAOTest {
     /**
      * Test of iniciarSesion method, of class ProgramadorDAO.
      */
-    @Test
+    /*@Test
     public void testIniciarSesionUsuarioValido() throws Exception {
         System.out.println("iniciarSesion");
         Programador programador = new Programador();
@@ -54,7 +54,7 @@ public class ProgramadorDAOTest {
         assertEquals(expResult, result);
     }
     
-    @Test
+    /*@Test
     public void testIniciarSesionUsuarioNoValido() throws Exception {
         System.out.println("iniciarSesion");
         Programador programador = new Programador();

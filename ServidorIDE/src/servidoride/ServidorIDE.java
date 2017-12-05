@@ -11,6 +11,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import modelo.negocio.ProgramadorDAO;
 
 /**
@@ -19,10 +20,13 @@ import modelo.negocio.ProgramadorDAO;
  */
 public class ServidorIDE {
 
+    private static ArrayList<String> colaboradoresConectados;
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        colaboradoresConectados = new ArrayList();
         try {
             ProgramadorDAO programador = new ProgramadorDAO();
             IProgramador stub = (IProgramador) UnicastRemoteObject.exportObject(programador, 0);
@@ -32,6 +36,22 @@ public class ServidorIDE {
         } catch (RemoteException | AlreadyBoundException ex) {
             System.out.println(ex.getMessage());
         }
+    }
+
+    public static boolean buscarColaborador(String nombreColaborador) {
+        boolean estaConectado = false;
+        if (colaboradoresConectados.contains(nombreColaborador)) {
+            estaConectado = true;
+        }
+        return estaConectado;
+    }
+
+    public static void agregarColaborador(String nombreColaborador) {
+        colaboradoresConectados.add(nombreColaborador);
+    }
+
+    public static void eliminarColaborador(String nombreColaborador) {
+        colaboradoresConectados.remove(nombreColaborador);
     }
 
 }

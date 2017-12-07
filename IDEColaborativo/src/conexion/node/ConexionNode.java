@@ -11,6 +11,8 @@ import static controladores.PantallaInvitarColaboradorController.mostrarVentanaH
 import static controladores.PantallaInvitadoController.finalizarSesion;
 import static controladores.PantallaHostController.colaboradorDesconectado;
 import static controladores.PantallaInvitarColaboradorController.mensajeRecursivo;
+import static controladores.PantallaHostController.escribirCodigoHost;
+import static controladores.PantallaInvitadoController.escribirCodigoInvitado;
 import controladores.PantallaPrincipalController;
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -32,7 +34,7 @@ public class ConexionNode {
     public ConexionNode(PantallaPrincipalController controlador){
         this.controlador = controlador;
          try {
-             socket = IO.socket("http://localhost:9000");
+             socket = IO.socket("http://192.168.43.221:9000");
              socket.on("saludoDelBarrio", new Emitter.Listener() {
             @Override
             public void call(Object... os) {
@@ -87,6 +89,20 @@ public class ConexionNode {
             public void call(Object... os) {
                 Platform.runLater(() -> {
                   mensajeRecursivo();
+                });
+            }
+        }).on("escribirCodigoHost", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                Platform.runLater(() -> {
+                  escribirCodigoHost((String)os[0],(String)os[1]);
+                });
+            }
+        }).on("escribirCodigoInvitado", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                Platform.runLater(() -> {
+                  escribirCodigoInvitado((String)os[0],(String)os[1]);
                 });
             }
         });

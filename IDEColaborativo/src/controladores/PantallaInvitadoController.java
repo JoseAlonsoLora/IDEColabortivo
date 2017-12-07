@@ -5,7 +5,7 @@
  */
 package controladores;
 
-import clasesApoyo.MyTreeItem;
+import clasesApoyo.MyTab;
 import com.jfoenix.controls.JFXButton;
 import static idecolaborativo.IDEColaborativo.mensajeAlert;
 import java.net.URL;
@@ -25,6 +25,7 @@ import javafx.stage.WindowEvent;
 import modelo.negocio.Archivo;
 import modelo.negocio.Carpeta;
 import modelo.negocio.Proyecto;
+import org.fxmisc.richtext.CodeArea;
 import org.json.JSONObject;
 
 /**
@@ -48,7 +49,7 @@ public class PantallaInvitadoController implements Initializable {
     @FXML
     private TreeTableColumn<String, String> columnaProyecto;
     private TreeItem<String> root;
-    private ArrayList<MyTreeItem> tabsAbiertos;
+    private static ArrayList<MyTab> tabsAbiertosInvitado;
     private ResourceBundle recurso;
 
     /**
@@ -77,7 +78,7 @@ public class PantallaInvitadoController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         recurso = rb;
         root = new TreeItem<>(recurso.getString("etProyectos"));
-        tabsAbiertos = new ArrayList();
+        tabsAbiertosInvitado = new ArrayList();
     }
 
     @FXML
@@ -92,7 +93,7 @@ public class PantallaInvitadoController implements Initializable {
         columnaProyecto.setCellValueFactory((TreeTableColumn.CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
         tablaProyecto.setRoot(root);
         tablaProyecto.setShowRoot(true);
-        controlador.handlerTablaProyectos(tablaProyecto, tabsAbiertos, tablaArchivos);
+        controlador.handlerTablaProyectos(tablaProyecto, tabsAbiertosInvitado, tablaArchivos,true);
     }
 
     public Proyecto transformarJSON() {
@@ -127,5 +128,12 @@ public class PantallaInvitadoController implements Initializable {
         controlador.hacerVisiblePantallaprincipal();
         mensajeAlert("Sesión terminado", "El host ha terminado la sesión");
         controlador.getSocket().emit("terminarSesion");
+    }
+    public static void escribirCodigoInvitado(String texto,String ruta){
+        for(MyTab myTab:tabsAbiertosInvitado){
+            if(myTab.getTreeItem().getArchivo().getRuta().equals(ruta)){
+                ((CodeArea) myTab.getContent()).replaceText(texto);
+            }
+        }
     }
 }

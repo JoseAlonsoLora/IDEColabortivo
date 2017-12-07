@@ -67,7 +67,7 @@ public class PantallaIniciarSesionController implements Initializable {
 
     public void inicializarRegistro() {
         try {
-            Registry registry = LocateRegistry.getRegistry(null);
+            Registry registry = LocateRegistry.getRegistry("192.168.43.221");
             stub = (IProgramador) registry.lookup("AdministrarUsuarios");
         } catch (RemoteException | NotBoundException ex) {
             System.out.println(ex.getMessage());

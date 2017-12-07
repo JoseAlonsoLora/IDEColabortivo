@@ -5,7 +5,7 @@
  */
 package controladores;
 
-import clasesApoyo.MyTreeItem;
+import clasesApoyo.MyTab;
 import com.jfoenix.controls.JFXButton;
 import static idecolaborativo.IDEColaborativo.mensajeAlert;
 import java.net.URL;
@@ -23,6 +23,7 @@ import javafx.scene.control.TreeTableView;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import modelo.negocio.Proyecto;
+import org.fxmisc.richtext.CodeArea;
 
 /**
  * FXML Controller class
@@ -48,7 +49,7 @@ public class PantallaHostController implements Initializable {
     @FXML
     private TreeTableColumn<String, String> columnaProyecto;
      private TreeItem<String> root;
-     private ArrayList<MyTreeItem> tabsAbiertos;
+     private static ArrayList<MyTab> tabsAbiertosHost;
     /**
      * Initializes the controller class.
      */
@@ -56,7 +57,7 @@ public class PantallaHostController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         recurso = rb;
         root = new TreeItem<>(recurso.getString("etProyectos"));
-        tabsAbiertos = new ArrayList();
+        tabsAbiertosHost = new ArrayList();
     }    
 
     public void setProyecto(Proyecto proyecto) {
@@ -102,10 +103,18 @@ public class PantallaHostController implements Initializable {
         columnaProyecto.setCellValueFactory((TreeTableColumn.CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
         tablaProyecto.setRoot(root);
         tablaProyecto.setShowRoot(true);
-        controlador.handlerTablaProyectos(tablaProyecto, tabsAbiertos, tablaArchivos);
+        controlador.handlerTablaProyectos(tablaProyecto, tabsAbiertosHost, tablaArchivos,true);
     }
    
     public static void colaboradorDesconectado(){
         mensajeAlert("Colaborador desconectado", "El invitado se ha desconectado ");
     }
+    
+    public static void escribirCodigoHost(String texto,String ruta){
+        for(MyTab myTab:tabsAbiertosHost){
+            if(myTab.getTreeItem().getArchivo().getRuta().equals(ruta)){
+                ((CodeArea) myTab.getContent()).replaceText(texto);
+            }
+        }
+    } 
 }

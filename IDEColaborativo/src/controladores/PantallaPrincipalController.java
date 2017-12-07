@@ -9,6 +9,7 @@ import clasesApoyo.MyTab;
 import clasesApoyo.MyTreeItem;
 import com.jfoenix.controls.JFXButton;
 import componentes.FormatoCodigo;
+import conexion.operaciones.IProgramador;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
 import static idecolaborativo.IDEColaborativo.mensajeAlert;
 import static idecolaborativo.IDEColaborativo.ventanaEjecutar;
@@ -21,9 +22,15 @@ import static idecolaborativo.IDEColaborativo.ventanaInvitarColaborador;
 import io.socket.client.Socket;
 import java.io.IOException;
 import java.net.URL;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -49,6 +56,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import modelo.negocio.Archivo;
 import modelo.negocio.Carpeta;
 import modelo.negocio.Proyecto;
@@ -105,6 +113,8 @@ public class PantallaPrincipalController implements Initializable {
     private ArrayList<Proyecto> proyectos;
     
     private Stage stagePantallaPrincipal;
+    
+    private IProgramador stub;
 
     /**
      * Initializes the controller class.
@@ -124,7 +134,16 @@ public class PantallaPrincipalController implements Initializable {
         tablaArchivos.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
         cargarProyectos();
         handlerTablaProyectos(tablaProyectos,tabsAbiertos,tablaArchivos);
-
+        inicializarRegistro();
+    }
+    
+    public void inicializarRegistro() {
+        try {
+            Registry registry = LocateRegistry.getRegistry(null);
+            stub = (IProgramador) registry.lookup("AdministrarUsuarios");
+        } catch (RemoteException | NotBoundException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     public void handlerTablaProyectos(TreeTableView<String> tablaProyectos,ArrayList<MyTreeItem> tabsAbiertos,TabPane tablaArchivos) {
@@ -187,6 +206,14 @@ public class PantallaPrincipalController implements Initializable {
 
     public void setStagePantallaPrincipal(Stage stagePantallaPrincipal) {
         this.stagePantallaPrincipal = stagePantallaPrincipal;
+        this.stagePantallaPrincipal.setOnCloseRequest(new EventHandler<WindowEvent>(){
+            @Override public void handle(WindowEvent event) {
+                if(!etiquetaNombreUsuario.getText().isEmpty()){
+                    cerrarSesion(null);
+                    stagePantallaPrincipal.close();
+                }
+            }  
+        });
     }
     
 
@@ -215,27 +242,35 @@ public class PantallaPrincipalController implements Initializable {
 
     @FXML
     private void botonCrearProyecto(ActionEvent event) throws IOException {
+        stagePantallaPrincipal.hide();
         ventanaCrearProyecto(recurso, controlador);
     }
 
     @FXML
     private void botonIniciarSesion(ActionEvent event) throws IOException {
+        stagePantallaPrincipal.hide();
         ventanaInicioSesion(recurso, controlador);
     }
 
     @FXML
     private void botonCambiarIdioma(ActionEvent event) throws IOException {
+        stagePantallaPrincipal.hide();
         ventanaCambiarIdioma(recurso, controlador);
     }
 
     @FXML
     private void cerrarSesion(ActionEvent event) {
-        iconoSesionIniciada.setVisible(false);
-        etiquetaNombreUsuario.setVisible(false);
-        etiquetaNombreUsuario.setText("");
-        cerrarSesion.setVisible(false);
-        iniciarSesion.setVisible(true);
-
+        try {
+            stub.cerrarSesion(etiquetaNombreUsuario.getText());
+            socket.emit("cerrarSesion", etiquetaNombreUsuario.getText());
+            iconoSesionIniciada.setVisible(false);
+            etiquetaNombreUsuario.setVisible(false);
+            etiquetaNombreUsuario.setText("");
+            cerrarSesion.setVisible(false);     
+            iniciarSesion.setVisible(true);
+        } catch (RemoteException ex) {
+            Logger.getLogger(PantallaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void sesionIniciada(String nombreUsuario) {
@@ -413,8 +448,9 @@ public class PantallaPrincipalController implements Initializable {
     private void botonEjecutar(ActionEvent event) {
         if (tablaArchivos.getSelectionModel().getSelectedItem() != null) {
             if (botonCompilar(null)) {
+                stagePantallaPrincipal.hide();
                 MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
-                ventanaEjecutar(recurso, tabSeleccionado.getTreeItem().getArchivo());
+                ventanaEjecutar(recurso, tabSeleccionado.getTreeItem().getArchivo(),controlador);
             }
 
         }

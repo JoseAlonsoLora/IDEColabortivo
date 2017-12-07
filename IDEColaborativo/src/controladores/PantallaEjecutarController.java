@@ -8,9 +8,11 @@ package controladores;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXTextField;
+import static idecolaborativo.IDEColaborativo.mensajeAlert;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -19,6 +21,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import modelo.negocio.Archivo;
 
 /**
@@ -50,6 +53,10 @@ public class PantallaEjecutarController implements Initializable {
     private final ToggleGroup grupoRadio = new ToggleGroup();
     
     private final String patron = "^[\u0400-\u04FFa-zA-Z ]+(,[\u0400-\u04FFa-zA-Z ]+)*$";
+    
+    private Stage stagePantallaEjecutar;
+    
+    private PantallaPrincipalController controlador;
 
     /**
      * Initializes the controller class.
@@ -76,6 +83,19 @@ public class PantallaEjecutarController implements Initializable {
         this.archivo=archivo;
     }
 
+    public void setControlador(PantallaPrincipalController controlador) {
+        this.controlador = controlador;
+    }
+
+    public void setStagePantallaEjecutar(Stage stagePantallaEjecutar) {
+        this.stagePantallaEjecutar = stagePantallaEjecutar;
+        this.stagePantallaEjecutar.setOnCloseRequest(new EventHandler<WindowEvent>(){
+            @Override public void handle(WindowEvent event) {
+                controlador.hacerVisiblePantallaprincipal();
+            }  
+        });
+    }
+
     @FXML
     private void botonEjecutar(ActionEvent event) {
         JFXRadioButton radioSeleccionado = (JFXRadioButton) grupoRadio.getSelectedToggle();
@@ -84,7 +104,7 @@ public class PantallaEjecutarController implements Initializable {
                 if( validarPatronParametros(campoTextoParametros.getText()))
                     areaTextoResultadoEjecucion.setText(archivo.ejecutarArchivo(archivo,campoTextoParametros.getText()));
                 else{
-                    
+                    mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeParametrosInvalidos"));
                 }
                     
             }else{
@@ -97,6 +117,7 @@ public class PantallaEjecutarController implements Initializable {
 
     @FXML
     private void botonSalir(ActionEvent event) {
+        controlador.hacerVisiblePantallaprincipal();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
     }

@@ -124,6 +124,7 @@ public class PantallaInvitadoController implements Initializable {
         
     public static void finalizarSesion(){
         stagePantallaInvitado.close();
+        controlador.hacerVisiblePantallaprincipal();
         mensajeAlert("Sesión terminado", "El host ha terminado la sesión");
         controlador.getSocket().emit("terminarSesion");
     }

@@ -10,6 +10,7 @@ import static controladores.PantallaInvitarColaboradorController.invitacionErron
 import static controladores.PantallaInvitarColaboradorController.mostrarVentanaHost;
 import static controladores.PantallaInvitadoController.finalizarSesion;
 import static controladores.PantallaHostController.colaboradorDesconectado;
+import static controladores.PantallaInvitarColaboradorController.mensajeRecursivo;
 import controladores.PantallaPrincipalController;
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -31,7 +32,7 @@ public class ConexionNode {
     public ConexionNode(PantallaPrincipalController controlador){
         this.controlador = controlador;
          try {
-             socket = IO.socket("http://192.168.100.17:9000");
+             socket = IO.socket("http://localhost:9000");
              socket.on("saludoDelBarrio", new Emitter.Listener() {
             @Override
             public void call(Object... os) {
@@ -74,11 +75,18 @@ public class ConexionNode {
                   colaboradorDesconectado();
                 });
             }
-        }).on("terminarSesion2", new Emitter.Listener() {
+        }).on("terminarSesion", new Emitter.Listener() {
             @Override
             public void call(Object... os) {
                 Platform.runLater(() -> {
                   finalizarSesion();
+                });
+            }
+        }).on("mensajeRecursivo", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                Platform.runLater(() -> {
+                  mensajeRecursivo();
                 });
             }
         });

@@ -78,6 +78,7 @@ public class IDEColaborativo extends Application {
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
+            control.setStagePantallaIniciarSesion(stage);
         } catch (IOException ex) {
             Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -94,6 +95,7 @@ public class IDEColaborativo extends Application {
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
+            control.setStagePantallaRegistrarUsuario(stage);
         } catch (IOException ex) {
             Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -110,6 +112,7 @@ public class IDEColaborativo extends Application {
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
+            control.setStagePantallaCrearProyecto(stage);
         } catch (IOException ex) {
             Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -126,6 +129,7 @@ public class IDEColaborativo extends Application {
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
+            control.setStagePantallaCambiarIdioma(stage);
         } catch (IOException ex) {
             Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -156,17 +160,19 @@ public class IDEColaborativo extends Application {
         alert.showAndWait();
     }
 
-    public static void ventanaEjecutar(ResourceBundle recurso, Archivo archivo) {
+    public static void ventanaEjecutar(ResourceBundle recurso, Archivo archivo, PantallaPrincipalController controlador) {
         try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaEjecutar.fxml"), recurso);
             Parent root = (Parent) loader.load();
             PantallaEjecutarController control = loader.getController();
             control.setArchivo(archivo);
+            control.setControlador(controlador);
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
+            control.setStagePantallaEjecutar(stage);
         } catch (IOException ex) {
             Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -21,12 +21,14 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import modelo.negocio.Programador;
 
 /**
@@ -63,6 +65,8 @@ public class PantallaRegistrarUsuarioController implements Initializable {
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private final String mensajeAtencion = "atencion";
     
+    private Stage stagePantallaRegistrarUsuario;
+    
     /**
      * Initializes the controller class.
      */
@@ -85,6 +89,16 @@ public class PantallaRegistrarUsuarioController implements Initializable {
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
     }
+
+    public void setStagePantallaRegistrarUsuario(Stage stagePantallaRegistrarUsuario) {
+        this.stagePantallaRegistrarUsuario = stagePantallaRegistrarUsuario;
+        this.stagePantallaRegistrarUsuario.setOnCloseRequest(new EventHandler<WindowEvent>(){
+            @Override public void handle(WindowEvent event) {
+                controlador.hacerVisiblePantallaprincipal();
+            }  
+        });
+    }
+    
 
     public void configurarIdioma() {
         etiquetaCrearCuenta.setText(recurso.getString("etCrearCuenta"));

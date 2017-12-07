@@ -13,6 +13,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -20,6 +21,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import modelo.negocio.Proyecto;
 
 /**
@@ -57,6 +59,8 @@ public class PantallaCrearProyectoController implements Initializable {
     private JFXRadioButton radioCSharp;
     
     private final String mensajeAtencion = "atencion";
+    
+    private Stage stagePantallaCrearProyecto;
 
     /**
      * Initializes the controller class.
@@ -73,6 +77,15 @@ public class PantallaCrearProyectoController implements Initializable {
 
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
+    }
+
+    public void setStagePantallaCrearProyecto(Stage stagePantallaCrearProyecto) {
+        this.stagePantallaCrearProyecto = stagePantallaCrearProyecto;
+        this.stagePantallaCrearProyecto.setOnCloseRequest(new EventHandler<WindowEvent>(){
+            @Override public void handle(WindowEvent event) {
+                controlador.hacerVisiblePantallaprincipal();
+            }  
+        });
     }
 
     public void configurarIdioma() {
@@ -101,6 +114,7 @@ public class PantallaCrearProyectoController implements Initializable {
 
     @FXML
     private void botonCancelar(ActionEvent event) {
+        controlador.hacerVisiblePantallaprincipal();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
     }
@@ -125,6 +139,7 @@ public class PantallaCrearProyectoController implements Initializable {
             }
             proyecto = proyecto.cargarNuevoProyecto(proyecto);
             controlador.cargarNuevoProyecto(proyecto);
+            controlador.hacerVisiblePantallaprincipal();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.close();
 

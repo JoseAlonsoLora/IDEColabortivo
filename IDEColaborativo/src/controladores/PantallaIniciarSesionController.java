@@ -18,12 +18,14 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import modelo.negocio.Programador;
 
 /**
@@ -54,6 +56,7 @@ public class PantallaIniciarSesionController implements Initializable {
 
     private IProgramador stub;
     private final String mensajeAtencion = "atencion";
+    private Stage stagePantallaIniciarSesion;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -64,7 +67,7 @@ public class PantallaIniciarSesionController implements Initializable {
 
     public void inicializarRegistro() {
         try {
-            Registry registry = LocateRegistry.getRegistry("192.168.100.17");
+            Registry registry = LocateRegistry.getRegistry(null);
             stub = (IProgramador) registry.lookup("AdministrarUsuarios");
         } catch (RemoteException | NotBoundException ex) {
             System.out.println(ex.getMessage());
@@ -74,6 +77,16 @@ public class PantallaIniciarSesionController implements Initializable {
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
     }
+
+    public void setStagePantallaIniciarSesion(Stage stagePantallaIniciarSesion) {
+        this.stagePantallaIniciarSesion = stagePantallaIniciarSesion;
+        this.stagePantallaIniciarSesion.setOnCloseRequest(new EventHandler<WindowEvent>(){
+            @Override public void handle(WindowEvent event) {
+                controlador.hacerVisiblePantallaprincipal();
+            }  
+        });
+    }
+    
 
     public void configurarIdioma() {
         etiquetaIniciarSesion.setText(recurso.getString("etInicioSesion"));
@@ -86,6 +99,7 @@ public class PantallaIniciarSesionController implements Initializable {
 
     @FXML
     private void botonCancelar(ActionEvent event) {
+        controlador.hacerVisiblePantallaprincipal();
         Stage ventanaIniciarSesion = (Stage) ((Node) event.getSource()).getScene().getWindow();
         ventanaIniciarSesion.close();
     }
@@ -105,6 +119,7 @@ public class PantallaIniciarSesionController implements Initializable {
                         conexionNode.getSocket().emit("agregarNombre", campoTextoNombreUsuario.getText());
                         controlador.sesionIniciada(campoTextoNombreUsuario.getText());
                         controlador.setSocket(conexionNode.getSocket());
+                        controlador.hacerVisiblePantallaprincipal();
                         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                         stage.close();
                         break;

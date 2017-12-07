@@ -142,6 +142,10 @@ public class PantallaInvitarColaboradorController implements Initializable {
         mensajeAlert(recurso.getString("atencion"),recurso.getString("mensajeColaboradorNoEncontrado"));
     }
     
+    public static void mensajeRecursivo() {
+        mensajeAlert(recurso.getString("atencion"),recurso.getString("mensajeRecursivo"));
+    }
+    
     
     
     

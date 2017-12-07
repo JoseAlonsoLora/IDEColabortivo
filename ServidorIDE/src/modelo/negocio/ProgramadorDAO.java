@@ -72,4 +72,9 @@ public class ProgramadorDAO implements IProgramador {
         return registroCompletado;
     }
 
+    @Override
+    public void cerrarSesion(String nombreProgramador) throws RemoteException {
+        ServidorIDE.eliminarColaborador(nombreProgramador);
+    }
+
 }

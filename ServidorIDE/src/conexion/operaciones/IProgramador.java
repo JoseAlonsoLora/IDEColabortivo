@@ -17,4 +17,5 @@ import modelo.negocio.Programador;
 public interface IProgramador extends Remote{
     public InformacionInicioSesion iniciarSesion(Programador programador) throws RemoteException;
     public boolean registrarUsuario(Programador programador) throws RemoteException;
+    public void cerrarSesion(String nombreProgramador) throws RemoteException;
 }

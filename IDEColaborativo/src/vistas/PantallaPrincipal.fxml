@@ -15,14 +15,14 @@
 <?import javafx.scene.effect.Glow?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="618.0" prefWidth="984.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.PantallaPrincipalController">
+<AnchorPane id="AnchorPane" prefHeight="618.0" prefWidth="984.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.PantallaPrincipalController">
    <children>
       <Separator layoutY="38.0" prefHeight="11.0" prefWidth="767.0" />
       <AnchorPane fx:id="panelBarraMenu" layoutY="-1.0" prefHeight="45.0" prefWidth="984.0" style="-fx-background-color: #DCDCDC;">
          <children>
-            <JFXButton fx:id="botonCrearProyecto" alignment="CENTER" layoutX="16.0" layoutY="9.0" onAction="#botonCrearProyecto" ripplerFill="#7c7c7c" text="" textAlignment="CENTER">
+            <JFXButton fx:id="botonCrearProyecto" alignment="CENTER" layoutX="20.0" layoutY="12.0" onAction="#botonCrearProyecto" ripplerFill="#7c7c7c" text="" textAlignment="CENTER">
                <graphic>
-                  <FontAwesomeIconView fill="TAN" glyphName="FOLDER" size="20.0" />
+                  <FontAwesomeIconView fill="TAN" glyphName="FOLDER" size="19" />
                </graphic>
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -30,13 +30,13 @@
             </JFXButton>
             <JFXButton fx:id="botonGuardar" layoutX="69.0" layoutY="9.0" onAction="#botonGuardarArchivo" ripplerFill="#7c7c7c" text="">
                <graphic>
-                  <MaterialDesignIconView glyphName="FLOPPY" size="20.0" />
+                  <MaterialDesignIconView fill="#4e238c" glyphName="FLOPPY" size="20.0" />
                </graphic>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
             </JFXButton>
-            <JFXButton fx:id="botonCompilar" layoutX="119.0" layoutY="10.0" onAction="#botonCompilar" ripplerFill="#7c7c7c" text="">
+            <JFXButton fx:id="botonCompilar" layoutX="251.0" layoutY="9.0" onAction="#botonCompilar" ripplerFill="#7c7c7c" text="">
                <graphic>
                   <OctIconView fill="TEAL" glyphName="TOOLS" size="17.0" />
                </graphic>
@@ -44,7 +44,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </JFXButton>
-            <JFXButton fx:id="botonEjecutar" layoutX="165.0" layoutY="5.0" onAction="#botonEjecutar" ripplerFill="#7c7c7c" text="">
+            <JFXButton fx:id="botonEjecutar" layoutX="296.0" layoutY="4.0" onAction="#botonEjecutar" ripplerFill="#7c7c7c" text="">
                <graphic>
                   <MaterialDesignIconView fill="#14c900" glyphName="YOUTUBE_PLAY" size="27" />
                </graphic>
@@ -73,6 +73,21 @@
             <JFXButton fx:id="botonInvitarColaborador" layoutX="854.0" layoutY="7.0" onAction="#invitarColaborador" prefHeight="35.0" prefWidth="45.0" ripplerFill="#7c7c7c" text="">
                <graphic>
                   <FontAwesomeIconView fill="#c69011" glyphName="USER_PLUS" size="20" />
+               </graphic>
+            </JFXButton>
+            <JFXButton fx:id="botonEliminar" layoutX="119.0" layoutY="9.0" onAction="#eliminar" ripplerFill="#7c7c7c" text="">
+               <graphic>
+                  <FontAwesomeIconView fill="#5e5353" glyphName="TRASH" size="21" />
+               </graphic>
+            </JFXButton>
+            <JFXButton fx:id="botonAgregarPaquete" layoutX="160.0" layoutY="8.0" onAction="#agregarPaquete" ripplerFill="#7c7c7c" text="">
+               <graphic>
+                  <MaterialDesignIconView fill="#e4b06c" glyphName="FOLDER_PLUS" size="23" />
+               </graphic>
+            </JFXButton>
+            <JFXButton fx:id="botonAgregarArchivo" layoutX="207.0" layoutY="8.0" onAction="#agregarArchivo" ripplerFill="#7c7c7c" text="">
+               <graphic>
+                  <MaterialDesignIconView fill="#575050" glyphName="NOTE_PLUS" size="20" />
                </graphic>
             </JFXButton>
          </children>

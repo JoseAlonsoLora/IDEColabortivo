@@ -130,7 +130,14 @@ public class PantallaInvitarColaboradorController implements Initializable {
     }
 
     public static void mostrarVentanaHost() {
+        controlador.hacerInVisiblePantallaprincipal();
         ventanaHost(recurso, proyecto, controlador);
+        stagePantallaInivitar.close();
+    }
+    
+    public static void invitacionEnviada(){
+        controlador.hacerVisiblePantallaprincipal();
+        controlador.invitacionEnviada();
         stagePantallaInivitar.close();
     }
 

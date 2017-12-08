@@ -54,7 +54,8 @@ public class PantallaInvitadoController implements Initializable {
     private TreeTableColumn<String, String> columnaProyecto;
     private TreeItem<String> root;
     private static ArrayList<MyTab> tabsAbiertosInvitado;
-    private ResourceBundle recurso;
+    private static ResourceBundle recurso;
+    private static final String mensajeAtencion = "atencion";
 
     /**
      * Initializes the controller class.
@@ -132,7 +133,7 @@ public class PantallaInvitadoController implements Initializable {
     public static void finalizarSesion(){
         stagePantallaInvitado.close();
         controlador.hacerVisiblePantallaprincipal();
-        mensajeAlert("Sesión terminado", "El host ha terminado la sesión");
+        mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeSesionTerminada"));
         controlador.getSocket().emit("terminarSesion");
     }
     public static void escribirCodigoInvitado(String texto,String ruta){
@@ -182,6 +183,6 @@ public class PantallaInvitadoController implements Initializable {
     }
     
     public void mostrarResultadoEjecucion(String resultado){
-        mensajeAlert("Resultado de ejecución", resultado);
+        mensajeAlert(recurso.getString("mensajeResultadoEjecucion"), resultado);
     }
 }

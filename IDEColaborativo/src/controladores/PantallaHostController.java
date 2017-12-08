@@ -56,6 +56,7 @@ public class PantallaHostController implements Initializable {
     private TreeTableColumn<String, String> columnaProyecto;
      private TreeItem<String> root;
      private static ArrayList<MyTab> tabsAbiertosHost;
+     
     /**
      * Initializes the controller class.
      */
@@ -102,10 +103,6 @@ public class PantallaHostController implements Initializable {
         controlador.ejecutarArchivo(tablaArchivos, true);
     }
     
-    public static void colaboradorConectado(String nombre){
-        mensajeAlert("",nombre +" "+recurso.getString("mensajeConectado"));
-    }
-    
     public void cargarProyecto(){
         TreeItem<String> hijo = new TreeItem<>(proyecto.getNombreProyecto(), controlador.crearIconoLenguaje(proyecto.getLenguaje()));
         hijo.getChildren().setAll(controlador.agregarCarpetasArbol(proyecto));
@@ -117,7 +114,7 @@ public class PantallaHostController implements Initializable {
     }
    
     public static void colaboradorDesconectado(){
-        mensajeAlert("Colaborador desconectado", "El invitado se ha desconectado ");
+        mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeColaboradorDesconectado"));
     }
     
     public static void escribirCodigoHost(String texto,String ruta){

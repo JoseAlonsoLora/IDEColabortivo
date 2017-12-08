@@ -118,6 +118,12 @@ public class PantallaPrincipalController implements Initializable {
     private IProgramador stub;
 
     private ConexionNode conexionNode;
+    @FXML
+    private JFXButton botonEliminar;
+    @FXML
+    private JFXButton botonAgregarPaquete;
+    @FXML
+    private JFXButton botonAgregarArchivo;
 
     /**
      * Initializes the controller class.
@@ -142,7 +148,7 @@ public class PantallaPrincipalController implements Initializable {
 
     public void inicializarRegistro() {
         try {
-            Registry registry = LocateRegistry.getRegistry(null);
+            Registry registry = LocateRegistry.getRegistry("192.168.0.15");
             stub = (IProgramador) registry.lookup("AdministrarUsuarios");
         } catch (RemoteException | NotBoundException ex) {
             System.out.println(ex.getMessage());
@@ -332,7 +338,7 @@ public class PantallaPrincipalController implements Initializable {
         iniciarSesion.setVisible(false);
     }
 
-    public void invitacionEnviada(String lobby, String nombreColaborador, JSONObject proyecto) {
+    public void invitacionRecibida(String lobby, String nombreColaborador, JSONObject proyecto) {
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setContentText(nombreColaborador + " " + recurso.getString("mensajeInvitacion"));
@@ -348,6 +354,11 @@ public class PantallaPrincipalController implements Initializable {
         }
 
     }
+    
+    public void invitacionEnviada(){
+        mensajeAlert("", recurso.getString("mensajeInvitacionEnviada"));
+    }
+    
 
     public void cargarProyectos() {
         Proyecto proyecto = new Proyecto();
@@ -569,6 +580,22 @@ public class PantallaPrincipalController implements Initializable {
 
     public void hacerVisiblePantallaprincipal() {
         stagePantallaPrincipal.show();
+    }
+    
+    public void hacerInVisiblePantallaprincipal() {
+        stagePantallaPrincipal.hide();
+    }
+
+    @FXML
+    private void eliminar(ActionEvent event) {
+    }
+
+    @FXML
+    private void agregarPaquete(ActionEvent event) {
+    }
+
+    @FXML
+    private void agregarArchivo(ActionEvent event) {
     }
 
 }

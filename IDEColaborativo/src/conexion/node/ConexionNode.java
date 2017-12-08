@@ -6,8 +6,8 @@
 package conexion.node;
 
 import controladores.PantallaHostController;
-import static controladores.PantallaHostController.colaboradorConectado;
 import static controladores.PantallaInvitarColaboradorController.invitacionErronea;
+import static controladores.PantallaInvitarColaboradorController.invitacionEnviada;
 import static controladores.PantallaInvitarColaboradorController.mostrarVentanaHost;
 import static controladores.PantallaInvitadoController.finalizarSesion;
 import static controladores.PantallaHostController.colaboradorDesconectado;
@@ -38,7 +38,7 @@ public class ConexionNode {
     public ConexionNode(PantallaPrincipalController controlador){
         this.controlador = controlador;
          try {
-             socket = IO.socket("http://localhost:9000");
+             socket = IO.socket("http://192.168.0.15:9000");
              socket.on("saludoDelBarrio", new Emitter.Listener() {
             @Override
             public void call(Object... os) {
@@ -57,21 +57,21 @@ public class ConexionNode {
             @Override
             public void call(Object... os) {
                 Platform.runLater(() -> {
-                   controlador.invitacionEnviada((String) os[0],(String) os[1],(JSONObject) os[2]);
+                   controlador.invitacionRecibida((String) os[0],(String) os[1],(JSONObject) os[2]);
                 });
             }
         }).on("colaboradorConectado", new Emitter.Listener() {
             @Override
             public void call(Object... os) {
                 Platform.runLater(() -> {
-                  colaboradorConectado((String)os[0]);
+                  mostrarVentanaHost();
                 });
             }
         }).on("colaboradorEncontrado", new Emitter.Listener() {
             @Override
             public void call(Object... os) {
                 Platform.runLater(() -> {
-                  mostrarVentanaHost();
+                  invitacionEnviada();
                 });
             }
         }).on("mensajeSalida", new Emitter.Listener() {

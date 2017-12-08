@@ -135,7 +135,7 @@ public class PantallaPrincipalController implements Initializable {
         tablaArchivos.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
         cargarProyectos();
         handlerTablaProyectos(tablaProyectos, tabsAbiertos, tablaArchivos, false);
-        inicializarRegistro();
+        
     }
 
     public void inicializarRegistro() {
@@ -157,7 +157,7 @@ public class PantallaPrincipalController implements Initializable {
                 } else {
 
                     MyTreeItem treeItem = (MyTreeItem) newVal;
-                    if (!buscarArchivosAbiertos(treeItem)) {
+                    if (!buscarArchivosAbiertos(treeItem,tabsAbiertos)) {
                         MyTab tab = new MyTab(treeItem.getArchivo().getNombreArchivo());
                         FormatoCodigo areaCodigo = new FormatoCodigo();
                         areaCodigo.setSampleCode(treeItem.getArchivo().getContenido());
@@ -174,11 +174,9 @@ public class PantallaPrincipalController implements Initializable {
                                 @Override
                                 public void handle(KeyEvent event) {
                                    treeItem.setModificado(true);
-                                   TextArea areaTextoApoyo = new TextArea();
-                                   areaTextoApoyo.setText(areaCodigo.getCodeArea().getText());
-                                   areaTextoApoyo.insertText(areaCodigo.getCodeArea().getCaretPosition(), event.getCharacter());
-                                   socket.emit("escribirCodigo", areaTextoApoyo.getText(),treeItem.getArchivo().getRuta());
-                                   areaTextoApoyo = null;
+                                 
+                                   socket.emit("escribirCodigo", areaCodigo.getCodeArea().getText(),treeItem.getArchivo().getRuta()+treeItem.getArchivo().getNombreArchivo());
+                                   
                                 }
                             });
                         }
@@ -194,7 +192,7 @@ public class PantallaPrincipalController implements Initializable {
         });
     }
     
-    public boolean buscarArchivosAbiertos(MyTreeItem myTreeItem){
+    public boolean buscarArchivosAbiertos(MyTreeItem myTreeItem,ArrayList<MyTab> tabsAbiertos){
         boolean estaAbierto = false;
         for(MyTab myTab:tabsAbiertos){
             if(myTab.getTreeItem().equals(myTreeItem)){
@@ -289,6 +287,7 @@ public class PantallaPrincipalController implements Initializable {
 
     @FXML
     private void cerrarSesion(ActionEvent event) {
+        inicializarRegistro();
         try {
             stub.cerrarSesion(etiquetaNombreUsuario.getText());
             socket.emit("cerrarSesion", etiquetaNombreUsuario.getText());

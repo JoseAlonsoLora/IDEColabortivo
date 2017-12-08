@@ -131,7 +131,7 @@ public class PantallaInvitadoController implements Initializable {
     }
     public static void escribirCodigoInvitado(String texto,String ruta){
         for(MyTab myTab:tabsAbiertosInvitado){
-            if(myTab.getTreeItem().getArchivo().getRuta().equals(ruta)){
+            if((myTab.getTreeItem().getArchivo().getRuta()+myTab.getTreeItem().getArchivo().getNombreArchivo()).equals(ruta)){
                 ((CodeArea) myTab.getContent()).replaceText(texto);
             }
         }

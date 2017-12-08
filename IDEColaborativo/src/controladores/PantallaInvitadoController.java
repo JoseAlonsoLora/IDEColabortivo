@@ -9,6 +9,7 @@ import clasesApoyo.MyTab;
 import clasesApoyo.MyTreeItem;
 import com.jfoenix.controls.JFXButton;
 import componentes.FormatoCodigo;
+import static controladores.PantallaHostController.obtenerNombreCarpetas;
 import static idecolaborativo.IDEColaborativo.mensajeAlert;
 import static idecolaborativo.IDEColaborativo.resultadoCompilacion;
 import java.net.URL;
@@ -93,7 +94,7 @@ public class PantallaInvitadoController implements Initializable {
     public void cargarProyecto() {
         Proyecto proyecto = transformarJSON();
         TreeItem<String> hijo = new TreeItem<>(proyecto.getNombreProyecto(), controlador.crearIconoLenguaje(proyecto.getLenguaje()));
-        hijo.getChildren().setAll(controlador.agregarCarpetasArbol(proyecto));
+        hijo.getChildren().setAll(controlador.agregarCarpetasArbol(proyecto, obtenerNombreCarpetas(proyecto)));
         root.getChildren().add(hijo);
         columnaProyecto.setCellValueFactory((TreeTableColumn.CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
         tablaProyecto.setRoot(root);

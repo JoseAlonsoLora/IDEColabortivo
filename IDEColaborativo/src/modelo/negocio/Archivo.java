@@ -219,9 +219,17 @@ public class Archivo {
         return compilador(comando.toString(), archivo.getRutaClases());
     }
 
-    public boolean crearArchivo(String nombre) {
-        return false;
-
+    public boolean crearArchivo(Archivo archivo) {
+        boolean seCreo = false;
+        String ruta = archivo.getRuta() + "/" + archivo.getNombreArchivo();
+        File file = new File(ruta);
+        System.out.println(archivo.getRuta());
+        try {
+            seCreo= file.createNewFile();
+        } catch (IOException ex) {
+            Logger.getLogger(Archivo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return seCreo;
     }
 
     public boolean eliminarArchivo(File archivo) {

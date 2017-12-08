@@ -13,18 +13,18 @@ import modelo.negocio.Archivo;
  *
  * @author alonso
  */
-    public class MyTreeItem extends TreeItem<String> {
+public class MyTreeItem extends TreeItem<String> {
 
-        private Archivo archivo;
-        private boolean modificado;
+    private Archivo archivo;
+    private boolean modificado;
 
-        public MyTreeItem() {
+    public MyTreeItem() {
 
-        }
+    }
 
-        public MyTreeItem(String nombreNodo, ImageView logo) {
-            super(nombreNodo, logo);
-        }
+    public MyTreeItem(String nombreNodo, ImageView logo) {
+        super(nombreNodo, logo);
+    }
 
     public Archivo getArchivo() {
         return archivo;
@@ -41,8 +41,5 @@ import modelo.negocio.Archivo;
     public void setModificado(boolean modificado) {
         this.modificado = modificado;
     }
-    
-    
 
-       
-    }
+}

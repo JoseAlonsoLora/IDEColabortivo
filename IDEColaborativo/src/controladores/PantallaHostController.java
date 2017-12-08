@@ -27,6 +27,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import modelo.negocio.Archivo;
+import modelo.negocio.Carpeta;
 import modelo.negocio.Proyecto;
 import org.fxmisc.richtext.CodeArea;
 import org.json.JSONObject;
@@ -105,7 +106,7 @@ public class PantallaHostController implements Initializable {
     
     public void cargarProyecto(){
         TreeItem<String> hijo = new TreeItem<>(proyecto.getNombreProyecto(), controlador.crearIconoLenguaje(proyecto.getLenguaje()));
-        hijo.getChildren().setAll(controlador.agregarCarpetasArbol(proyecto));
+        hijo.getChildren().setAll(controlador.agregarCarpetasArbol(proyecto,obtenerNombreCarpetas(proyecto)));
         root.getChildren().add(hijo);
         columnaProyecto.setCellValueFactory((TreeTableColumn.CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
         tablaProyecto.setRoot(root);
@@ -113,6 +114,14 @@ public class PantallaHostController implements Initializable {
         controlador.handlerTablaProyectos(tablaProyecto, tabsAbiertosHost, tablaArchivos,true);
     }
    
+    public static ArrayList<String> obtenerNombreCarpetas(Proyecto proyecto){
+        ArrayList<String> nombreCarpetas = new ArrayList();
+        for(Carpeta carpeta: proyecto.getCarpetas()){
+            nombreCarpetas.add(carpeta.getNombreCarpeta());
+        }
+        return nombreCarpetas;
+    }
+    
     public static void colaboradorDesconectado(){
         mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeColaboradorDesconectado"));
     }

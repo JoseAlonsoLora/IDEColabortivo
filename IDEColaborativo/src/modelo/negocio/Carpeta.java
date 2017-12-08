@@ -42,8 +42,11 @@ public class Carpeta {
         this.rutaCarpeta = rutaCarpeta;
     }
     
-    public boolean crearCarpeta(String nombre){
-        return false;
+    public boolean crearCarpeta(Carpeta carpeta){
+        boolean seCreo;
+        File file = new File(carpeta.getRutaCarpeta());
+        seCreo = file.mkdir();
+        return seCreo;
     }
     
     public boolean eliminarCarpeta(File archivo){

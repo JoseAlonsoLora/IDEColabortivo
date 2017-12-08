@@ -5,7 +5,9 @@
  */
 package clasesApoyo;
 
+import java.util.ArrayList;
 import javafx.scene.control.TreeItem;
+import javafx.scene.image.ImageView;
 
 /**
  *
@@ -14,6 +16,17 @@ import javafx.scene.control.TreeItem;
 public class MyTreeItemCarpeta extends TreeItem<String>{
     private String nombreCarpeta;
     private String ruta;
+    private ArrayList<String> nombreArchivos;
+    private String rutaProyecto;
+    private String lenguaje;
+    
+    public MyTreeItemCarpeta() {
+
+    }
+
+    public MyTreeItemCarpeta(String nombreNodo, ImageView logo) {
+        super(nombreNodo, logo);
+    }
 
     public String getNombreCarpeta() {
         return nombreCarpeta;
@@ -30,6 +43,33 @@ public class MyTreeItemCarpeta extends TreeItem<String>{
     public void setRuta(String ruta) {
         this.ruta = ruta;
     }
+
+    public ArrayList<String> getNombreArchivos() {
+        return nombreArchivos;
+    }
+
+    public void setNombreArchivos(ArrayList<String> nombreArchivos) {
+        this.nombreArchivos = nombreArchivos;
+    }
+
+    public String getRutaProyecto() {
+        return rutaProyecto;
+    }
+
+    public void setRutaProyecto(String rutaProyecto) {
+        this.rutaProyecto = rutaProyecto;
+    }
+
+    public String getLenguaje() {
+        return lenguaje;
+    }
+
+    public void setLenguaje(String lenguaje) {
+        this.lenguaje = lenguaje;
+    }
+    
+    
+    
     
     
 }

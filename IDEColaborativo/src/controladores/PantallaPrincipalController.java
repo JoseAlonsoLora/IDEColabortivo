@@ -5,8 +5,11 @@
  */
 package controladores;
 
+import clasesApoyo.ArchivoConfiguracion;
 import clasesApoyo.MyTab;
 import clasesApoyo.MyTreeItem;
+import clasesApoyo.MyTreeItemCarpeta;
+import clasesApoyo.MyTreeItemProyecto;
 import com.jfoenix.controls.JFXButton;
 import componentes.FormatoCodigo;
 import conexion.node.ConexionNode;
@@ -49,6 +52,7 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableColumn.CellDataFeatures;
@@ -160,10 +164,7 @@ public class PantallaPrincipalController implements Initializable {
         tablaProyectos.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldVal, Object newVal) {
-                if ("class javafx.scene.control.TreeItem".equals(newVal.getClass().toString())) {
-                    TreeItem treeItem = (TreeItem) newVal;
-                } else {
-
+                if ("class clasesApoyo.MyTreeItem".equals(newVal.getClass().toString())) {
                     MyTreeItem treeItem = (MyTreeItem) newVal;
                     if (!buscarArchivosAbiertos(treeItem, tabsAbiertos)) {
                         MyTab tab = new MyTab(treeItem.getArchivo().getNombreArchivo());
@@ -354,22 +355,26 @@ public class PantallaPrincipalController implements Initializable {
         }
 
     }
-    
-    public void invitacionEnviada(){
+
+    public void invitacionEnviada() {
         mensajeAlert("", recurso.getString("mensajeInvitacionEnviada"));
     }
-    
 
     public void cargarProyectos() {
         Proyecto proyecto = new Proyecto();
         proyectos = proyecto.cargarProyectos();
-        ArrayList<TreeItem<String>> carpetas;
-        ArrayList<TreeItem<String>> proyectosArbol = new ArrayList();
+        ArrayList<MyTreeItemCarpeta> carpetas;
+        ArrayList<MyTreeItemProyecto> proyectosArbol = new ArrayList();
         for (Proyecto proyecto1 : proyectos) {
-            TreeItem<String> hijo = new TreeItem<>(proyecto1.getNombreProyecto(),
+            ArrayList<String> nombreCarpetas = new ArrayList();
+            MyTreeItemProyecto hijo = new MyTreeItemProyecto(proyecto1.getNombreProyecto(),
                     crearIconoLenguaje(proyecto1.getLenguaje()));
-            carpetas = agregarCarpetasArbol(proyecto1);
+            carpetas = agregarCarpetasArbol(proyecto1,nombreCarpetas);
             hijo.getChildren().setAll(carpetas);
+            hijo.setNombreProyecto(proyecto1.getNombreProyecto());
+            hijo.setLenguaje(proyecto1.getLenguaje());
+            hijo.setRuta(proyecto1.getRutaProyecto());
+            hijo.setNombreCarpetas(nombreCarpetas);
             proyectosArbol.add(hijo);
 
         }
@@ -381,8 +386,13 @@ public class PantallaPrincipalController implements Initializable {
     }
 
     public void cargarNuevoProyecto(Proyecto proyecto) {
-        TreeItem<String> hijo = new TreeItem<>(proyecto.getNombreProyecto(), crearIconoLenguaje(proyecto.getLenguaje()));
-        hijo.getChildren().setAll(agregarCarpetasArbol(proyecto));
+        MyTreeItemProyecto hijo = new MyTreeItemProyecto(proyecto.getNombreProyecto(), crearIconoLenguaje(proyecto.getLenguaje()));
+        ArrayList<String> nombreCarpetas = new ArrayList();
+        hijo.getChildren().setAll(agregarCarpetasArbol(proyecto,nombreCarpetas));
+        hijo.setNombreProyecto(proyecto.getNombreProyecto());
+        hijo.setLenguaje(proyecto.getLenguaje());
+        hijo.setRuta(proyecto.getRutaProyecto());
+        hijo.setNombreCarpetas(nombreCarpetas);
         root.getChildren().add(hijo);
         columnaProyectos.setCellValueFactory((CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
         tablaProyectos.setRoot(root);
@@ -448,24 +458,32 @@ public class PantallaPrincipalController implements Initializable {
         return lenguaje;
     }
 
-    public ArrayList<TreeItem<String>> agregarCarpetasArbol(Proyecto proyecto) {
+    public ArrayList<MyTreeItemCarpeta> agregarCarpetasArbol(Proyecto proyecto,ArrayList<String> nombreCarpetas) {
         ArrayList<Carpeta> carpetasProyecto = proyecto.getCarpetas();
-        ArrayList<TreeItem<String>> carpetas = new ArrayList();
+        ArrayList<MyTreeItemCarpeta> carpetas = new ArrayList();
+        ArrayList<String> nombreArchivos = new ArrayList();
         for (Carpeta carpeta : carpetasProyecto) {
-            TreeItem<String> hijo = new TreeItem<>(carpeta.getNombreCarpeta(), crearIconoCarpeta());
-            hijo.getChildren().addAll(agregarArchivosArbol(carpeta, proyecto.getLenguaje()));
+            MyTreeItemCarpeta hijo = new MyTreeItemCarpeta(carpeta.getNombreCarpeta(), crearIconoCarpeta());
+            hijo.getChildren().addAll(agregarArchivosArbol(carpeta, proyecto.getLenguaje(),nombreArchivos));
+            hijo.setNombreCarpeta(carpeta.getNombreCarpeta());
+            hijo.setRuta(carpeta.getRutaCarpeta());
+            hijo.setNombreArchivos(nombreArchivos);
+            hijo.setRutaProyecto(proyecto.getRutaProyecto());
+            hijo.setLenguaje(proyecto.getLenguaje());
+            nombreCarpetas.add(carpeta.getNombreCarpeta());
             carpetas.add(hijo);
         }
 
         return carpetas;
     }
 
-    public ArrayList<MyTreeItem> agregarArchivosArbol(Carpeta carpeta, String lenguaje) {
+    public ArrayList<MyTreeItem> agregarArchivosArbol(Carpeta carpeta, String lenguaje,ArrayList<String> nombreArchivos) {
         ArrayList<Archivo> archivos = carpeta.getArchivos();
         ArrayList<MyTreeItem> treeArchivos = new ArrayList();
         for (Archivo archivo : archivos) {
             MyTreeItem hijo = new MyTreeItem(archivo.getNombreArchivo(), crearIconoArchivo(lenguaje));
             hijo.setArchivo(archivo);
+            nombreArchivos.add(archivo.getNombreArchivo());
             treeArchivos.add(hijo);
 
         }
@@ -557,14 +575,14 @@ public class PantallaPrincipalController implements Initializable {
     public void ejecutarLocal(TabPane tablaArchivos) {
         if (compilarArchivo(tablaArchivos, false, true)) {
             MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
-            ventanaEjecutar(recurso, tabSeleccionado.getTreeItem().getArchivo(),controlador,false);
+            ventanaEjecutar(recurso, tabSeleccionado.getTreeItem().getArchivo(), controlador, false);
         }
     }
 
     public void ejecutarColaborativo(TabPane tablaArchivos) {
         if (compilarArchivo(tablaArchivos, true, true)) {
             MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
-            ventanaEjecutar(recurso, tabSeleccionado.getTreeItem().getArchivo(),controlador,true);
+            ventanaEjecutar(recurso, tabSeleccionado.getTreeItem().getArchivo(), controlador, true);
         }
     }
 
@@ -581,7 +599,7 @@ public class PantallaPrincipalController implements Initializable {
     public void hacerVisiblePantallaprincipal() {
         stagePantallaPrincipal.show();
     }
-    
+
     public void hacerInVisiblePantallaprincipal() {
         stagePantallaPrincipal.hide();
     }
@@ -592,10 +610,68 @@ public class PantallaPrincipalController implements Initializable {
 
     @FXML
     private void agregarPaquete(ActionEvent event) {
+        if (tablaProyectos.getSelectionModel().getSelectedItem() != null
+                && tablaProyectos.getSelectionModel().getSelectedItem().getClass().toString().equals("class clasesApoyo.MyTreeItemProyecto")) {
+            MyTreeItemProyecto treeItem = (MyTreeItemProyecto) tablaProyectos.getSelectionModel().getSelectedItem();
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("");
+            dialog.setHeaderText("Crear nuevo paquete");
+            dialog.setContentText("Nombre del paquete");
+            Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                if(treeItem.getNombreCarpetas().contains(result.get())){
+                    mensajeAlert(recurso.getString("atencion"), "el paquete ya existe");
+                }else{
+                    Carpeta carpeta = new Carpeta();
+                    carpeta.setNombreCarpeta(result.get());
+                    ArchivoConfiguracion archivoConfig = new ArchivoConfiguracion();
+                    carpeta.setRutaCarpeta(treeItem.getRuta()+archivoConfig.getNombreCarpetaCodigos()+result.get());
+                    if(carpeta.crearCarpeta(carpeta)){
+                        MyTreeItemCarpeta treeItemCarpeta = new MyTreeItemCarpeta(result.get(), crearIconoCarpeta());
+                        treeItemCarpeta.setNombreCarpeta(carpeta.getNombreCarpeta());
+                        treeItemCarpeta.setRuta(carpeta.getRutaCarpeta());
+                        treeItemCarpeta.setNombreArchivos(new ArrayList());
+                        treeItem.getNombreCarpetas().add(result.get());
+                        treeItem.getChildren().add(treeItemCarpeta);
+                    }
+                }
+                
+            } 
+        }
     }
 
     @FXML
     private void agregarArchivo(ActionEvent event) {
+         if (tablaProyectos.getSelectionModel().getSelectedItem() != null
+                && tablaProyectos.getSelectionModel().getSelectedItem().getClass().toString().equals("class clasesApoyo.MyTreeItemCarpeta")) {
+            MyTreeItemCarpeta treeItem = (MyTreeItemCarpeta) tablaProyectos.getSelectionModel().getSelectedItem();
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("");
+            dialog.setHeaderText("Crear nuevo archivo");
+            dialog.setContentText("Nombre del archivo");
+            Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                if(treeItem.getNombreArchivos().contains(result.get())){
+                    mensajeAlert(recurso.getString("atencion"), "el archivo ya existe");
+                }else{
+                    Archivo archivo = new Archivo();
+                    archivo.setNombreArchivo(result.get());
+                    ArchivoConfiguracion archivoConfig = new ArchivoConfiguracion();
+                    archivo.setRutaClases(treeItem.getRutaProyecto()+archivoConfig.getNombreCarpetaClases());
+                    archivo.setRuta(treeItem.getRuta());
+                    archivo.setContenido("");
+                    archivo.setPaquete(treeItem.getNombreCarpeta());
+                   
+                    if(archivo.crearArchivo(archivo)){
+                        MyTreeItem treeItemArchivo = new MyTreeItem(result.get(), crearIconoArchivo(treeItem.getLenguaje()));
+                        treeItemArchivo.setArchivo(archivo);
+                        treeItemArchivo.setModificado(false);
+                       treeItem.getChildren().add(treeItemArchivo);
+                    }
+                }
+                
+            } 
+        }
     }
 
 }

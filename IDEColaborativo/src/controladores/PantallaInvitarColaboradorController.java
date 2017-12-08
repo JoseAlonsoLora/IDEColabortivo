@@ -53,7 +53,7 @@ public class PantallaInvitarColaboradorController implements Initializable {
     private Label etiquetaProyecto;
     @FXML
     private JFXComboBox<String> comboProyectos;
-    
+
     private static PantallaPrincipalController controlador;
     private static Stage stagePantallaInivitar;
     private static Proyecto proyecto;
@@ -65,7 +65,6 @@ public class PantallaInvitarColaboradorController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         recurso = rb;
         configurarIdioma();
-        
 
     }
 
@@ -75,19 +74,17 @@ public class PantallaInvitarColaboradorController implements Initializable {
 
     public void setStagePantallaInivitar(Stage stagePantallaInivitar) {
         this.stagePantallaInivitar = stagePantallaInivitar;
-        this.stagePantallaInivitar.setOnCloseRequest(new EventHandler<WindowEvent>(){
-            @Override public void handle(WindowEvent event) {
+        this.stagePantallaInivitar.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
                 controlador.hacerVisiblePantallaprincipal();
-            }  
+            }
         });
     }
 
-    
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
     }
-    
-    
 
     public void setProyectos(ArrayList<Proyecto> proyectos) {
         this.proyectos = proyectos;
@@ -122,42 +119,38 @@ public class PantallaInvitarColaboradorController implements Initializable {
 
     @FXML
     private void invitarColaborador(ActionEvent event) {
-        
+
         if (!campoTextoNombreColaborador.getText().isEmpty() && comboProyectos.getValue() != null) {
             proyecto = obtenerProyectoCombo();
-            socket.emit("invitarColaborador", campoTextoNombreColaborador.getText(),crearObjetoJSON(proyecto));
-            
-            
+            socket.emit("invitarColaborador", campoTextoNombreColaborador.getText(), crearObjetoJSON(proyecto));
+
         } else {
             mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeCamposVacios"));
         }
     }
-    
-    public static void mostrarVentanaHost(){  
-        ventanaHost(recurso,proyecto,controlador);
+
+    public static void mostrarVentanaHost() {
+        ventanaHost(recurso, proyecto, controlador);
         stagePantallaInivitar.close();
     }
-    
+
     public static void invitacionErronea() {
-        mensajeAlert(recurso.getString("atencion"),recurso.getString("mensajeColaboradorNoEncontrado"));
+        mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeColaboradorNoEncontrado"));
     }
-    
+
     public static void mensajeRecursivo() {
-        mensajeAlert(recurso.getString("atencion"),recurso.getString("mensajeRecursivo"));
+        mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeRecursivo"));
     }
-    
-    
-    
-    
-    public Proyecto obtenerProyectoCombo(){
+
+    public Proyecto obtenerProyectoCombo() {
         Proyecto proyecto = null;
-        for(Proyecto proyectoColaborativo: proyectos){
-            if(comboProyectos.getValue().equals(proyectoColaborativo.getNombreProyecto())){
+        for (Proyecto proyectoColaborativo : proyectos) {
+            if (comboProyectos.getValue().equals(proyectoColaborativo.getNombreProyecto())) {
                 proyecto = proyectoColaborativo;
                 break;
             }
         }
-        
+
         return proyecto;
     }
 
@@ -182,6 +175,8 @@ public class PantallaInvitarColaboradorController implements Initializable {
                 archivoJSON.put("nombreArchivo", archivo.getNombreArchivo());
                 archivoJSON.put("contenido", archivo.getContenido());
                 archivoJSON.put("ruta", archivo.getRuta());
+                archivoJSON.put("rutaClases", archivo.getRutaClases());
+                archivoJSON.put("paquete", archivo.getPaquete());
                 arregloArchivos.put(archivoJSON);
             }
             carpetaJSON.put("archivos", arregloArchivos);

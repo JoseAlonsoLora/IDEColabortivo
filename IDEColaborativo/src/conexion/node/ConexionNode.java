@@ -5,6 +5,7 @@
  */
 package conexion.node;
 
+import controladores.PantallaHostController;
 import static controladores.PantallaHostController.colaboradorConectado;
 import static controladores.PantallaInvitarColaboradorController.invitacionErronea;
 import static controladores.PantallaInvitarColaboradorController.mostrarVentanaHost;
@@ -12,6 +13,7 @@ import static controladores.PantallaInvitadoController.finalizarSesion;
 import static controladores.PantallaHostController.colaboradorDesconectado;
 import static controladores.PantallaInvitarColaboradorController.mensajeRecursivo;
 import static controladores.PantallaHostController.escribirCodigoHost;
+import controladores.PantallaInvitadoController;
 import static controladores.PantallaInvitadoController.escribirCodigoInvitado;
 import controladores.PantallaPrincipalController;
 import io.socket.client.IO;
@@ -30,11 +32,13 @@ import org.json.JSONObject;
 public class ConexionNode {
      private Socket socket;
      private PantallaPrincipalController controlador;
+     private PantallaInvitadoController controladorInvitado;
+     private PantallaHostController controladorHost;
 
     public ConexionNode(PantallaPrincipalController controlador){
         this.controlador = controlador;
          try {
-             socket = IO.socket("http://192.168.43.221:9000");
+             socket = IO.socket("http://localhost:9000");
              socket.on("saludoDelBarrio", new Emitter.Listener() {
             @Override
             public void call(Object... os) {
@@ -105,6 +109,41 @@ public class ConexionNode {
                   escribirCodigoInvitado((String)os[0],(String)os[1]);
                 });
             }
+        }).on("abrirTabInvitado", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                Platform.runLater(() -> {
+                  controladorInvitado.abrirTabInvitado((JSONObject)os[0]);
+                });
+            }
+        }).on("abrirTabHost", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                Platform.runLater(() -> {
+                  controladorHost.abrirTabHost((JSONObject)os[0]);
+                });
+            }
+        }).on("mensajeCompilacionExitosa", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                Platform.runLater(() -> {
+                  controladorInvitado.mostrarMensajeCompilacionExitosa();
+                });
+            }
+        }).on("mensajeErrorCompilacion", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                Platform.runLater(() -> {
+                  controladorInvitado.mostrarMensajeErrorCompilacion((String)os[0]);
+                });
+            }
+        }).on("resultadoEjecucion", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                Platform.runLater(() -> {
+                  controladorInvitado.mostrarResultadoEjecucion((String)os[0]);
+                });
+            }
         });
         socket.connect();
          } catch (URISyntaxException ex) {
@@ -121,6 +160,16 @@ public class ConexionNode {
     public void setSocket(Socket socket) {
         this.socket = socket;
     }
+
+    public void setControladorInvitado(PantallaInvitadoController controladorInvitado) {
+        this.controladorInvitado = controladorInvitado;
+    }
+
+    public void setControladorHost(PantallaHostController controladorHost) {
+        this.controladorHost = controladorHost;
+    }
+    
+    
      
     
 }

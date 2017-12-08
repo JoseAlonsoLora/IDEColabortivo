@@ -160,7 +160,8 @@ public class IDEColaborativo extends Application {
         alert.showAndWait();
     }
 
-    public static void ventanaEjecutar(ResourceBundle recurso, Archivo archivo, PantallaPrincipalController controlador) {
+    public static void ventanaEjecutar(ResourceBundle recurso, Archivo archivo, 
+            PantallaPrincipalController controlador,boolean esColaborativo) {
         try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaEjecutar.fxml"), recurso);
@@ -168,11 +169,11 @@ public class IDEColaborativo extends Application {
             PantallaEjecutarController control = loader.getController();
             control.setArchivo(archivo);
             control.setControlador(controlador);
+            control.setEsColaborativo(esColaborativo);
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setResizable(false);
             stage.show();
-            control.setStagePantallaEjecutar(stage);
         } catch (IOException ex) {
             Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
         }

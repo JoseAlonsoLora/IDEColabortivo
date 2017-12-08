@@ -6,8 +6,11 @@
 package controladores;
 
 import clasesApoyo.MyTab;
+import clasesApoyo.MyTreeItem;
 import com.jfoenix.controls.JFXButton;
+import componentes.FormatoCodigo;
 import static idecolaborativo.IDEColaborativo.mensajeAlert;
+import static idecolaborativo.IDEColaborativo.resultadoCompilacion;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -20,6 +23,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import modelo.negocio.Archivo;
@@ -57,11 +61,11 @@ public class PantallaInvitadoController implements Initializable {
      */
     public void setProyecto(JSONObject proyecto) {
         this.proyecto = proyecto;
-        // TODO
     }
 
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
+        controlador.getConexionNode().setControladorInvitado(this);
     }
 
     public void setStagePantallaInvitado(Stage stagePantallaInvitado) {
@@ -112,6 +116,8 @@ public class PantallaInvitadoController implements Initializable {
                 archivoNegocio.setNombreArchivo(archivo.getString("nombreArchivo"));
                 archivoNegocio.setRuta(archivo.getString("ruta"));
                 archivoNegocio.setContenido(archivo.getString("contenido"));
+                archivoNegocio.setRutaClases(archivo.getString("rutaClases"));
+                archivoNegocio.setPaquete(archivo.getString("paquete"));
                 archivos.add(archivoNegocio);
             }
             carpetaNegocio.setArchivos(archivos);
@@ -135,5 +141,47 @@ public class PantallaInvitadoController implements Initializable {
                 ((CodeArea) myTab.getContent()).replaceText(texto);
             }
         }
+    }
+    
+    public static Archivo transformarJSONArchivo(JSONObject archivoJSON) {
+        Archivo archivo = new Archivo();
+        archivo.setNombreArchivo(archivoJSON.getString("nombreArchivo"));
+        archivo.setRuta(archivoJSON.getString("ruta"));
+        archivo.setRutaClases(archivoJSON.getString("rutaClases"));
+        archivo.setContenido(archivoJSON.getString("contenido"));
+        archivo.setPaquete(archivoJSON.getString("paquete"));
+        return archivo;
+    }
+    
+    public void abrirTabInvitado(JSONObject archivoJSON) {
+        Archivo archivo = transformarJSONArchivo(archivoJSON);
+        MyTreeItem treeItem = new MyTreeItem();
+        treeItem.setArchivo(archivo);
+        MyTab tab = new MyTab(archivo.getNombreArchivo());
+        FormatoCodigo areaCodigo = new FormatoCodigo();
+        areaCodigo.setSampleCode(treeItem.getArchivo().getContenido());
+        tab.setContent(areaCodigo.crearAreaCodigo());
+        areaCodigo.getCodeArea().setOnKeyTyped(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                treeItem.setModificado(true);
+                controlador.getSocket().emit("escribirCodigo", areaCodigo.getCodeArea().getText(), treeItem.getArchivo().getRuta()+treeItem.getArchivo().getNombreArchivo());
+            }
+        });
+        tab.setTreeItem(treeItem);
+        tablaArchivos.getTabs().add(tab);
+        tabsAbiertosInvitado.add(tab);
+    }
+    
+    public void mostrarMensajeCompilacionExitosa(){
+        mensajeAlert(recurso.getString("felicidades"), recurso.getString("mensajeCompilacionExitosa"));
+    }
+    
+    public void mostrarMensajeErrorCompilacion(String errorCompilacion){
+         resultadoCompilacion(errorCompilacion, recurso);
+    }
+    
+    public void mostrarResultadoEjecucion(String resultado){
+        mensajeAlert("Resultado de ejecución", resultado);
     }
 }

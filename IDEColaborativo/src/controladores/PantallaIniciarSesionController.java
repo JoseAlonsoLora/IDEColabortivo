@@ -67,7 +67,7 @@ public class PantallaIniciarSesionController implements Initializable {
 
     public void inicializarRegistro() {
         try {
-            Registry registry = LocateRegistry.getRegistry("192.168.43.221");
+            Registry registry = LocateRegistry.getRegistry(null);
             stub = (IProgramador) registry.lookup("AdministrarUsuarios");
         } catch (RemoteException | NotBoundException ex) {
             System.out.println(ex.getMessage());
@@ -119,6 +119,7 @@ public class PantallaIniciarSesionController implements Initializable {
                         conexionNode.getSocket().emit("agregarNombre", campoTextoNombreUsuario.getText());
                         controlador.sesionIniciada(campoTextoNombreUsuario.getText());
                         controlador.setSocket(conexionNode.getSocket());
+                        controlador.setConexionNode(conexionNode);
                         controlador.hacerVisiblePantallaprincipal();
                         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                         stage.close();

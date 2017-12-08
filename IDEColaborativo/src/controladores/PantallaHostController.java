@@ -6,7 +6,10 @@
 package controladores;
 
 import clasesApoyo.MyTab;
+import clasesApoyo.MyTreeItem;
 import com.jfoenix.controls.JFXButton;
+import componentes.FormatoCodigo;
+import static controladores.PantallaInvitadoController.transformarJSONArchivo;
 import static idecolaborativo.IDEColaborativo.mensajeAlert;
 import java.net.URL;
 import java.util.ArrayList;
@@ -20,10 +23,13 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import modelo.negocio.Archivo;
 import modelo.negocio.Proyecto;
 import org.fxmisc.richtext.CodeArea;
+import org.json.JSONObject;
 
 /**
  * FXML Controller class
@@ -66,6 +72,7 @@ public class PantallaHostController implements Initializable {
 
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
+        controlador.getConexionNode().setControladorHost(this);
     }
 
     public void setStagePantallaHost(Stage stagePantallaHost) {
@@ -82,14 +89,17 @@ public class PantallaHostController implements Initializable {
 
     @FXML
     private void guardarArchivo(ActionEvent event) {
+        controlador.guardarArchivo(tablaArchivos);
     }
 
     @FXML
     private void compilar(ActionEvent event) {
+        controlador.compilarArchivo(tablaArchivos, true, false);
     }
 
     @FXML
     private void ejecutar(ActionEvent event) {
+        controlador.ejecutarArchivo(tablaArchivos, true);
     }
     
     public static void colaboradorConectado(String nombre){
@@ -116,5 +126,30 @@ public class PantallaHostController implements Initializable {
                 ((CodeArea) myTab.getContent()).replaceText(texto);
             }
         }
-    } 
+    }
+    
+    public void abrirTabHost(JSONObject archivoJSON) {
+        Archivo archivo = transformarJSONArchivo(archivoJSON);
+        MyTreeItem treeItem = new MyTreeItem();
+        treeItem.setArchivo(archivo);
+        MyTab tab = new MyTab(archivo.getNombreArchivo());
+        FormatoCodigo areaCodigo = new FormatoCodigo();
+        areaCodigo.setSampleCode(treeItem.getArchivo().getContenido());
+        tab.setContent(areaCodigo.crearAreaCodigo());
+        areaCodigo.getCodeArea().setOnKeyTyped(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                treeItem.setModificado(true);
+                controlador.getSocket().emit("escribirCodigo", areaCodigo.getCodeArea().getText(), treeItem.getArchivo().getRuta()+treeItem.getArchivo().getNombreArchivo());
+            }
+        });
+        tab.setTreeItem(treeItem);
+        tablaArchivos.getTabs().add(tab);
+        tabsAbiertosHost.add(tab);
+    }
+    
+   
+
+    
+    
 }

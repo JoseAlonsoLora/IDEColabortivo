@@ -9,6 +9,7 @@ import clasesApoyo.MyTab;
 import clasesApoyo.MyTreeItem;
 import com.jfoenix.controls.JFXButton;
 import componentes.FormatoCodigo;
+import conexion.node.ConexionNode;
 import conexion.operaciones.IProgramador;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
 import static idecolaborativo.IDEColaborativo.mensajeAlert;
@@ -48,7 +49,6 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableColumn.CellDataFeatures;
@@ -117,6 +117,8 @@ public class PantallaPrincipalController implements Initializable {
 
     private IProgramador stub;
 
+    private ConexionNode conexionNode;
+
     /**
      * Initializes the controller class.
      */
@@ -135,12 +137,12 @@ public class PantallaPrincipalController implements Initializable {
         tablaArchivos.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
         cargarProyectos();
         handlerTablaProyectos(tablaProyectos, tabsAbiertos, tablaArchivos, false);
-        
+
     }
 
     public void inicializarRegistro() {
         try {
-            Registry registry = LocateRegistry.getRegistry("192.168.43.221");
+            Registry registry = LocateRegistry.getRegistry(null);
             stub = (IProgramador) registry.lookup("AdministrarUsuarios");
         } catch (RemoteException | NotBoundException ex) {
             System.out.println(ex.getMessage());
@@ -157,7 +159,7 @@ public class PantallaPrincipalController implements Initializable {
                 } else {
 
                     MyTreeItem treeItem = (MyTreeItem) newVal;
-                    if (!buscarArchivosAbiertos(treeItem,tabsAbiertos)) {
+                    if (!buscarArchivosAbiertos(treeItem, tabsAbiertos)) {
                         MyTab tab = new MyTab(treeItem.getArchivo().getNombreArchivo());
                         FormatoCodigo areaCodigo = new FormatoCodigo();
                         areaCodigo.setSampleCode(treeItem.getArchivo().getContenido());
@@ -169,16 +171,17 @@ public class PantallaPrincipalController implements Initializable {
                                     treeItem.setModificado(true);
                                 }
                             });
-                        }else{
+                        } else {
                             areaCodigo.getCodeArea().setOnKeyTyped(new EventHandler<KeyEvent>() {
                                 @Override
                                 public void handle(KeyEvent event) {
-                                   treeItem.setModificado(true);
-                                 
-                                   socket.emit("escribirCodigo", areaCodigo.getCodeArea().getText(),treeItem.getArchivo().getRuta()+treeItem.getArchivo().getNombreArchivo());
-                                   
+                                    treeItem.setModificado(true);
+
+                                    socket.emit("escribirCodigo", areaCodigo.getCodeArea().getText(), treeItem.getArchivo().getRuta() + treeItem.getArchivo().getNombreArchivo());
+
                                 }
                             });
+                            socket.emit("abrirTab", crearObjetoJSONArchivo(treeItem.getArchivo()));
                         }
 
                         tab.setTreeItem(treeItem);
@@ -191,11 +194,23 @@ public class PantallaPrincipalController implements Initializable {
             }
         });
     }
-    
-    public boolean buscarArchivosAbiertos(MyTreeItem myTreeItem,ArrayList<MyTab> tabsAbiertos){
+
+    public JSONObject crearObjetoJSONArchivo(Archivo archivo) {
+        JSONObject archivoJSON = new JSONObject();
+        archivoJSON.put("nombreArchivo", archivo.getNombreArchivo());
+        archivoJSON.put("ruta", archivo.getRuta());
+        archivoJSON.put("contenido", archivo.getContenido());
+        archivoJSON.put("rutaClases", archivo.getRutaClases());
+        archivoJSON.put("paquete", archivo.getPaquete());
+        return archivoJSON;
+    }
+
+    public boolean buscarArchivosAbiertos(MyTreeItem myTreeItem, ArrayList<MyTab> tabsAbiertos) {
         boolean estaAbierto = false;
-        for(MyTab myTab:tabsAbiertos){
-            if(myTab.getTreeItem().equals(myTreeItem)){
+        for (MyTab myTab : tabsAbiertos) {
+            if ((myTab.getTreeItem().getArchivo().getRuta()
+                    + myTab.getTreeItem().getArchivo().getNombreArchivo()).equals(myTreeItem.getArchivo().getRuta()
+                    + myTreeItem.getArchivo().getNombreArchivo())) {
                 estaAbierto = true;
                 break;
             }
@@ -228,7 +243,7 @@ public class PantallaPrincipalController implements Initializable {
                 tabsAbiertos.remove(tab);
             }
         });
-       
+
     }
 
     public void setStagePantallaPrincipal(Stage stagePantallaPrincipal) {
@@ -251,6 +266,14 @@ public class PantallaPrincipalController implements Initializable {
 
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
+    }
+
+    public ConexionNode getConexionNode() {
+        return conexionNode;
+    }
+
+    public void setConexionNode(ConexionNode conexionNode) {
+        this.conexionNode = conexionNode;
     }
 
     public void setSocket(Socket socket) {
@@ -440,6 +463,10 @@ public class PantallaPrincipalController implements Initializable {
 
     @FXML
     private void botonGuardarArchivo(ActionEvent event) {
+        guardarArchivo(tablaArchivos);
+    }
+
+    public void guardarArchivo(TabPane tablaArchivos) {
         if (tablaArchivos.getSelectionModel().getSelectedItem() != null) {
             CodeArea area = (CodeArea) tablaArchivos.getSelectionModel().getSelectedItem().getContent();
             MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
@@ -451,34 +478,82 @@ public class PantallaPrincipalController implements Initializable {
     }
 
     @FXML
-    private boolean botonCompilar(ActionEvent event) {
+    private void botonCompilar(ActionEvent event) {
+        compilarArchivo(tablaArchivos, false, false);
+    }
+
+    public boolean compilarArchivo(TabPane tablaArchivos, boolean esColaborativo, boolean ejecucion) {
         boolean compilo = false;
         if (tablaArchivos.getSelectionModel().getSelectedItem() != null) {
-            botonGuardarArchivo(null);
+            guardarArchivo(tablaArchivos);
             MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
             Archivo archivo = tabSeleccionado.getTreeItem().getArchivo();
             String resultado = archivo.compilarArchivo(archivo);
-            if (resultado.isEmpty()) {
-                compilo = true;
-                if (event != null) {
-                    mensajeAlert(recurso.getString("felicidades"), recurso.getString("mensajeCompilacionExitosa"));
-                }
+            if (esColaborativo) {
+                compilo = compilarColaborativo(resultado, ejecucion);
             } else {
-                resultadoCompilacion(resultado, recurso);
+                compilo = compilarLocal(resultado, ejecucion);
             }
+
+        }
+        return compilo;
+    }
+
+    public boolean compilarLocal(String resultado, boolean ejecucion) {
+        boolean compilo = false;
+        if (resultado.isEmpty()) {
+            compilo = true;
+            if (!ejecucion) {
+                mensajeAlert(recurso.getString("felicidades"), recurso.getString("mensajeCompilacionExitosa"));
+            }
+        } else {
+            resultadoCompilacion(resultado, recurso);
+        }
+        return compilo;
+    }
+
+    public boolean compilarColaborativo(String resultado, boolean ejecucion) {
+        boolean compilo = false;
+        if (resultado.isEmpty()) {
+            compilo = true;
+            if (!ejecucion) {
+                socket.emit("mensajeCompilacionExitosa");
+                mensajeAlert(recurso.getString("felicidades"), recurso.getString("mensajeCompilacionExitosa"));
+            }
+        } else {
+            socket.emit("mensajeErrorCompilacion", resultado);
+            resultadoCompilacion(resultado, recurso);
         }
         return compilo;
     }
 
     @FXML
     private void botonEjecutar(ActionEvent event) {
+        ejecutarArchivo(tablaArchivos, false);
+    }
+
+    public void ejecutarArchivo(TabPane tablaArchivos, boolean esColaborativo) {
         if (tablaArchivos.getSelectionModel().getSelectedItem() != null) {
-            if (botonCompilar(null)) {
-                stagePantallaPrincipal.hide();
-                MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
-                ventanaEjecutar(recurso, tabSeleccionado.getTreeItem().getArchivo(), controlador);
+            if (esColaborativo) {
+                ejecutarColaborativo(tablaArchivos);
+            } else {
+                ejecutarLocal(tablaArchivos);
             }
 
+        }
+    }
+
+    public void ejecutarLocal(TabPane tablaArchivos) {
+        if (compilarArchivo(tablaArchivos, false, true)) {
+            MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
+            ventanaEjecutar(recurso, tabSeleccionado.getTreeItem().getArchivo(),controlador,false);
+        }
+    }
+
+    public void ejecutarColaborativo(TabPane tablaArchivos) {
+        if (compilarArchivo(tablaArchivos, true, true)) {
+            MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
+            ventanaEjecutar(recurso, tabSeleccionado.getTreeItem().getArchivo(),controlador,true);
         }
     }
 

@@ -84,10 +84,10 @@ public class FormatoCodigo {
     private boolean codigoModificado;
 
     public FormatoCodigo() {
-       codigoModificado = false;
+        codigoModificado = false;
     }
-    
-    public CodeArea getCodeArea(){
+
+    public CodeArea getCodeArea() {
         return codeArea;
     }
 
@@ -98,14 +98,11 @@ public class FormatoCodigo {
     public void setCodigoModificado(boolean codigoModificado) {
         this.codigoModificado = codigoModificado;
     }
-    
-    
-    
-    public void setSampleCode(String sampleCode){
+
+    public void setSampleCode(String sampleCode) {
         this.sampleCode = sampleCode;
     }
-    
-    
+
     public CodeArea crearAreaCodigo() {
         executor = Executors.newSingleThreadExecutor();
         codeArea = new CodeArea();
@@ -144,7 +141,11 @@ public class FormatoCodigo {
     }
 
     private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
-        codeArea.setStyleSpans(0, highlighting);
+        try {
+            codeArea.setStyleSpans(0, highlighting);
+        } catch (IllegalStateException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     private static StyleSpans<Collection<String>> computeHighlighting(String text) {

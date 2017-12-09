@@ -64,9 +64,9 @@ public class PantallaRegistrarUsuarioController implements Initializable {
     private static final String PATTERN_EMAIL = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private final String mensajeAtencion = "atencion";
-    
+
     private Stage stagePantallaRegistrarUsuario;
-    
+
     /**
      * Initializes the controller class.
      */
@@ -74,31 +74,31 @@ public class PantallaRegistrarUsuarioController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         this.recurso = rb;
         configurarIdioma();
+    }
+
+    public void setControlador(PantallaPrincipalController controlador) {
+        this.controlador = controlador;
         inicializarRegistro();
     }
 
     public void inicializarRegistro() {
         try {
-            Registry registry = LocateRegistry.getRegistry(null);
+            Registry registry = LocateRegistry.getRegistry(controlador.getDireccionIP());
             stub = (IProgramador) registry.lookup("AdministrarUsuarios");
         } catch (RemoteException | NotBoundException ex) {
             System.out.println(ex.getMessage());
         }
     }
 
-    public void setControlador(PantallaPrincipalController controlador) {
-        this.controlador = controlador;
-    }
-
     public void setStagePantallaRegistrarUsuario(Stage stagePantallaRegistrarUsuario) {
         this.stagePantallaRegistrarUsuario = stagePantallaRegistrarUsuario;
-        this.stagePantallaRegistrarUsuario.setOnCloseRequest(new EventHandler<WindowEvent>(){
-            @Override public void handle(WindowEvent event) {
+        this.stagePantallaRegistrarUsuario.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
                 controlador.hacerVisiblePantallaprincipal();
-            }  
+            }
         });
     }
-    
 
     public void configurarIdioma() {
         etiquetaCrearCuenta.setText(recurso.getString("etCrearCuenta"));
@@ -120,30 +120,38 @@ public class PantallaRegistrarUsuarioController implements Initializable {
     private void botonCrearCuenta(ActionEvent event) {
         Programador programador = new Programador();
         if (campoTextoContraseña.getText().isEmpty() || campoTextoCorreoElectronico.getText().isEmpty() || campoTextoNombreUsuario.getText().isEmpty()) {
-            mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeCamposVacios"));       
+            mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeCamposVacios"));
         } else {
             if (validarCorreo(campoTextoCorreoElectronico.getText())) {
-                programador.setNombreUsuario(campoTextoNombreUsuario.getText());
-                programador.setContraseña(PantallaIniciarSesionController.makeHash(campoTextoContraseña.getText()));
-                programador.setCorreoElectronico(campoTextoCorreoElectronico.getText());
+                if (datosRegistroValidos()) {
+                    programador.setNombreUsuario(campoTextoNombreUsuario.getText());
+                    programador.setContraseña(PantallaIniciarSesionController.makeHash(campoTextoContraseña.getText()));
+                    programador.setCorreoElectronico(campoTextoCorreoElectronico.getText());
 
-                try {
+                    try {
 
-                    if (stub.registrarUsuario(programador)) {
-                        mensajeAlert(recurso.getString("felicidades"), recurso.getString("mensajeCuentaCreada"));       
-                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                        stage.close();
-                    } else {
-                        mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeNombreUsuarioExistente"));
+                        if (stub.registrarUsuario(programador)) {
+                            mensajeAlert(recurso.getString("felicidades"), recurso.getString("mensajeCuentaCreada"));
+                            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                            stage.close();
+                        } else {
+                            mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeNombreUsuarioExistente"));
 
+                        }
+                    } catch (RemoteException | java.lang.NullPointerException ex) {
+                        mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeNoConexion"));
                     }
-                } catch (RemoteException | java.lang.NullPointerException ex) {
-                    mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeNoConexion"));
+                } else {
+                    mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeDatosInvalidos"));
                 }
             } else {
                 mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeCorreoInvalido"));
             }
         }
+    }
+
+    public boolean datosRegistroValidos() {
+        return campoTextoNombreUsuario.getText().length() <= 20 && campoTextoCorreoElectronico.getText().length() <= 50;
     }
 
     @FXML

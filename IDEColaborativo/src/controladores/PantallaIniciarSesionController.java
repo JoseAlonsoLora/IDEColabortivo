@@ -62,31 +62,31 @@ public class PantallaIniciarSesionController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         this.recurso = rb;
         configurarIdioma();
+    }
+
+    public void setControlador(PantallaPrincipalController controlador) {
+        this.controlador = controlador;
         inicializarRegistro();
     }
 
     public void inicializarRegistro() {
         try {
-            Registry registry = LocateRegistry.getRegistry("192.168.0.15");
+            Registry registry = LocateRegistry.getRegistry(controlador.getDireccionIP());
             stub = (IProgramador) registry.lookup("AdministrarUsuarios");
         } catch (RemoteException | NotBoundException ex) {
             System.out.println(ex.getMessage());
         }
     }
 
-    public void setControlador(PantallaPrincipalController controlador) {
-        this.controlador = controlador;
-    }
-
     public void setStagePantallaIniciarSesion(Stage stagePantallaIniciarSesion) {
         this.stagePantallaIniciarSesion = stagePantallaIniciarSesion;
-        this.stagePantallaIniciarSesion.setOnCloseRequest(new EventHandler<WindowEvent>(){
-            @Override public void handle(WindowEvent event) {
+        this.stagePantallaIniciarSesion.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
                 controlador.hacerVisiblePantallaprincipal();
-            }  
+            }
         });
     }
-    
 
     public void configurarIdioma() {
         etiquetaIniciarSesion.setText(recurso.getString("etInicioSesion"));
@@ -125,7 +125,7 @@ public class PantallaIniciarSesionController implements Initializable {
                         stage.close();
                         break;
                     case DatosInvalidos:
-                         mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeDatosIncorrectos"));
+                        mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeDatosIncorrectos"));
                         break;
                     case SesionIniciada:
                         mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeSesionIniciada"));

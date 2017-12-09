@@ -5,6 +5,7 @@
  */
 package modelo.negocio;
 
+import clasesApoyo.HiloCompilador;
 import static com.sun.javafx.PlatformUtil.isWindows;
 import controladores.PantallaPrincipalController;
 import java.io.BufferedReader;
@@ -69,12 +70,12 @@ public class Archivo {
         this.ruta = ruta;
     }
 
-    public String compilarArchivo(Archivo archivo) {
+    public String compilarArchivo(Archivo archivo, String rutaProyecto) {
         String resultado = "";
         String[] lenguaje = archivo.getNombreArchivo().split("\\.");
         switch (lenguaje[1]) {
             case "java":
-                resultado = compilarJava(archivo);
+                resultado = compilarJava(archivo, rutaProyecto);
                 break;
             case "cs":
                 break;
@@ -87,11 +88,13 @@ public class Archivo {
         return resultado;
 
     }
+    
 
     public String compilador(String comando, String ruta) {
         StringBuilder resultadoCompilacion = new StringBuilder();
         ProcessBuilder procesoCompilar;
         try {
+            
             if (isWindows()) {
                 procesoCompilar = new ProcessBuilder("cmd.exe", "/c", comando);
             } else {
@@ -99,33 +102,37 @@ public class Archivo {
             }
             procesoCompilar.directory(new File(ruta));
             procesoCompilar.redirectErrorStream(true);
-            Process process = procesoCompilar.start();
-            InputStream out = process.getInputStream();
-            String auxiliar;
-            try (BufferedReader lector = new BufferedReader(new InputStreamReader(out))) {
-                while ((auxiliar = lector.readLine()) != null) {
-                    resultadoCompilacion.append(auxiliar).append("\n");
-                }
-            }
-
-        } catch (IOException ex) {
+            HiloCompilador hilo = new HiloCompilador(procesoCompilar);
+            hilo.start();
+            Thread.sleep(1000);
+            hilo.interrupt();
+            resultadoCompilacion = hilo.getResultadoCompilacion();          
+        } catch (InterruptedException ex) {
             Logger.getLogger(Archivo.class.getName()).log(Level.SEVERE, null, ex);
         }
         return resultadoCompilacion.toString();
     }
 
-    public String compilarJava(Archivo archivo) {
-        String rutaClase = rutaClases;
+    public String compilarJava(Archivo archivo, String rutaProyecto) {
+        String rutaClase = archivo.getRutaClases();
+        StringBuilder comando = new StringBuilder();
+        String caracter;
         File file = new File(rutaClase);
         if (!file.exists()) {
             file.mkdir();
         }
-        String comando = "javac -d " + rutaClase + " " + archivo.getNombreArchivo();
-        return compilador(comando, archivo.getRuta());
+        if (isWindows()) {
+            caracter = ".;";
+        } else {
+            caracter = ".:";
+        }
+        comando.append("javac -cp ").append("\"").append(caracter).append(rutaProyecto).append("/codigo/").append("\"")
+                .append(" -d ").append(rutaClase).append(" ").append(archivo.getNombreArchivo());
+        return compilador(comando.toString(), archivo.getRuta());
     }
 
     public String complilarCPlusPlus(Archivo archivo, String nombre) {
-        String rutaClase = rutaClases;
+        String rutaClase = archivo.getRutaClases();
         File file = new File(rutaClase);
         if (!file.exists()) {
             file.mkdir();
@@ -224,7 +231,7 @@ public class Archivo {
         String ruta = archivo.getRuta() + "/" + archivo.getNombreArchivo();
         File file = new File(ruta);
         try {
-            seCreo= file.createNewFile();
+            seCreo = file.createNewFile();
         } catch (IOException ex) {
             Logger.getLogger(Archivo.class.getName()).log(Level.SEVERE, null, ex);
         }

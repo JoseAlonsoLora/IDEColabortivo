@@ -8,6 +8,7 @@ package idecolaborativo;
 import componentes.FormatoCodigo;
 import controladores.PantallaCambiarIdiomaController;
 import controladores.PantallaCrearProyectoController;
+import controladores.PantallaDireccionIPController;
 import controladores.PantallaEjecutarController;
 import controladores.PantallaHostController;
 import controladores.PantallaIniciarSesionController;
@@ -233,6 +234,23 @@ public class IDEColaborativo extends Application {
             stage.show();
             control.setStagePantallaInvitado(stage);
             control.cargarProyecto();
+        } catch (IOException ex) {
+            Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public static void ventanaDireccionIP(ResourceBundle recurso, PantallaPrincipalController controlador){
+        try {
+            Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaDireccionIP.fxml"), recurso);
+            Parent root = (Parent) loader.load();
+            PantallaDireccionIPController control = loader.getController();
+            control.setControlador(controlador);
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+            control.setStagePantallaDireccionIP(stage);
         } catch (IOException ex) {
             Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
         }

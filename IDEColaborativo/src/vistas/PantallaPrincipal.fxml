@@ -15,7 +15,7 @@
 <?import javafx.scene.effect.Glow?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="618.0" prefWidth="984.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.PantallaPrincipalController">
+<AnchorPane id="AnchorPane" prefHeight="618.0" prefWidth="984.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.PantallaPrincipalController">
    <children>
       <Separator layoutY="38.0" prefHeight="11.0" prefWidth="767.0" />
       <AnchorPane fx:id="panelBarraMenu" layoutY="-1.0" prefHeight="45.0" prefWidth="984.0" style="-fx-background-color: #DCDCDC;">
@@ -57,6 +57,7 @@
                 <MenuItem fx:id="cambiarIdioma" mnemonicParsing="false" onAction="#botonCambiarIdioma" text="Cambiar idioma" />
                   <MenuItem fx:id="iniciarSesion" mnemonicParsing="false" onAction="#botonIniciarSesion" text="Iniciar Sesion" />
                   <MenuItem fx:id="cerrarSesion" mnemonicParsing="false" onAction="#cerrarSesion" text="Unspecified Action" />
+                  <MenuItem fx:id="botonConfigurarIP" mnemonicParsing="false" onAction="#configurarIP" text="Unspecified Action" />
               </items>
                <effect>
                   <Glow />

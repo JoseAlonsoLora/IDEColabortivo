@@ -38,7 +38,7 @@ public class ConexionNode {
     public ConexionNode(PantallaPrincipalController controlador){
         this.controlador = controlador;
          try {
-             socket = IO.socket("http://192.168.0.15:9000");
+             socket = IO.socket("http://"+controlador.getDireccionIP()+":9000");
              socket.on("saludoDelBarrio", new Emitter.Listener() {
             @Override
             public void call(Object... os) {

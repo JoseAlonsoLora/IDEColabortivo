@@ -20,6 +20,7 @@ import static idecolaborativo.IDEColaborativo.ventanaEjecutar;
 import static idecolaborativo.IDEColaborativo.resultadoCompilacion;
 import static idecolaborativo.IDEColaborativo.ventanaCambiarIdioma;
 import static idecolaborativo.IDEColaborativo.ventanaCrearProyecto;
+import static idecolaborativo.IDEColaborativo.ventanaDireccionIP;
 import static idecolaborativo.IDEColaborativo.ventanaInicioSesion;
 import static idecolaborativo.IDEColaborativo.ventanaInvitado;
 import static idecolaborativo.IDEColaborativo.ventanaInvitarColaborador;
@@ -128,6 +129,10 @@ public class PantallaPrincipalController implements Initializable {
     private JFXButton botonAgregarPaquete;
     @FXML
     private JFXButton botonAgregarArchivo;
+    @FXML
+    private MenuItem botonConfigurarIP;
+    
+    private String direccionIP;
 
     /**
      * Initializes the controller class.
@@ -141,6 +146,7 @@ public class PantallaPrincipalController implements Initializable {
         etiquetaNombreUsuario.setVisible(false);
         cerrarSesion.setVisible(false);
         recurso = rb;
+        direccionIP = "localhost";
         etiquetaNombreUsuario.setText("");
         root = new TreeItem<>(recurso.getString("etProyectos"));
         configurarIdioma();
@@ -152,7 +158,7 @@ public class PantallaPrincipalController implements Initializable {
 
     public void inicializarRegistro() {
         try {
-            Registry registry = LocateRegistry.getRegistry("192.168.0.15");
+            Registry registry = LocateRegistry.getRegistry(direccionIP);
             stub = (IProgramador) registry.lookup("AdministrarUsuarios");
         } catch (RemoteException | NotBoundException ex) {
             System.out.println(ex.getMessage());
@@ -291,10 +297,20 @@ public class PantallaPrincipalController implements Initializable {
         return socket;
     }
 
+    public String getDireccionIP() {
+        return direccionIP;
+    }
+
+    public void setDireccionIP(String direccionIP) {
+        this.direccionIP = direccionIP;
+    }
+
     public void configurarIdioma() {
         iniciarSesion.setText(recurso.getString("etInicioSesion"));
         cambiarIdioma.setText(recurso.getString("etCambiarIdioma"));
         cerrarSesion.setText(recurso.getString("btCerrarSesion"));
+        botonConfigurarIP.setText(recurso.getString("btConfigurarIP"));
+        
     }
 
     @FXML
@@ -324,6 +340,7 @@ public class PantallaPrincipalController implements Initializable {
             iconoSesionIniciada.setVisible(false);
             etiquetaNombreUsuario.setVisible(false);
             etiquetaNombreUsuario.setText("");
+            botonConfigurarIP.setVisible(true);
             cerrarSesion.setVisible(false);
             iniciarSesion.setVisible(true);
         } catch (RemoteException ex) {
@@ -336,6 +353,7 @@ public class PantallaPrincipalController implements Initializable {
         etiquetaNombreUsuario.setText(nombreUsuario);
         etiquetaNombreUsuario.setVisible(true);
         cerrarSesion.setVisible(true);
+        botonConfigurarIP.setVisible(false);
         iniciarSesion.setVisible(false);
     }
 
@@ -519,7 +537,8 @@ public class PantallaPrincipalController implements Initializable {
             guardarArchivo(tablaArchivos);
             MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
             Archivo archivo = tabSeleccionado.getTreeItem().getArchivo();
-            String resultado = archivo.compilarArchivo(archivo);
+            String rutaProyecto = tabSeleccionado.getTreeItem().getRutaProyecto();
+            String resultado = archivo.compilarArchivo(archivo, rutaProyecto);
             if (esColaborativo) {
                 compilo = compilarColaborativo(resultado, ejecucion);
             } else {
@@ -625,12 +644,14 @@ public class PantallaPrincipalController implements Initializable {
                     break;
                 case "class clasesApoyo.MyTreeItemCarpeta":
                     myTreeItemCarpeta = (MyTreeItemCarpeta) tablaProyectos.getSelectionModel().getSelectedItem();
-                    Carpeta carpeta = new Carpeta();
-                    carpeta.eliminarCarpeta(myTreeItemCarpeta.getRuta());
-                    removerTabsAbiertosCarpetaEliminada(myTreeItemCarpeta, tabsAbiertos, tablaArchivos);
-                    myTreeItemProyecto = (MyTreeItemProyecto) myTreeItemCarpeta.getParent();
-                    myTreeItemProyecto.getNombreCarpetas().remove(myTreeItemCarpeta.getNombreCarpeta());
-                    myTreeItemCarpeta.getParent().getChildren().remove(myTreeItemCarpeta);
+                    if (!myTreeItemCarpeta.getLenguaje().equals("c++")) {
+                        Carpeta carpeta = new Carpeta();
+                        carpeta.eliminarCarpeta(myTreeItemCarpeta.getRuta());
+                        removerTabsAbiertosCarpetaEliminada(myTreeItemCarpeta, tabsAbiertos, tablaArchivos);
+                        myTreeItemProyecto = (MyTreeItemProyecto) myTreeItemCarpeta.getParent();
+                        myTreeItemProyecto.getNombreCarpetas().remove(myTreeItemCarpeta.getNombreCarpeta());
+                        myTreeItemCarpeta.getParent().getChildren().remove(myTreeItemCarpeta);
+                    }
                     break;
                 case "class clasesApoyo.MyTreeItem":
                     MyTreeItem myTreeItem = (MyTreeItem) tablaProyectos.getSelectionModel().getSelectedItem();
@@ -690,12 +711,12 @@ public class PantallaPrincipalController implements Initializable {
             if (treeItem.getLenguaje().equals("java")) {
                 TextInputDialog dialog = new TextInputDialog();
                 dialog.setTitle("");
-                dialog.setHeaderText("Crear nuevo paquete");
-                dialog.setContentText("Nombre del paquete");
+                dialog.setHeaderText(recurso.getString("mensajeCrearNuevoPaquete"));
+                dialog.setContentText(recurso.getString("etNombrePaquete"));
                 Optional<String> result = dialog.showAndWait();
                 if (result.isPresent()) {
                     if (treeItem.getNombreCarpetas().contains(result.get())) {
-                        mensajeAlert(recurso.getString("atencion"), "el paquete ya existe");
+                        mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajePaqueteExistente"));
                     } else {
 
                         Carpeta carpeta = new Carpeta();
@@ -735,12 +756,12 @@ public class PantallaPrincipalController implements Initializable {
                 }
             });
             dialog.setTitle("");
-            dialog.setHeaderText("Crear nuevo archivo");
-            dialog.setContentText("Nombre del archivo");
+            dialog.setHeaderText(recurso.getString("mensajeCrearNuevoArchivo"));
+            dialog.setContentText(recurso.getString("etNombreArchivo"));
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
                 if (treeItem.getNombreArchivos().contains(result.get())) {
-                    mensajeAlert(recurso.getString("atencion"), "el archivo ya existe");
+                    mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeArchivoExistente"));
                 } else {
                     String nombreArchivo = result.get();
                     if (treeItem.getLenguaje().equals("java")) {
@@ -768,6 +789,12 @@ public class PantallaPrincipalController implements Initializable {
 
             }
         }
+    }
+
+    @FXML
+    private void configurarIP(ActionEvent event) {
+        stagePantallaPrincipal.hide();
+        ventanaDireccionIP(recurso,controlador);
     }
 
 }

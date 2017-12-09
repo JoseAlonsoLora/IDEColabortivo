@@ -72,7 +72,7 @@ public class PantallaCrearProyectoController implements Initializable {
         radioCPlusPlus.setToggleGroup(grupoRadio);
         radioCSharp.setToggleGroup(grupoRadio);
         configurarIdioma();
-
+        radioCSharp.setVisible(false);
     }
 
     public void setControlador(PantallaPrincipalController controlador) {

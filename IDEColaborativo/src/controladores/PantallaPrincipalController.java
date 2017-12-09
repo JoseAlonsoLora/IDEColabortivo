@@ -369,7 +369,7 @@ public class PantallaPrincipalController implements Initializable {
             ArrayList<String> nombreCarpetas = new ArrayList();
             MyTreeItemProyecto hijo = new MyTreeItemProyecto(proyecto1.getNombreProyecto(),
                     crearIconoLenguaje(proyecto1.getLenguaje()));
-            carpetas = agregarCarpetasArbol(proyecto1,nombreCarpetas);
+            carpetas = agregarCarpetasArbol(proyecto1, nombreCarpetas);
             hijo.getChildren().setAll(carpetas);
             hijo.setNombreProyecto(proyecto1.getNombreProyecto());
             hijo.setLenguaje(proyecto1.getLenguaje());
@@ -388,7 +388,7 @@ public class PantallaPrincipalController implements Initializable {
     public void cargarNuevoProyecto(Proyecto proyecto) {
         MyTreeItemProyecto hijo = new MyTreeItemProyecto(proyecto.getNombreProyecto(), crearIconoLenguaje(proyecto.getLenguaje()));
         ArrayList<String> nombreCarpetas = new ArrayList();
-        hijo.getChildren().setAll(agregarCarpetasArbol(proyecto,nombreCarpetas));
+        hijo.getChildren().setAll(agregarCarpetasArbol(proyecto, nombreCarpetas));
         hijo.setNombreProyecto(proyecto.getNombreProyecto());
         hijo.setLenguaje(proyecto.getLenguaje());
         hijo.setRuta(proyecto.getRutaProyecto());
@@ -458,13 +458,13 @@ public class PantallaPrincipalController implements Initializable {
         return lenguaje;
     }
 
-    public ArrayList<MyTreeItemCarpeta> agregarCarpetasArbol(Proyecto proyecto,ArrayList<String> nombreCarpetas) {
+    public ArrayList<MyTreeItemCarpeta> agregarCarpetasArbol(Proyecto proyecto, ArrayList<String> nombreCarpetas) {
         ArrayList<Carpeta> carpetasProyecto = proyecto.getCarpetas();
         ArrayList<MyTreeItemCarpeta> carpetas = new ArrayList();
-        ArrayList<String> nombreArchivos = new ArrayList();
         for (Carpeta carpeta : carpetasProyecto) {
+            ArrayList<String> nombreArchivos = new ArrayList();
             MyTreeItemCarpeta hijo = new MyTreeItemCarpeta(carpeta.getNombreCarpeta(), crearIconoCarpeta());
-            hijo.getChildren().addAll(agregarArchivosArbol(carpeta, proyecto.getLenguaje(),nombreArchivos));
+            hijo.getChildren().addAll(agregarArchivosArbol(carpeta, proyecto.getLenguaje(), nombreArchivos, proyecto.getRutaProyecto()));
             hijo.setNombreCarpeta(carpeta.getNombreCarpeta());
             hijo.setRuta(carpeta.getRutaCarpeta());
             hijo.setNombreArchivos(nombreArchivos);
@@ -477,12 +477,14 @@ public class PantallaPrincipalController implements Initializable {
         return carpetas;
     }
 
-    public ArrayList<MyTreeItem> agregarArchivosArbol(Carpeta carpeta, String lenguaje,ArrayList<String> nombreArchivos) {
+    public ArrayList<MyTreeItem> agregarArchivosArbol(Carpeta carpeta, String lenguaje, ArrayList<String> nombreArchivos, String rutaProyecto) {
         ArrayList<Archivo> archivos = carpeta.getArchivos();
         ArrayList<MyTreeItem> treeArchivos = new ArrayList();
         for (Archivo archivo : archivos) {
             MyTreeItem hijo = new MyTreeItem(archivo.getNombreArchivo(), crearIconoArchivo(lenguaje));
             hijo.setArchivo(archivo);
+            hijo.setRutaProyecto(rutaProyecto);
+            hijo.setRutaCarpeta(carpeta.getRutaCarpeta());
             nombreArchivos.add(archivo.getNombreArchivo());
             treeArchivos.add(hijo);
 
@@ -606,6 +608,78 @@ public class PantallaPrincipalController implements Initializable {
 
     @FXML
     private void eliminar(ActionEvent event) {
+        MyTreeItemCarpeta myTreeItemCarpeta;
+        MyTreeItemProyecto myTreeItemProyecto;
+        if (tablaProyectos.getSelectionModel().getSelectedItem() != null) {
+            switch (tablaProyectos.getSelectionModel().getSelectedItem().getClass().toString()) {
+                case "class clasesApoyo.MyTreeItemProyecto":
+                    myTreeItemProyecto = (MyTreeItemProyecto) tablaProyectos.getSelectionModel().getSelectedItem();
+                    Proyecto proyecto = new Proyecto();
+                    proyecto.setNombreProyecto(myTreeItemProyecto.getNombreProyecto());
+                    proyecto.setRutaProyecto(myTreeItemProyecto.getRuta());
+                    proyecto.setLenguaje(myTreeItemProyecto.getLenguaje());
+                    proyecto.eliminarProyecto(myTreeItemProyecto.getRuta());
+                    proyecto.eliminarRutaDeProyecto(proyecto);
+                    removerTabsAbiertosProyectoEliminado(myTreeItemProyecto, tabsAbiertos, tablaArchivos);
+                    myTreeItemProyecto.getParent().getChildren().remove(myTreeItemProyecto);
+                    break;
+                case "class clasesApoyo.MyTreeItemCarpeta":
+                    myTreeItemCarpeta = (MyTreeItemCarpeta) tablaProyectos.getSelectionModel().getSelectedItem();
+                    Carpeta carpeta = new Carpeta();
+                    carpeta.eliminarCarpeta(myTreeItemCarpeta.getRuta());
+                    removerTabsAbiertosCarpetaEliminada(myTreeItemCarpeta, tabsAbiertos, tablaArchivos);
+                    myTreeItemProyecto = (MyTreeItemProyecto) myTreeItemCarpeta.getParent();
+                    myTreeItemProyecto.getNombreCarpetas().remove(myTreeItemCarpeta.getNombreCarpeta());
+                    myTreeItemCarpeta.getParent().getChildren().remove(myTreeItemCarpeta);
+                    break;
+                case "class clasesApoyo.MyTreeItem":
+                    MyTreeItem myTreeItem = (MyTreeItem) tablaProyectos.getSelectionModel().getSelectedItem();
+                    myTreeItem.getArchivo().eliminarArchivo(myTreeItem.getArchivo());
+                    removerTabAbiertoArchivoEliminado(myTreeItem, tabsAbiertos, tablaArchivos);
+                    myTreeItemCarpeta = (MyTreeItemCarpeta) myTreeItem.getParent();
+                    myTreeItemCarpeta.getNombreArchivos().remove(myTreeItem.getArchivo().getNombreArchivo());
+                    myTreeItem.getParent().getChildren().remove(myTreeItem);
+                    break;
+            }
+        }
+    }
+
+    public void removerTabsAbiertosProyectoEliminado(MyTreeItemProyecto myTreeItemProyecto, ArrayList<MyTab> tabsAbiertos, TabPane tablaArchivos) {
+        ArrayList<MyTab> tabsAbiertosAux = crearAuxiliarTabsAbiertos(tabsAbiertos);
+        for (MyTab myTab : tabsAbiertosAux) {
+            if (myTab.getTreeItem().getRutaProyecto().equals(myTreeItemProyecto.getRuta())) {
+                tablaArchivos.getTabs().remove(myTab);
+                tabsAbiertos.remove(myTab);
+            }
+        }
+    }
+
+    public void removerTabsAbiertosCarpetaEliminada(MyTreeItemCarpeta myTreeItemCarpeta, ArrayList<MyTab> tabsAbiertos, TabPane tablaArchivos) {
+        ArrayList<MyTab> tabsAbiertosAux = crearAuxiliarTabsAbiertos(tabsAbiertos);
+        for (MyTab myTab : tabsAbiertosAux) {
+            if (myTab.getTreeItem().getRutaCarpeta().equals(myTreeItemCarpeta.getRuta())) {
+                tablaArchivos.getTabs().remove(myTab);
+                tabsAbiertos.remove(myTab);
+            }
+        }
+    }
+
+    public ArrayList<MyTab> crearAuxiliarTabsAbiertos(ArrayList<MyTab> tabsAbiertos) {
+        ArrayList<MyTab> tabsAbiertosAux = new ArrayList();
+        for (MyTab myTab : tabsAbiertos) {
+            tabsAbiertosAux.add(myTab);
+        }
+        return tabsAbiertosAux;
+    }
+
+    public void removerTabAbiertoArchivoEliminado(MyTreeItem myTreeItem, ArrayList<MyTab> tabsAbiertos, TabPane tablaArchivos) {
+        for (MyTab myTab : tabsAbiertos) {
+            if (myTab.getTreeItem().equals(myTreeItem)) {
+                tablaArchivos.getTabs().remove(myTab);
+                tabsAbiertos.remove(myTab);
+                break;
+            }
+        }
     }
 
     @FXML
@@ -613,64 +687,86 @@ public class PantallaPrincipalController implements Initializable {
         if (tablaProyectos.getSelectionModel().getSelectedItem() != null
                 && tablaProyectos.getSelectionModel().getSelectedItem().getClass().toString().equals("class clasesApoyo.MyTreeItemProyecto")) {
             MyTreeItemProyecto treeItem = (MyTreeItemProyecto) tablaProyectos.getSelectionModel().getSelectedItem();
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("");
-            dialog.setHeaderText("Crear nuevo paquete");
-            dialog.setContentText("Nombre del paquete");
-            Optional<String> result = dialog.showAndWait();
-            if (result.isPresent()) {
-                if(treeItem.getNombreCarpetas().contains(result.get())){
-                    mensajeAlert(recurso.getString("atencion"), "el paquete ya existe");
-                }else{
-                    Carpeta carpeta = new Carpeta();
-                    carpeta.setNombreCarpeta(result.get());
-                    ArchivoConfiguracion archivoConfig = new ArchivoConfiguracion();
-                    carpeta.setRutaCarpeta(treeItem.getRuta()+archivoConfig.getNombreCarpetaCodigos()+result.get());
-                    if(carpeta.crearCarpeta(carpeta)){
-                        MyTreeItemCarpeta treeItemCarpeta = new MyTreeItemCarpeta(result.get(), crearIconoCarpeta());
-                        treeItemCarpeta.setNombreCarpeta(carpeta.getNombreCarpeta());
-                        treeItemCarpeta.setRuta(carpeta.getRutaCarpeta());
-                        treeItemCarpeta.setNombreArchivos(new ArrayList());
-                        treeItem.getNombreCarpetas().add(result.get());
-                        treeItem.getChildren().add(treeItemCarpeta);
+            if (treeItem.getLenguaje().equals("java")) {
+                TextInputDialog dialog = new TextInputDialog();
+                dialog.setTitle("");
+                dialog.setHeaderText("Crear nuevo paquete");
+                dialog.setContentText("Nombre del paquete");
+                Optional<String> result = dialog.showAndWait();
+                if (result.isPresent()) {
+                    if (treeItem.getNombreCarpetas().contains(result.get())) {
+                        mensajeAlert(recurso.getString("atencion"), "el paquete ya existe");
+                    } else {
+
+                        Carpeta carpeta = new Carpeta();
+                        carpeta.setNombreCarpeta(result.get());
+                        ArchivoConfiguracion archivoConfig = new ArchivoConfiguracion();
+                        carpeta.setRutaCarpeta(treeItem.getRuta() + archivoConfig.getNombreCarpetaCodigos() + result.get());
+                        if (carpeta.crearCarpeta(carpeta)) {
+                            MyTreeItemCarpeta treeItemCarpeta = new MyTreeItemCarpeta(result.get(), crearIconoCarpeta());
+                            treeItemCarpeta.setNombreCarpeta(carpeta.getNombreCarpeta());
+                            treeItemCarpeta.setRuta(carpeta.getRutaCarpeta());
+                            treeItemCarpeta.setNombreArchivos(new ArrayList());
+                            treeItemCarpeta.setRutaProyecto(treeItem.getRuta());
+                            treeItemCarpeta.setLenguaje(treeItem.getLenguaje());
+                            treeItem.getNombreCarpetas().add(result.get());
+                            treeItem.getChildren().add(treeItemCarpeta);
+                        }
+
                     }
                 }
-                
-            } 
+            }
         }
     }
 
     @FXML
     private void agregarArchivo(ActionEvent event) {
-         if (tablaProyectos.getSelectionModel().getSelectedItem() != null
+        if (tablaProyectos.getSelectionModel().getSelectedItem() != null
                 && tablaProyectos.getSelectionModel().getSelectedItem().getClass().toString().equals("class clasesApoyo.MyTreeItemCarpeta")) {
             MyTreeItemCarpeta treeItem = (MyTreeItemCarpeta) tablaProyectos.getSelectionModel().getSelectedItem();
             TextInputDialog dialog = new TextInputDialog();
+            dialog.getEditor().setOnKeyTyped(new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent event) {
+                    String digito = event.getCharacter();
+                    if (digito.equals(".")) {
+                        event.consume();
+                    }
+                }
+            });
             dialog.setTitle("");
             dialog.setHeaderText("Crear nuevo archivo");
             dialog.setContentText("Nombre del archivo");
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
-                if(treeItem.getNombreArchivos().contains(result.get())){
+                if (treeItem.getNombreArchivos().contains(result.get())) {
                     mensajeAlert(recurso.getString("atencion"), "el archivo ya existe");
-                }else{
+                } else {
+                    String nombreArchivo = result.get();
+                    if (treeItem.getLenguaje().equals("java")) {
+                        nombreArchivo += ".java";
+                    } else {
+                        nombreArchivo += ".cpp";
+                    }
                     Archivo archivo = new Archivo();
-                    archivo.setNombreArchivo(result.get());
+                    archivo.setNombreArchivo(nombreArchivo);
                     ArchivoConfiguracion archivoConfig = new ArchivoConfiguracion();
-                    archivo.setRutaClases(treeItem.getRutaProyecto()+archivoConfig.getNombreCarpetaClases());
+                    archivo.setRutaClases(treeItem.getRutaProyecto() + archivoConfig.getNombreCarpetaClases());
                     archivo.setRuta(treeItem.getRuta());
                     archivo.setContenido("");
                     archivo.setPaquete(treeItem.getNombreCarpeta());
-                   
-                    if(archivo.crearArchivo(archivo)){
-                        MyTreeItem treeItemArchivo = new MyTreeItem(result.get(), crearIconoArchivo(treeItem.getLenguaje()));
+
+                    if (archivo.crearArchivo(archivo)) {
+                        MyTreeItem treeItemArchivo = new MyTreeItem(nombreArchivo, crearIconoArchivo(treeItem.getLenguaje()));
                         treeItemArchivo.setArchivo(archivo);
                         treeItemArchivo.setModificado(false);
-                       treeItem.getChildren().add(treeItemArchivo);
+                        treeItemArchivo.setRutaCarpeta(treeItem.getRuta());
+                        treeItemArchivo.setRutaProyecto(treeItem.getRutaProyecto());
+                        treeItem.getChildren().add(treeItemArchivo);
                     }
                 }
-                
-            } 
+
+            }
         }
     }
 

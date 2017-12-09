@@ -11,12 +11,12 @@ import controladores.PantallaCrearProyectoController;
 import controladores.PantallaPrincipalController;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -207,13 +207,50 @@ public class Proyecto {
         return proyecto;
     }
 
-    public boolean eliminarProyecto() {
-        return false;
-
+    public boolean eliminarProyecto(String ruta) { 
+        boolean seElimino = false;
+        File file = new File(ruta);
+        String[] carpetas = file.list();
+        for(String carpeta:carpetas){
+            File fileSegundoNivel = new File(ruta +"/"+carpeta);
+            String[] carpetasSegundoNivel = fileSegundoNivel.list();
+            for(String carpetaSegundoNivel: carpetasSegundoNivel){
+                Carpeta carpetaNegocio = new Carpeta();
+                carpetaNegocio.eliminarCarpeta(fileSegundoNivel.getPath()+"/"+carpetaSegundoNivel);
+            }
+            fileSegundoNivel.delete();
+        }
+        file.delete();
+        return seElimino;
     }
-
-    public List<Programador> mostrarColaboradores() {
-        return null;
+    
+    public void eliminarRutaDeProyecto(Proyecto proyecto){
+        File file = new File(obtenerRutaProyectos());
+        try(BufferedReader bufferedReader = new BufferedReader(new FileReader(file))){
+            String auxiliar="";
+            String contenidoArchivo="";
+            StringBuilder rutaEliminar = new StringBuilder();
+            rutaEliminar.append(proyecto.getRutaProyecto()).append(",").append(proyecto.getLenguaje()).append(",").append(proyecto.getNombreProyecto());
+            while((auxiliar = bufferedReader.readLine()) != null){
+                if(!auxiliar.equals(rutaEliminar.toString())){
+                    contenidoArchivo+=auxiliar+"\n";
+                }
+            }
+            actualizarArchivoRutas(contenidoArchivo);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void actualizarArchivoRutas(String cadenaActualizadda){
+        File file = new File(obtenerRutaProyectos());
+        try(PrintWriter printWriter = new PrintWriter(new FileWriter(file))){
+            printWriter.write(cadenaActualizadda);
+        } catch (IOException ex) {
+            Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void crearArchivoRutas() {

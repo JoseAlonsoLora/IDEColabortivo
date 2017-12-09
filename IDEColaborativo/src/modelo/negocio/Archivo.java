@@ -223,7 +223,6 @@ public class Archivo {
         boolean seCreo = false;
         String ruta = archivo.getRuta() + "/" + archivo.getNombreArchivo();
         File file = new File(ruta);
-        System.out.println(archivo.getRuta());
         try {
             seCreo= file.createNewFile();
         } catch (IOException ex) {
@@ -232,8 +231,12 @@ public class Archivo {
         return seCreo;
     }
 
-    public boolean eliminarArchivo(File archivo) {
-        return false;
+    public boolean eliminarArchivo(Archivo archivo) {
+        boolean seElimino = false;
+        String ruta = archivo.getRuta() + "/" + archivo.getNombreArchivo();
+        File file = new File(ruta);
+        seElimino = file.delete();
+        return seElimino;
 
     }
 

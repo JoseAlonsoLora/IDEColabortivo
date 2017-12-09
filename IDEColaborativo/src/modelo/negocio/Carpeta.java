@@ -49,8 +49,22 @@ public class Carpeta {
         return seCreo;
     }
     
-    public boolean eliminarCarpeta(File archivo){
-        return false;
+    public boolean eliminarCarpeta(String ruta){
+        boolean seElimino = false;
+        File file = new File(ruta);
+        String[] archivos = file.list();
+        if(archivos.length > 0){
+            eliminarArchivosCarpeta(archivos, ruta);
+        }
+        seElimino = file.delete();
+        return seElimino;
     }
     
+    public void eliminarArchivosCarpeta(String[] archivos,String ruta){
+        for(String archivo:archivos){
+            String rutaArchivo = ruta+"/"+archivo;
+            File file = new File(rutaArchivo);
+            file.delete();
+        }
+    }
 }

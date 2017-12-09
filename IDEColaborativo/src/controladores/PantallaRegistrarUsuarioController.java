@@ -132,8 +132,8 @@ public class PantallaRegistrarUsuarioController implements Initializable {
 
                         if (stub.registrarUsuario(programador)) {
                             mensajeAlert(recurso.getString("felicidades"), recurso.getString("mensajeCuentaCreada"));
-                            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                            stage.close();
+                            controlador.hacerVisiblePantallaprincipal();
+                            stagePantallaRegistrarUsuario.close();
                         } else {
                             mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeNombreUsuarioExistente"));
 

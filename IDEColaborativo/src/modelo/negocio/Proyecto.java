@@ -6,7 +6,7 @@
 package modelo.negocio;
 
 import clasesApoyo.ArchivoConfiguracion;
-import static com.sun.javafx.PlatformUtil.isWindows;
+import static com.sun.javafx.PlatformUtil.isLinux;
 import controladores.PantallaCrearProyectoController;
 import controladores.PantallaPrincipalController;
 import java.io.BufferedReader;
@@ -155,14 +155,14 @@ public class Proyecto {
                 Carpeta carpeta = new Carpeta();
                 carpeta.setNombreCarpeta(carpeta1);
                 carpeta.setRutaCarpeta(ruta + carpeta1);
-                carpeta.setArchivos(buscarArchivos(carpeta.getRutaCarpeta(),carpeta1,rutaClases));
+                carpeta.setArchivos(buscarArchivos(carpeta.getRutaCarpeta(), carpeta1, rutaClases));
                 carpetas.add(carpeta);
             }
         }
         return carpetas;
     }
 
-    public ArrayList<Archivo> buscarArchivos(String ruta,String paquete,String rutaClases) {
+    public ArrayList<Archivo> buscarArchivos(String ruta, String paquete, String rutaClases) {
         ArrayList<Archivo> archivos = new ArrayList();
         File file = new File(ruta);
         String[] archivosCarpeta = file.list();
@@ -207,33 +207,33 @@ public class Proyecto {
         return proyecto;
     }
 
-    public boolean eliminarProyecto(String ruta) { 
+    public boolean eliminarProyecto(String ruta) {
         boolean seElimino = false;
         File file = new File(ruta);
         String[] carpetas = file.list();
-        for(String carpeta:carpetas){
-            File fileSegundoNivel = new File(ruta +"/"+carpeta);
+        for (String carpeta : carpetas) {
+            File fileSegundoNivel = new File(ruta + "/" + carpeta);
             String[] carpetasSegundoNivel = fileSegundoNivel.list();
-            for(String carpetaSegundoNivel: carpetasSegundoNivel){
+            for (String carpetaSegundoNivel : carpetasSegundoNivel) {
                 Carpeta carpetaNegocio = new Carpeta();
-                carpetaNegocio.eliminarCarpeta(fileSegundoNivel.getPath()+"/"+carpetaSegundoNivel);
+                carpetaNegocio.eliminarCarpeta(fileSegundoNivel.getPath() + "/" + carpetaSegundoNivel);
             }
             fileSegundoNivel.delete();
         }
         file.delete();
         return seElimino;
     }
-    
-    public void eliminarRutaDeProyecto(Proyecto proyecto){
+
+    public void eliminarRutaDeProyecto(Proyecto proyecto) {
         File file = new File(obtenerRutaProyectos());
-        try(BufferedReader bufferedReader = new BufferedReader(new FileReader(file))){
-            String auxiliar="";
-            String contenidoArchivo="";
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+            String auxiliar = "";
+            String contenidoArchivo = "";
             StringBuilder rutaEliminar = new StringBuilder();
             rutaEliminar.append(proyecto.getRutaProyecto()).append(",").append(proyecto.getLenguaje()).append(",").append(proyecto.getNombreProyecto());
-            while((auxiliar = bufferedReader.readLine()) != null){
-                if(!auxiliar.equals(rutaEliminar.toString())){
-                    contenidoArchivo+=auxiliar+"\n";
+            while ((auxiliar = bufferedReader.readLine()) != null) {
+                if (!auxiliar.equals(rutaEliminar.toString())) {
+                    contenidoArchivo += auxiliar + "\n";
                 }
             }
             actualizarArchivoRutas(contenidoArchivo);
@@ -243,10 +243,10 @@ public class Proyecto {
             Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void actualizarArchivoRutas(String cadenaActualizadda){
+
+    public void actualizarArchivoRutas(String cadenaActualizadda) {
         File file = new File(obtenerRutaProyectos());
-        try(PrintWriter printWriter = new PrintWriter(new FileWriter(file))){
+        try (PrintWriter printWriter = new PrintWriter(new FileWriter(file))) {
             printWriter.write(cadenaActualizadda);
         } catch (IOException ex) {
             Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
@@ -269,11 +269,12 @@ public class Proyecto {
     public static String obtenerRutaProyectos() {
         String rutaArchivoProyectos;
         String palabraClave = "user.name";
-        if (isWindows()) {
-            rutaArchivoProyectos = archivoConfig.getRutaProyectosWindows().replace(palabraClave, System.getProperty(palabraClave));
-        } else {
+        if (isLinux()) {
             rutaArchivoProyectos = archivoConfig.getRutaProyectosLinux().replace(palabraClave, System.getProperty(palabraClave));
+        } else {
+            rutaArchivoProyectos = archivoConfig.getRutaProyectosWindows().replace(palabraClave, System.getProperty(palabraClave));
         }
+
         return rutaArchivoProyectos;
     }
 

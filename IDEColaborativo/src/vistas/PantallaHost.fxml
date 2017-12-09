@@ -10,7 +10,7 @@
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="631.0" prefWidth="984.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.PantallaHostController">
+<AnchorPane id="AnchorPane" prefHeight="631.0" prefWidth="984.0" style="-fx-background-color: #DCDCDC;" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.PantallaHostController">
    <children>
       <TreeTableView fx:id="tablaProyecto" layoutX="-1.0" prefHeight="631.0" prefWidth="208.0">
         <columns>
@@ -18,21 +18,40 @@
         </columns>
       </TreeTableView>
       <Separator layoutX="207.0" layoutY="51.0" prefHeight="0.0" prefWidth="776.0" />
-      <JFXButton fx:id="botonGuardar" layoutX="247.0" layoutY="12.0" onAction="#guardarArchivo" text="">
+      <JFXButton fx:id="botonGuardar" layoutX="349.0" layoutY="13.0" onAction="#guardarArchivo" ripplerFill="#7c7c7c" text="">
          <graphic>
-            <MaterialDesignIconView glyphName="FLOPPY" size="25" />
+            <MaterialDesignIconView fill="#4e238c" glyphName="FLOPPY" size="20" />
          </graphic>
       </JFXButton>
-      <JFXButton fx:id="botonCompilar" layoutX="340.0" layoutY="15.0" onAction="#compilar" text="">
+      <JFXButton fx:id="botonCompilar" layoutX="394.0" layoutY="10.0" onAction="#compilar" prefHeight="35.0" prefWidth="40.0" ripplerFill="#7c7c7c" text="">
          <graphic>
-            <OctIconView glyphName="TOOLS" size="20" />
+            <OctIconView fill="TEAL" glyphName="TOOLS" size="17" />
          </graphic>
       </JFXButton>
-      <JFXButton fx:id="botonEjecutar" layoutX="432.0" layoutY="12.0" onAction="#ejecutar" text="">
+      <JFXButton fx:id="botonEjecutar" layoutX="442.0" layoutY="11.0" onAction="#ejecutar" ripplerFill="#7c7c7c" text="">
          <graphic>
-            <FontAwesomeIconView glyphName="PLAY_CIRCLE" size="25" />
+            <FontAwesomeIconView fill="#19bf45" glyphName="PLAY_CIRCLE" size="22" />
          </graphic>
       </JFXButton>
-      <TabPane fx:id="tablaArchivos" layoutX="207.0" layoutY="51.0" prefHeight="580.0" prefWidth="776.0" tabClosingPolicy="UNAVAILABLE" />
+      <JFXButton fx:id="botonEliminar" layoutX="219.0" layoutY="12.0" onAction="#eliminar" ripplerFill="#7c7c7c" text="">
+         <graphic>
+            <FontAwesomeIconView fill="#5e5353" glyphName="TRASH" size="21" />
+         </graphic>
+      </JFXButton>
+      <AnchorPane layoutX="207.0" layoutY="53.0" prefHeight="576.0" prefWidth="776.0" style="-fx-background-color: #ffffff;">
+         <children>
+            <TabPane fx:id="tablaArchivos" prefHeight="576.0" prefWidth="776.0" tabClosingPolicy="UNAVAILABLE" />
+         </children>
+      </AnchorPane>
+      <JFXButton fx:id="botonAgregarPaquete" layoutX="264.0" layoutY="12.0" onAction="#agregarPaquete" ripplerFill="#7c7c7c" text="">
+         <graphic>
+            <MaterialDesignIconView fill="#e4b06c" glyphName="FOLDER_PLUS" size="23" />
+         </graphic>
+      </JFXButton>
+      <JFXButton fx:id="botonAgregarArchivo" layoutX="305.0" layoutY="13.0" onAction="#agregarArchivo" ripplerFill="#7c7c7c" text="">
+         <graphic>
+            <MaterialDesignIconView fill="#575050" glyphName="NOTE_PLUS" size="20" />
+         </graphic>
+      </JFXButton>
    </children>
 </AnchorPane>

@@ -131,7 +131,7 @@ public class PantallaPrincipalController implements Initializable {
     private JFXButton botonAgregarArchivo;
     @FXML
     private MenuItem botonConfigurarIP;
-    
+
     private String direccionIP;
 
     /**
@@ -310,7 +310,7 @@ public class PantallaPrincipalController implements Initializable {
         cambiarIdioma.setText(recurso.getString("etCambiarIdioma"));
         cerrarSesion.setText(recurso.getString("btCerrarSesion"));
         botonConfigurarIP.setText(recurso.getString("btConfigurarIP"));
-        
+
     }
 
     @FXML
@@ -412,6 +412,7 @@ public class PantallaPrincipalController implements Initializable {
         hijo.setRuta(proyecto.getRutaProyecto());
         hijo.setNombreCarpetas(nombreCarpetas);
         root.getChildren().add(hijo);
+        proyectos.add(proyecto);
         columnaProyectos.setCellValueFactory((CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
         tablaProyectos.setRoot(root);
         tablaProyectos.setShowRoot(true);
@@ -627,20 +628,26 @@ public class PantallaPrincipalController implements Initializable {
 
     @FXML
     private void eliminar(ActionEvent event) {
+        eliminarElementoArbol(tabsAbiertos, tablaProyectos, tablaArchivos, false);
+    }
+
+    public void eliminarElementoArbol(ArrayList<MyTab> tabsAbiertos, TreeTableView<String> tablaProyectos, TabPane tablaArchivos, boolean esColaborativo) {
         MyTreeItemCarpeta myTreeItemCarpeta;
         MyTreeItemProyecto myTreeItemProyecto;
         if (tablaProyectos.getSelectionModel().getSelectedItem() != null) {
             switch (tablaProyectos.getSelectionModel().getSelectedItem().getClass().toString()) {
                 case "class clasesApoyo.MyTreeItemProyecto":
-                    myTreeItemProyecto = (MyTreeItemProyecto) tablaProyectos.getSelectionModel().getSelectedItem();
-                    Proyecto proyecto = new Proyecto();
-                    proyecto.setNombreProyecto(myTreeItemProyecto.getNombreProyecto());
-                    proyecto.setRutaProyecto(myTreeItemProyecto.getRuta());
-                    proyecto.setLenguaje(myTreeItemProyecto.getLenguaje());
-                    proyecto.eliminarProyecto(myTreeItemProyecto.getRuta());
-                    proyecto.eliminarRutaDeProyecto(proyecto);
-                    removerTabsAbiertosProyectoEliminado(myTreeItemProyecto, tabsAbiertos, tablaArchivos);
-                    myTreeItemProyecto.getParent().getChildren().remove(myTreeItemProyecto);
+                    if (!esColaborativo) {
+                        myTreeItemProyecto = (MyTreeItemProyecto) tablaProyectos.getSelectionModel().getSelectedItem();
+                        Proyecto proyecto = new Proyecto();
+                        proyecto.setNombreProyecto(myTreeItemProyecto.getNombreProyecto());
+                        proyecto.setRutaProyecto(myTreeItemProyecto.getRuta());
+                        proyecto.setLenguaje(myTreeItemProyecto.getLenguaje());
+                        proyecto.eliminarProyecto(myTreeItemProyecto.getRuta());
+                        proyecto.eliminarRutaDeProyecto(proyecto);
+                        removerTabsAbiertosProyectoEliminado(myTreeItemProyecto, tabsAbiertos, tablaArchivos);
+                        myTreeItemProyecto.getParent().getChildren().remove(myTreeItemProyecto);
+                    }
                     break;
                 case "class clasesApoyo.MyTreeItemCarpeta":
                     myTreeItemCarpeta = (MyTreeItemCarpeta) tablaProyectos.getSelectionModel().getSelectedItem();
@@ -705,6 +712,10 @@ public class PantallaPrincipalController implements Initializable {
 
     @FXML
     private void agregarPaquete(ActionEvent event) {
+        agregarPaqueteArbol(tablaProyectos, recurso);
+    }
+
+    public void agregarPaqueteArbol(TreeTableView<String> tablaProyectos, ResourceBundle recurso) {
         if (tablaProyectos.getSelectionModel().getSelectedItem() != null
                 && tablaProyectos.getSelectionModel().getSelectedItem().getClass().toString().equals("class clasesApoyo.MyTreeItemProyecto")) {
             MyTreeItemProyecto treeItem = (MyTreeItemProyecto) tablaProyectos.getSelectionModel().getSelectedItem();
@@ -742,6 +753,10 @@ public class PantallaPrincipalController implements Initializable {
 
     @FXML
     private void agregarArchivo(ActionEvent event) {
+        agregarArchvioArbol(tablaProyectos, recurso);
+    }
+
+    public void agregarArchvioArbol(TreeTableView<String> tablaProyectos, ResourceBundle recurso) {
         if (tablaProyectos.getSelectionModel().getSelectedItem() != null
                 && tablaProyectos.getSelectionModel().getSelectedItem().getClass().toString().equals("class clasesApoyo.MyTreeItemCarpeta")) {
             MyTreeItemCarpeta treeItem = (MyTreeItemCarpeta) tablaProyectos.getSelectionModel().getSelectedItem();
@@ -794,7 +809,7 @@ public class PantallaPrincipalController implements Initializable {
     @FXML
     private void configurarIP(ActionEvent event) {
         stagePantallaPrincipal.hide();
-        ventanaDireccionIP(recurso,controlador);
+        ventanaDireccionIP(recurso, controlador);
     }
 
 }

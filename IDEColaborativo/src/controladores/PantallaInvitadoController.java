@@ -186,4 +186,20 @@ public class PantallaInvitadoController implements Initializable {
     public void mostrarResultadoEjecucion(String resultado){
         mensajeAlert(recurso.getString("mensajeResultadoEjecucion"), resultado);
     }
+    
+    public void agregarPaqueteArbol(){
+        
+    }
+    
+    public void agregarArchivoArbol(){
+        
+    }
+    
+    public void eliminarPaqueteArbol(){
+        
+    }
+    
+    public void elimanrArchivoArbol(){
+        
+    }
 }

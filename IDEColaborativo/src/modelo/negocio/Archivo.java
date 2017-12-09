@@ -8,12 +8,9 @@ package modelo.negocio;
 import clasesApoyo.HiloCompilador;
 import static com.sun.javafx.PlatformUtil.isWindows;
 import controladores.PantallaPrincipalController;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -132,7 +129,7 @@ public class Archivo {
     }
 
     public String complilarCPlusPlus(Archivo archivo, String nombre) {
-        String rutaClase = archivo.getRutaClases();
+        String rutaClase = archivo.getRutaClases()+"/"+archivo.getPaquete();
         File file = new File(rutaClase);
         if (!file.exists()) {
             file.mkdir();
@@ -223,7 +220,7 @@ public class Archivo {
             }
         }
 
-        return compilador(comando.toString(), archivo.getRutaClases());
+        return compilador(comando.toString(), archivo.getRutaClases()+"/"+archivo.getPaquete());
     }
 
     public boolean crearArchivo(Archivo archivo) {

@@ -7,6 +7,7 @@ package controladores;
 
 import clasesApoyo.MyTab;
 import clasesApoyo.MyTreeItem;
+import clasesApoyo.MyTreeItemProyecto;
 import com.jfoenix.controls.JFXButton;
 import componentes.FormatoCodigo;
 import static controladores.PantallaInvitadoController.transformarJSONArchivo;
@@ -57,6 +58,12 @@ public class PantallaHostController implements Initializable {
     private TreeTableColumn<String, String> columnaProyecto;
      private TreeItem<String> root;
      private static ArrayList<MyTab> tabsAbiertosHost;
+    @FXML
+    private JFXButton botonEliminar;
+    @FXML
+    private JFXButton botonAgregarPaquete;
+    @FXML
+    private JFXButton botonAgregarArchivo;
      
     /**
      * Initializes the controller class.
@@ -105,9 +112,13 @@ public class PantallaHostController implements Initializable {
     }
     
     public void cargarProyecto(){
-        TreeItem<String> hijo = new TreeItem<>(proyecto.getNombreProyecto(), controlador.crearIconoLenguaje(proyecto.getLenguaje()));
+        MyTreeItemProyecto hijo = new MyTreeItemProyecto(proyecto.getNombreProyecto(), controlador.crearIconoLenguaje(proyecto.getLenguaje()));
         hijo.getChildren().setAll(controlador.agregarCarpetasArbol(proyecto,obtenerNombreCarpetas(proyecto)));
         root.getChildren().add(hijo);
+        hijo.setLenguaje(proyecto.getLenguaje());
+        hijo.setNombreCarpetas(obtenerNombreCarpetas(proyecto));
+        hijo.setNombreProyecto(proyecto.getNombreProyecto());
+        hijo.setRuta(proyecto.getRutaProyecto());
         columnaProyecto.setCellValueFactory((TreeTableColumn.CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
         tablaProyecto.setRoot(root);
         tablaProyecto.setShowRoot(true);
@@ -152,6 +163,21 @@ public class PantallaHostController implements Initializable {
         tab.setTreeItem(treeItem);
         tablaArchivos.getTabs().add(tab);
         tabsAbiertosHost.add(tab);
+    }
+
+    @FXML
+    private void eliminar(ActionEvent event) {
+        controlador.eliminarElementoArbol(tabsAbiertosHost, tablaProyecto, tablaArchivos, true);
+    }
+
+    @FXML
+    private void agregarPaquete(ActionEvent event) {
+       controlador.agregarPaqueteArbol(tablaProyecto, recurso);
+    }
+
+    @FXML
+    private void agregarArchivo(ActionEvent event) {
+        controlador.agregarArchvioArbol(tablaProyecto, recurso);
     }
     
    

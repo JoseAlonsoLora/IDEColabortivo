@@ -18,8 +18,8 @@ import modelo.negocio.Archivo;
  * @author raymu
  */
 public class HiloCompilador extends Thread{
-    private StringBuilder resultadoCompilacion;
-    private ProcessBuilder procesoCompilar;
+    private final StringBuilder resultadoCompilacion;
+    private final ProcessBuilder procesoCompilar;
     
     public HiloCompilador(ProcessBuilder procesoCompilar){
         this.procesoCompilar = procesoCompilar;

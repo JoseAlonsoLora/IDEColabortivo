@@ -39,14 +39,7 @@ public class ConexionNode {
         this.controlador = controlador;
          try {
              socket = IO.socket("http://"+controlador.getDireccionIP()+":9000");
-             socket.on("saludoDelBarrio", new Emitter.Listener() {
-            @Override
-            public void call(Object... os) {
-                Platform.runLater(() -> {
-                    //escribirMensaje((String) os[0]);
-                });
-            }
-        }).on("colaboradorNoEncontrado", new Emitter.Listener() {
+             socket.on("colaboradorNoEncontrado", new Emitter.Listener() {
             @Override
             public void call(Object... os) {
                 Platform.runLater(() -> {

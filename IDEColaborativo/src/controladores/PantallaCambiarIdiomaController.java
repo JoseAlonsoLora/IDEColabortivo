@@ -24,7 +24,7 @@ import javafx.stage.WindowEvent;
 public class PantallaCambiarIdiomaController implements Initializable {
 
     private ResourceBundle recurso;
-    private ToggleGroup grupoRadio = new ToggleGroup();
+    private final ToggleGroup grupoRadio = new ToggleGroup();
     private PantallaPrincipalController controlador;
 
     @FXML

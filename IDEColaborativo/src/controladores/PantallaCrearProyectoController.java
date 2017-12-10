@@ -33,7 +33,7 @@ public class PantallaCrearProyectoController implements Initializable {
 
     private ResourceBundle recurso;
     private PantallaPrincipalController controlador;
-    private ToggleGroup grupoRadio = new ToggleGroup();
+    private final ToggleGroup grupoRadio = new ToggleGroup();
 
     @FXML
     private Label etiquetaEligeProyecto;

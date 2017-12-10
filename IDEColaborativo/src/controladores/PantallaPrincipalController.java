@@ -25,7 +25,6 @@ import static idecolaborativo.IDEColaborativo.ventanaInicioSesion;
 import static idecolaborativo.IDEColaborativo.ventanaInvitado;
 import static idecolaborativo.IDEColaborativo.ventanaInvitarColaborador;
 import io.socket.client.Socket;
-import java.io.IOException;
 import java.net.URL;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -156,6 +155,120 @@ public class PantallaPrincipalController implements Initializable {
 
     }
 
+    /**
+     * Regresa TabPane donde se encuentran los archivos abiertos
+     *
+     * @return TabPane con los arhivos abiertos
+     */
+    public TabPane getTablaArchivos() {
+        return tablaArchivos;
+    }
+
+    /**
+     * Regresa una lista de archivos abiertos
+     *
+     * @return Lista de archivos
+     */
+    public ArrayList<MyTab> getTabsAbiertos() {
+        return tabsAbiertos;
+    }
+
+    /**
+     * Da valor al recurso estableciendo el idioma que sera usado en todo el
+     * sistema
+     *
+     * @param recurso Idioma (Español e Inglés)
+     */
+    public void setRecurso(ResourceBundle recurso) {
+        this.recurso = recurso;
+        configurarIdioma();
+    }
+
+    /**
+     * Da valor al controlador de la instancia actual
+     *
+     * @param controlador Instancia del controlador
+     */
+    public void setControlador(PantallaPrincipalController controlador) {
+        this.controlador = controlador;
+    }
+
+    /**
+     * Regresa la conexión con el servidor de node
+     *
+     * @return Conexión con el servidor de node
+     */
+    public ConexionNode getConexionNode() {
+        return conexionNode;
+    }
+
+    /**
+     * Da valor a la conexión con el servidor de node
+     *
+     * @param conexionNode Conexión con el servidor de node
+     */
+    public void setConexionNode(ConexionNode conexionNode) {
+        this.conexionNode = conexionNode;
+    }
+
+    /**
+     * Da valor al socket para la comunicación en red
+     *
+     * @param socket Socket
+     */
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
+
+    /**
+     * Regresa el valor del socket
+     *
+     * @return Valor del socket
+     */
+    public Socket getSocket() {
+        return socket;
+    }
+
+    /**
+     * Regresa el valor de la IP del servidor
+     *
+     * @return IP del servidor
+     */
+    public String getDireccionIP() {
+        return direccionIP;
+    }
+
+    /**
+     * Da valor a la dirección IP del servidor
+     *
+     * @param direccionIP IP del servidor
+     */
+    public void setDireccionIP(String direccionIP) {
+        this.direccionIP = direccionIP;
+    }
+
+    /**
+     * Da valor al Stage de la pantalla principal
+     *
+     * @param stagePantallaPrincipal Instancia del Stage de la pantalla
+     * principal
+     */
+    public void setStagePantallaPrincipal(Stage stagePantallaPrincipal) {
+        this.stagePantallaPrincipal = stagePantallaPrincipal;
+        this.stagePantallaPrincipal.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                if (!etiquetaNombreUsuario.getText().isEmpty()) {
+                    cerrarSesion(null);
+                    stagePantallaPrincipal.close();
+                }
+            }
+        });
+    }
+
+    /**
+     * Se conecta con el servidor RMI
+     */
     public void inicializarRegistro() {
         try {
             Registry registry = LocateRegistry.getRegistry(direccionIP);
@@ -165,6 +278,14 @@ public class PantallaPrincipalController implements Initializable {
         }
     }
 
+    /**
+     * Evento del TreeView para abrir Tabs y porder escribir código
+     *
+     * @param tablaProyectos Árbol donde se encuentran los proyectos
+     * @param tabsAbiertos Tabs abiertos en el TabPane
+     * @param tablaArchivos TabPane para agregar el Tab
+     * @param esColaborativo Inidica si el proyecto es de manera colaborativa
+     */
     public void handlerTablaProyectos(TreeTableView<String> tablaProyectos, ArrayList<MyTab> tabsAbiertos, TabPane tablaArchivos,
             boolean esColaborativo) {
         tablaProyectos.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
@@ -209,6 +330,12 @@ public class PantallaPrincipalController implements Initializable {
         });
     }
 
+    /**
+     * Transforma un archivo a un objeto JSON para enviarlo de manera remota
+     *
+     * @param archivo Archivo que será transformado
+     * @return Archivo transformado a JSON
+     */
     public JSONObject crearObjetoJSONArchivo(Archivo archivo) {
         JSONObject archivoJSON = new JSONObject();
         archivoJSON.put("nombreArchivo", archivo.getNombreArchivo());
@@ -219,6 +346,13 @@ public class PantallaPrincipalController implements Initializable {
         return archivoJSON;
     }
 
+    /**
+     * Busca en el TabPane archivos abiertos
+     *
+     * @param myTreeItem Archivo en el árbol de proyectos
+     * @param tabsAbiertos Tabs abiertos en el TabPane
+     * @return Indica si el archivo esta abierto
+     */
     public boolean buscarArchivosAbiertos(MyTreeItem myTreeItem, ArrayList<MyTab> tabsAbiertos) {
         boolean estaAbierto = false;
         for (MyTab myTab : tabsAbiertos) {
@@ -232,6 +366,14 @@ public class PantallaPrincipalController implements Initializable {
         return estaAbierto;
     }
 
+    /**
+     * Evento para cerrar los Tabs
+     *
+     * @param tab Tabs que será cerrado
+     * @param treeItem Archivo en el árbol de proyectos
+     * @param tabsAbiertos Tabs abiertos en el TabPane
+     * @param tablaArchivos TabPane donde se cerrara el Tab
+     */
     public void handlerCerrarProyectoTab(MyTab tab, MyTreeItem treeItem, ArrayList<MyTab> tabsAbiertos, TabPane tablaArchivos) {
         tab.setOnCloseRequest((Event t) -> {
             if (treeItem.isModificado()) {
@@ -260,60 +402,9 @@ public class PantallaPrincipalController implements Initializable {
 
     }
 
-    public void setStagePantallaPrincipal(Stage stagePantallaPrincipal) {
-        this.stagePantallaPrincipal = stagePantallaPrincipal;
-        this.stagePantallaPrincipal.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                if (!etiquetaNombreUsuario.getText().isEmpty()) {
-                    cerrarSesion(null);
-                    stagePantallaPrincipal.close();
-                }
-            }
-        });
-    }
-
-    public TabPane getTablaArchivos() {
-        return tablaArchivos;
-    }
-
-    public ArrayList<MyTab> getTabsAbiertos() {
-        return tabsAbiertos;
-    }
-
-    public void setRecurso(ResourceBundle recurso) {
-        this.recurso = recurso;
-        configurarIdioma();
-    }
-
-    public void setControlador(PantallaPrincipalController controlador) {
-        this.controlador = controlador;
-    }
-
-    public ConexionNode getConexionNode() {
-        return conexionNode;
-    }
-
-    public void setConexionNode(ConexionNode conexionNode) {
-        this.conexionNode = conexionNode;
-    }
-
-    public void setSocket(Socket socket) {
-        this.socket = socket;
-    }
-
-    public Socket getSocket() {
-        return socket;
-    }
-
-    public String getDireccionIP() {
-        return direccionIP;
-    }
-
-    public void setDireccionIP(String direccionIP) {
-        this.direccionIP = direccionIP;
-    }
-
+    /**
+     * Configura el idioma de todas etiquetas de la pantalla
+     */
     public void configurarIdioma() {
         iniciarSesion.setText(recurso.getString("etInicioSesion"));
         cambiarIdioma.setText(recurso.getString("etCambiarIdioma"));
@@ -322,24 +413,44 @@ public class PantallaPrincipalController implements Initializable {
 
     }
 
+    /**
+     * Despliega la ventana para crear un proyeto
+     *
+     * @param event Clic del usuario
+     */
     @FXML
-    private void botonCrearProyecto(ActionEvent event) throws IOException {
+    private void botonCrearProyecto(ActionEvent event) {
         stagePantallaPrincipal.hide();
         ventanaCrearProyecto(recurso, controlador);
     }
 
+    /**
+     * Despliega la ventana para iniciar sesión
+     *
+     * @param event Clic del usuario
+     */
     @FXML
-    private void botonIniciarSesion(ActionEvent event) throws IOException {
+    private void botonIniciarSesion(ActionEvent event) {
         stagePantallaPrincipal.hide();
         ventanaInicioSesion(recurso, controlador);
     }
 
+    /**
+     * Despliega la pantalla para cambiar idioma
+     *
+     * @param event Clic del usuario
+     */
     @FXML
-    private void botonCambiarIdioma(ActionEvent event) throws IOException {
+    private void botonCambiarIdioma(ActionEvent event) {
         stagePantallaPrincipal.hide();
         ventanaCambiarIdioma(recurso, controlador);
     }
 
+    /**
+     * Cierra la sesión del usuario
+     *
+     * @param event Clic del usuario
+     */
     @FXML
     private void cerrarSesion(ActionEvent event) {
         inicializarRegistro();
@@ -357,6 +468,11 @@ public class PantallaPrincipalController implements Initializable {
         }
     }
 
+    /**
+     * Muestra el nombre de usuario en la pantalla principal
+     *
+     * @param nombreUsuario Nombre de usuario
+     */
     public void sesionIniciada(String nombreUsuario) {
         iconoSesionIniciada.setVisible(true);
         etiquetaNombreUsuario.setText(nombreUsuario);
@@ -366,8 +482,14 @@ public class PantallaPrincipalController implements Initializable {
         iniciarSesion.setVisible(false);
     }
 
+    /**
+     * Despliega un pantalla donde indica qué usuario te invito a colaborar
+     *
+     * @param lobby Lobby del usuario que te invito
+     * @param nombreColaborador Nombre del colaborador que te invito
+     * @param proyecto Proyecto al cual te han invitado
+     */
     public void invitacionRecibida(String lobby, String nombreColaborador, JSONObject proyecto) {
-
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setContentText(nombreColaborador + " " + recurso.getString("mensajeInvitacion"));
         ButtonType botonAceptar = new ButtonType(recurso.getString("btAceptar"));
@@ -378,15 +500,19 @@ public class PantallaPrincipalController implements Initializable {
             socket.emit("conectarseALobby", lobby);
             stagePantallaPrincipal.hide();
             ventanaInvitado(recurso, proyecto, controlador);
-
         }
-
     }
 
+    /**
+     * Mensaje donde indica que la invitación fue enviada
+     */
     public void invitacionEnviada() {
         mensajeAlert("", recurso.getString("mensajeInvitacionEnviada"));
     }
 
+    /**
+     * Carga los proyectos creados por el usario
+     */
     public void cargarProyectos() {
         Proyecto proyecto = new Proyecto();
         proyectos = proyecto.cargarProyectos();
@@ -412,6 +538,11 @@ public class PantallaPrincipalController implements Initializable {
 
     }
 
+    /**
+     * Carga el nuevo proyecto
+     *
+     * @param proyecto Proyecto creado
+     */
     public void cargarNuevoProyecto(Proyecto proyecto) {
         MyTreeItemProyecto hijo = new MyTreeItemProyecto(proyecto.getNombreProyecto(), crearIconoLenguaje(proyecto.getLenguaje()));
         ArrayList<String> nombreCarpetas = new ArrayList();
@@ -428,6 +559,11 @@ public class PantallaPrincipalController implements Initializable {
 
     }
 
+    /**
+     * Crea el icono de carpeta para agregarlo al árbol de proyectos
+     *
+     * @return Icono carpeta
+     */
     public ImageView crearIconoCarpeta() {
         ImageView carpeta;
         carpeta = new ImageView("/Imagenes/carpeta_1.png");
@@ -436,6 +572,13 @@ public class PantallaPrincipalController implements Initializable {
         return carpeta;
     }
 
+    /**
+     * Crea el icono de lenguaje de programación para agregarlo al árbol de
+     * proyectos
+     *
+     * @param lenguajeProgramacion Lenguaje de programación
+     * @return Icono de lenguaje de programación
+     */
     public ImageView crearIconoLenguaje(String lenguajeProgramacion) {
         ImageView lenguaje = null;
         switch (lenguajeProgramacion) {
@@ -461,6 +604,12 @@ public class PantallaPrincipalController implements Initializable {
         return lenguaje;
     }
 
+    /**
+     * Crea el icono del archivo para agregarlo al árbol de proyectos
+     *
+     * @param lenguajeProgramacion Lenguaje de programación
+     * @return Icono del archivo
+     */
     public ImageView crearIconoArchivo(String lenguajeProgramacion) {
         ImageView lenguaje = null;
         switch (lenguajeProgramacion) {
@@ -486,6 +635,13 @@ public class PantallaPrincipalController implements Initializable {
         return lenguaje;
     }
 
+    /**
+     * Agrega las carpetas pertenecientes a un proyecto al árbol de proyectos
+     *
+     * @param proyecto Proyecto al cual se le agregarán las carpetas
+     * @param nombreCarpetas Nombre de las carpetas
+     * @return Lista de MyTreeItemCarpeta que será agregada al árbol proyectos
+     */
     public ArrayList<MyTreeItemCarpeta> agregarCarpetasArbol(Proyecto proyecto, ArrayList<String> nombreCarpetas) {
         ArrayList<Carpeta> carpetasProyecto = proyecto.getCarpetas();
         ArrayList<MyTreeItemCarpeta> carpetas = new ArrayList();
@@ -505,6 +661,15 @@ public class PantallaPrincipalController implements Initializable {
         return carpetas;
     }
 
+    /**
+     * Agrega los archivos pertenecientes a un proyecto al árbol de proyectos
+     *
+     * @param carpeta Carpeta al cual se le agregarán los archivos
+     * @param lenguaje Lenguaje de progamación
+     * @param nombreArchivos Nombre del archivo
+     * @param rutaProyecto Ruta específica donde se encuentra el proyecto
+     * @return Lista de MyTreeItem que será agregada al árbol proyectos
+     */
     public ArrayList<MyTreeItem> agregarArchivosArbol(Carpeta carpeta, String lenguaje, ArrayList<String> nombreArchivos, String rutaProyecto) {
         ArrayList<Archivo> archivos = carpeta.getArchivos();
         ArrayList<MyTreeItem> treeArchivos = new ArrayList();
@@ -520,11 +685,21 @@ public class PantallaPrincipalController implements Initializable {
         return treeArchivos;
     }
 
+    /**
+     * Guarda el archivo seleccionado
+     *
+     * @param event Clic del usuario
+     */
     @FXML
     private void botonGuardarArchivo(ActionEvent event) {
         guardarArchivo(tablaArchivos);
     }
 
+    /**
+     * Guarda el archivo que el usuario selecciona desde el TabPane
+     *
+     * @param tablaArchivos Tab seleccionado
+     */
     public void guardarArchivo(TabPane tablaArchivos) {
         if (tablaArchivos.getSelectionModel().getSelectedItem() != null) {
             CodeArea area = (CodeArea) tablaArchivos.getSelectionModel().getSelectedItem().getContent();
@@ -536,11 +711,25 @@ public class PantallaPrincipalController implements Initializable {
         }
     }
 
+    /**
+     * Compila el archivo seleccionado
+     *
+     * @param event Clic del usuario
+     */
     @FXML
     private void botonCompilar(ActionEvent event) {
         compilarArchivo(tablaArchivos, false, false);
     }
 
+    /**
+     * Complia el archivo seleccionado por el usuario y muestra su resultado
+     *
+     * @param tablaArchivos TabPane donde estan los archivos abiertos
+     * @param esColaborativo Indica si la compilación es colaborativa
+     * @param ejecucion Indica si necesita mostrar el mensaje de compilación
+     * exitosa
+     * @return
+     */
     public boolean compilarArchivo(TabPane tablaArchivos, boolean esColaborativo, boolean ejecucion) {
         boolean compilo = false;
         if (tablaArchivos.getSelectionModel().getSelectedItem() != null) {
@@ -559,6 +748,13 @@ public class PantallaPrincipalController implements Initializable {
         return compilo;
     }
 
+    /**
+     * Compila el archivo de manera local
+     *
+     * @param resultado Resultado de la compilación
+     * @param ejecucion Indica si tiene que ser ejecutado
+     * @return Indica si el programa tiene errores
+     */
     public boolean compilarLocal(String resultado, boolean ejecucion) {
         boolean compilo = false;
         if (resultado.isEmpty()) {
@@ -572,6 +768,14 @@ public class PantallaPrincipalController implements Initializable {
         return compilo;
     }
 
+    /**
+     * Complila de manera colaborativa, enviando el resultado a todos los
+     * integrantes
+     *
+     * @param resultado Resultado de la compilación
+     * @param ejecucion Indica si tiene que ser ejecutado
+     * @return Indica si el programa tiene errores
+     */
     public boolean compilarColaborativo(String resultado, boolean ejecucion) {
         boolean compilo = false;
         if (resultado.isEmpty()) {
@@ -587,11 +791,20 @@ public class PantallaPrincipalController implements Initializable {
         return compilo;
     }
 
+    /**
+     * Ejecuta un archivo seleccionado
+     * @param event Clic del usuario
+     */
     @FXML
     private void botonEjecutar(ActionEvent event) {
         ejecutarArchivo(tablaArchivos, false);
     }
 
+    /**
+     * Ejecuta un archivo seleccionado por el usuario
+     * @param tablaArchivos TabPane donde estan los archivos abiertos
+     * @param esColaborativo Indica si el archivo será ejecutado 
+     */
     public void ejecutarArchivo(TabPane tablaArchivos, boolean esColaborativo) {
         if (tablaArchivos.getSelectionModel().getSelectedItem() != null) {
             if (esColaborativo) {
@@ -602,21 +815,33 @@ public class PantallaPrincipalController implements Initializable {
 
         }
     }
-
+    
+    /**
+     * Despliega la pantalla para ejecutar el programa
+     * @param tablaArchivos TabPane donde estan los archivos abiertos
+     */
     public void ejecutarLocal(TabPane tablaArchivos) {
         if (compilarArchivo(tablaArchivos, false, true)) {
             MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
             ventanaEjecutar(recurso, tabSeleccionado.getTreeItem().getArchivo(), controlador, false);
         }
     }
-
+    
+    /**
+     * Despliega la pantalla para ejecutar de manera colaborativa el programa
+     * @param tablaArchivos TabPane donde estan los archivos abiertos
+     */
     public void ejecutarColaborativo(TabPane tablaArchivos) {
         if (compilarArchivo(tablaArchivos, true, true)) {
             MyTab tabSeleccionado = (MyTab) tablaArchivos.getSelectionModel().getSelectedItem();
             ventanaEjecutar(recurso, tabSeleccionado.getTreeItem().getArchivo(), controlador, true);
         }
     }
-
+    
+    /**
+     * Despliega la pantalla para invitar a un colaborador
+     * @param event Clic del usuario
+     */
     @FXML
     private void invitarColaborador(ActionEvent event) {
         if (!etiquetaNombreUsuario.getText().isEmpty()) {
@@ -627,19 +852,35 @@ public class PantallaPrincipalController implements Initializable {
         }
     }
 
+    /**
+     * Hace visible la pantalla principal
+     */
     public void hacerVisiblePantallaprincipal() {
         stagePantallaPrincipal.show();
     }
 
+    /**
+     * Oculta la pantalla principal
+     */
     public void hacerInVisiblePantallaprincipal() {
         stagePantallaPrincipal.hide();
     }
 
+    /**
+     * Eliminar un proyecto,carpeta,archivo
+     * @param event Clic del usuario
+     */
     @FXML
     private void eliminar(ActionEvent event) {
         eliminarElementoArbol(tabsAbiertos, tablaProyectos, tablaArchivos);
     }
 
+    /**
+     * Elimina el elemnto seleccionado del árbol de proyectos
+     * @param tabsAbiertos Tabs abiertos en el TabPane
+     * @param tablaProyectos Árbol donde se encuentran los proyectos
+     * @param tablaArchivos TabPane para cerrar el Tab
+     */
     public void eliminarElementoArbol(ArrayList<MyTab> tabsAbiertos, TreeTableView<String> tablaProyectos, TabPane tablaArchivos) {
         MyTreeItemCarpeta myTreeItemCarpeta;
         MyTreeItemProyecto myTreeItemProyecto;
@@ -679,6 +920,12 @@ public class PantallaPrincipalController implements Initializable {
         }
     }
 
+    /**
+     * Remueve los Tabs abiertos cuando se elimina un proyecto
+     * @param myTreeItemProyecto Proyecto que será eliminado
+     * @param tabsAbiertos Tabs abiertos en el TabPane
+     * @param tablaArchivos TabPane para cerrar el Tab
+     */
     public void removerTabsAbiertosProyectoEliminado(MyTreeItemProyecto myTreeItemProyecto, ArrayList<MyTab> tabsAbiertos, TabPane tablaArchivos) {
         ArrayList<MyTab> tabsAbiertosAux = crearAuxiliarTabsAbiertos(tabsAbiertos);
         for (MyTab myTab : tabsAbiertosAux) {
@@ -688,7 +935,13 @@ public class PantallaPrincipalController implements Initializable {
             }
         }
     }
-
+    
+    /**
+     * Remueve los Tabs abiertos cuando se elimina una carpeta
+     * @param rutaCarpeta Ruta de la carpeta que será eliminada
+     * @param tabsAbiertos Tabs abiertos en el TabPane
+     * @param tablaArchivos TabPane para cerrar el Tab
+     */
     public void removerTabsAbiertosCarpetaEliminada(String rutaCarpeta, ArrayList<MyTab> tabsAbiertos, TabPane tablaArchivos) {
         ArrayList<MyTab> tabsAbiertosAux = crearAuxiliarTabsAbiertos(tabsAbiertos);
         for (MyTab myTab : tabsAbiertosAux) {
@@ -699,6 +952,11 @@ public class PantallaPrincipalController implements Initializable {
         }
     }
 
+    /**
+     * Crea un arreglo auxiliar para remover Tabs abiertos 
+     * @param tabsAbiertos Tabs abiertos en el TabPane
+     * @return Arreglo auxiliar con los tabs abiertos
+     */
     public ArrayList<MyTab> crearAuxiliarTabsAbiertos(ArrayList<MyTab> tabsAbiertos) {
         ArrayList<MyTab> tabsAbiertosAux = new ArrayList();
         for (MyTab myTab : tabsAbiertos) {
@@ -707,6 +965,12 @@ public class PantallaPrincipalController implements Initializable {
         return tabsAbiertosAux;
     }
 
+    /**
+     * Remueve Tabs de archivos 
+     * @param rutaArchivo Ruta del archivo que será eliminado
+     * @param tabsAbiertos Tabs abiertos en el TabPane
+     * @param tablaArchivos TabTane donde se cerrará el Tab
+     */
     public void removerTabAbiertoArchivoEliminado(String rutaArchivo, ArrayList<MyTab> tabsAbiertos, TabPane tablaArchivos) {
         for (MyTab myTab : tabsAbiertos) {
             if ((myTab.getTreeItem().getArchivo().getRuta() + myTab.getTreeItem().getArchivo().getNombreArchivo()).equals(rutaArchivo)) {
@@ -717,11 +981,21 @@ public class PantallaPrincipalController implements Initializable {
         }
     }
 
+    /**
+     * Agrega un paquete a un proyecto seleccionado
+     * @param event Clic del usuario
+     */
     @FXML
     private void agregarPaquete(ActionEvent event) {
         agregarPaqueteArbol(tablaProyectos, recurso);
     }
 
+    /**
+     * Agrega al árbol de proyetos una carpeta
+     * @param tablaProyectos Árbol donde se encuentran los proyectos
+     * @param recurso Idioma
+     * @return MyTreeItemCarpeta para agregarla al de árbol proyectos
+     */
     public MyTreeItemCarpeta agregarPaqueteArbol(TreeTableView<String> tablaProyectos, ResourceBundle recurso) {
         MyTreeItemCarpeta treeItemCarpeta = null;
         if (tablaProyectos.getSelectionModel().getSelectedItem() != null
@@ -760,11 +1034,21 @@ public class PantallaPrincipalController implements Initializable {
         return treeItemCarpeta;
     }
 
+    /**
+     * Agrega el archivo al árbol de proyectos
+     * @param event Clic del usuario
+     */
     @FXML
     private void agregarArchivo(ActionEvent event) {
         agregarArchvioArbol(tablaProyectos, recurso);
     }
 
+    /**
+     * Agrega al árbol de proyetos un archivo
+     * @param tablaProyectos Árbol donde se encuentran los proyectos
+     * @param recurso Idioma
+     * @return MyTreeItem para agregarlo al árbol de proyectos
+     */
     public MyTreeItem agregarArchvioArbol(TreeTableView<String> tablaProyectos, ResourceBundle recurso) {
         MyTreeItem treeItemArchivo = null;
         if (tablaProyectos.getSelectionModel().getSelectedItem() != null
@@ -822,6 +1106,10 @@ public class PantallaPrincipalController implements Initializable {
         return treeItemArchivo;
     }
 
+    /**
+     * Desplegar la pantalla para configurar la IP del servidor
+     * @param event Clic del usuario
+     */
     @FXML
     private void configurarIP(ActionEvent event) {
         stagePantallaPrincipal.hide();

@@ -21,8 +21,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author raymu
+ * La clase Proyecto crea, actualiza y elimina proyectos del usuario
+ * @author Raymundo Pérez
+ * @author Alonso Lora
  */
 public class Proyecto {
 
@@ -30,40 +31,159 @@ public class Proyecto {
     private String nombreProyecto;
     private String rutaProyecto;
     private ArrayList<Carpeta> carpetas;
-    private static ArchivoConfiguracion archivoConfig = new ArchivoConfiguracion();
-
+    private final static ArchivoConfiguracion archivoConfig = new ArchivoConfiguracion();
+    
+    /**
+     * Regresa el lenguaje de programación del proyecto
+     * @return Lenguaje de programación
+     */
     public String getLenguaje() {
         return lenguaje;
     }
-
+    
+    /**
+     * Da valor al lenguaje de programamción del proyecto
+     * @param lenguaje Lenguaje de programación
+     */
     public void setLenguaje(String lenguaje) {
         this.lenguaje = lenguaje;
     }
-
+    
+    /**
+     * Regresa el nombre del proyecto
+     * @return Nombre del proyecto
+     */
     public String getNombreProyecto() {
         return nombreProyecto;
     }
 
+    /**
+     * Da valor al nombre del proyecto
+     * @param nombreProyecto Nombre del proyecto
+     */
     public void setNombreProyecto(String nombreProyecto) {
         this.nombreProyecto = nombreProyecto;
     }
-
+    
+    /**
+     * Regresa la ruta donde se encuentra el proyecto
+     * @return Ruta del proyecto
+     */
     public String getRutaProyecto() {
         return rutaProyecto;
     }
 
+    /**
+     * Da valor a la ruta del proyecto
+     * @param rutaProyecto Ruta donde se encuentra el proyecto
+     */
     public void setRutaProyecto(String rutaProyecto) {
         this.rutaProyecto = rutaProyecto;
     }
 
+    /**
+     * Regresa la lista de carpetas pertenecientes a un proyecto
+     * @return Lista de carpetas
+     */
     public ArrayList<Carpeta> getCarpetas() {
         return carpetas;
     }
 
+    /**
+     * Da valor a la lista de carpetas
+     * @param carpetas Lista de carpetas pertenecientes a un proyecto
+     */
     public void setCarpetas(ArrayList<Carpeta> carpetas) {
         this.carpetas = carpetas;
     }
+    
+    /**
+     * El archivo contiene las rutas de los proyectos creados, para su posterior lectura
+     */   
+    public void crearArchivoRutas() {
+        String ruta = obtenerRutaProyectos();
+        File file = new File(ruta);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException ex) {
+                Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
 
+    }
+    
+    /**
+     * Guarda la ruta del nuevo proyecto en el archivo de rutas
+     */
+    public void guardarRuta() {
+        String rutaArchivoProyectos = obtenerRutaProyectos();
+        File file = new File(rutaArchivoProyectos);
+        try (FileWriter fileWriter = new FileWriter(file, true);
+                PrintWriter pw = new PrintWriter(fileWriter)) {
+            pw.append(rutaProyecto + "," + lenguaje + "," + nombreProyecto + "\n");
+        } catch (IOException ex) {
+            Logger.getLogger(PantallaCrearProyectoController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /**
+     * Elimina la ruta de de un proyecto del archivo de rutas
+     * @param cadenaActualizadda Contenido del archivo de rutas actualizado
+     */
+    public void actualizarArchivoRutas(String cadenaActualizadda) {
+        File file = new File(obtenerRutaProyectos());
+        try (PrintWriter printWriter = new PrintWriter(new FileWriter(file))) {
+            printWriter.write(cadenaActualizadda);
+        } catch (IOException ex) {
+            Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+        
+    /**
+     * Elimina el proyecto del archivo rutas
+     * @param proyecto Proyecto que será eliminado del archivo de rutas
+     */
+    public void eliminarRutaDeProyecto(Proyecto proyecto) {
+        File file = new File(obtenerRutaProyectos());
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
+            String auxiliar;
+            String contenidoArchivo = "";
+            StringBuilder rutaEliminar = new StringBuilder();
+            rutaEliminar.append(proyecto.getRutaProyecto()).append(",").append(proyecto.getLenguaje()).append(",").append(proyecto.getNombreProyecto());
+            while ((auxiliar = bufferedReader.readLine()) != null) {
+                if (!auxiliar.equals(rutaEliminar.toString())) {
+                    contenidoArchivo += auxiliar + "\n";
+                }
+            }
+            actualizarArchivoRutas(contenidoArchivo);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /**
+     * Obtiene la ruta del archivo de rutas de los proyectos
+     * @return La ruta del archivo rutas de los proyectos
+     */
+    public static String obtenerRutaProyectos() {
+        String rutaArchivoProyectos;
+        String palabraClave = "user.name";
+        if (isLinux()) {
+            rutaArchivoProyectos = archivoConfig.getRutaProyectosLinux().replace(palabraClave, System.getProperty(palabraClave));
+        } else {
+            rutaArchivoProyectos = archivoConfig.getRutaProyectosWindows().replace(palabraClave, System.getProperty(palabraClave));
+        }
+
+        return rutaArchivoProyectos;
+    }
+
+    /**
+     * Crea un proyecto de los lenguajes Java y C++
+     * @return Indica si el proyecto se creo correctamente
+     */
     public boolean crearProyecto() {
         boolean proyetoCreado = false;
         File carpetaProyecto = new File(rutaProyecto);
@@ -107,17 +227,10 @@ public class Proyecto {
 
     }
 
-    public void guardarRuta() {
-        String rutaArchivoProyectos = obtenerRutaProyectos();
-        File file = new File(rutaArchivoProyectos);
-        try (FileWriter fileWriter = new FileWriter(file, true);
-                PrintWriter pw = new PrintWriter(fileWriter)) {
-            pw.append(rutaProyecto + "," + lenguaje + "," + nombreProyecto + "\n");
-        } catch (IOException ex) {
-            Logger.getLogger(PantallaCrearProyectoController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
+    /**
+     * Carga en memoria todos los proyectos creados por el usuario
+     * @return Proyectos creados por el usuario
+     */
     public ArrayList<Proyecto> cargarProyectos() {
         ArrayList<Proyecto> proyectos = new ArrayList();
         String rutaArchivoProyectos = obtenerRutaProyectos();
@@ -142,7 +255,12 @@ public class Proyecto {
         }
         return proyectos;
     }
-
+    
+    /**
+     * Busca las carpetas pertenecientes a un proyecto
+     * @param ruta Ruta específica donde busca las carpetas
+     * @return Carpetas pertenecientes a un proyecto
+     */
     public ArrayList<Carpeta> buscarCarpetas(String ruta) {
         String rutaClases = ruta + archivoConfig.getNombreCarpetaClases();
         ArrayList<Carpeta> carpetas = new ArrayList();
@@ -161,7 +279,14 @@ public class Proyecto {
         }
         return carpetas;
     }
-
+    
+    /**
+     * Busca los archivos pertenecientes a un proyecto
+     * @param ruta Ruta específica donde buscar archivos pertenecientes a un proyecto
+     * @param paquete Paquete en el que se encuentra el archivo
+     * @param rutaClases Ruta donde se guardarán los archivos compilados
+     * @return Archivos pertenecientes a un proyecto
+     */
     public ArrayList<Archivo> buscarArchivos(String ruta, String paquete, String rutaClases) {
         ArrayList<Archivo> archivos = new ArrayList();
         File file = new File(ruta);
@@ -182,9 +307,14 @@ public class Proyecto {
 
         return archivos;
     }
-
+    
+    /**
+     * Lee el código fuente de un archivo
+     * @param ruta Ruta del archivo que será leido
+     * @return El contenido del archivo
+     */
     public String leerArchivo(String ruta) {
-        String auxiliar = "";
+        String auxiliar;
         StringBuilder contenidoArchivo = new StringBuilder();
         File file = new File(ruta);
         if (!file.isDirectory()) {
@@ -199,7 +329,12 @@ public class Proyecto {
         }
         return contenidoArchivo.toString();
     }
-
+    
+    /**
+     * Después de crear un nuevo proyecto se carga en memoria para su manipulación
+     * @param proyecto Proyecto que será cargado en memoria
+     * @return El contenido del proyecto
+     */
     public Proyecto cargarNuevoProyecto(Proyecto proyecto) {
         if ((new File(proyecto.getRutaProyecto())).exists()) {
             proyecto.setCarpetas(buscarCarpetas(proyecto.getRutaProyecto()));
@@ -207,6 +342,11 @@ public class Proyecto {
         return proyecto;
     }
 
+    /**
+     * Elimina el proyecto indicado por el usuario
+     * @param ruta Ruta específica donde se encuetra el proyecto
+     * @return Indica si el proyecto se elimino correctamente
+     */
     public boolean eliminarProyecto(String ruta) {
         boolean seElimino = false;
         File file = new File(ruta);
@@ -222,60 +362,6 @@ public class Proyecto {
         }
         file.delete();
         return seElimino;
-    }
-
-    public void eliminarRutaDeProyecto(Proyecto proyecto) {
-        File file = new File(obtenerRutaProyectos());
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
-            String auxiliar = "";
-            String contenidoArchivo = "";
-            StringBuilder rutaEliminar = new StringBuilder();
-            rutaEliminar.append(proyecto.getRutaProyecto()).append(",").append(proyecto.getLenguaje()).append(",").append(proyecto.getNombreProyecto());
-            while ((auxiliar = bufferedReader.readLine()) != null) {
-                if (!auxiliar.equals(rutaEliminar.toString())) {
-                    contenidoArchivo += auxiliar + "\n";
-                }
-            }
-            actualizarArchivoRutas(contenidoArchivo);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void actualizarArchivoRutas(String cadenaActualizadda) {
-        File file = new File(obtenerRutaProyectos());
-        try (PrintWriter printWriter = new PrintWriter(new FileWriter(file))) {
-            printWriter.write(cadenaActualizadda);
-        } catch (IOException ex) {
-            Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void crearArchivoRutas() {
-        String ruta = obtenerRutaProyectos();
-        File file = new File(ruta);
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException ex) {
-                Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-    }
-
-    public static String obtenerRutaProyectos() {
-        String rutaArchivoProyectos;
-        String palabraClave = "user.name";
-        if (isLinux()) {
-            rutaArchivoProyectos = archivoConfig.getRutaProyectosLinux().replace(palabraClave, System.getProperty(palabraClave));
-        } else {
-            rutaArchivoProyectos = archivoConfig.getRutaProyectosWindows().replace(palabraClave, System.getProperty(palabraClave));
-        }
-
-        return rutaArchivoProyectos;
     }
 
 }

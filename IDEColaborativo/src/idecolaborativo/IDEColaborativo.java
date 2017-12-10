@@ -1,7 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* Identificador del programa: IDEColaborativo2017
+
+   Clave única del programa: IDEC2017
+   
+   Nombre: IDE Colaborativo
+ 
+   Nombre de los desarrolladores: José Alonso Lora González
+                                  Raymundo de Jesús Pérez Castellanos
+    
+   Fecha en la que se inicio el desarrollo del programa: 20 de septiembre 2017
+
+   Descripción: El sistema desarrollado tiene como objetivo principal el desarrollo de proyectos de software tanto de manera local, como colaborativa
+                entre dos personas.
+
  */
 package idecolaborativo;
 
@@ -18,7 +28,6 @@ import controladores.PantallaPrincipalController;
 import controladores.PantallaRegistrarUsuarioController;
 import io.socket.client.Socket;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -272,6 +272,14 @@ public class PantallaPrincipalController implements Initializable {
         });
     }
 
+    public TabPane getTablaArchivos() {
+        return tablaArchivos;
+    }
+
+    public ArrayList<MyTab> getTabsAbiertos() {
+        return tabsAbiertos;
+    }
+
     public void setRecurso(ResourceBundle recurso) {
         this.recurso = recurso;
         configurarIdioma();
@@ -612,7 +620,7 @@ public class PantallaPrincipalController implements Initializable {
     private void invitarColaborador(ActionEvent event) {
         if (!etiquetaNombreUsuario.getText().isEmpty()) {
             stagePantallaPrincipal.hide();
-            ventanaInvitarColaborador(recurso, socket, proyectos, controlador);
+            ventanaInvitarColaborador(recurso, socket, controlador);
         } else {
             mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeDebesIniciarSesion"));
         }
@@ -628,33 +636,31 @@ public class PantallaPrincipalController implements Initializable {
 
     @FXML
     private void eliminar(ActionEvent event) {
-        eliminarElementoArbol(tabsAbiertos, tablaProyectos, tablaArchivos, false);
+        eliminarElementoArbol(tabsAbiertos, tablaProyectos, tablaArchivos);
     }
 
-    public void eliminarElementoArbol(ArrayList<MyTab> tabsAbiertos, TreeTableView<String> tablaProyectos, TabPane tablaArchivos, boolean esColaborativo) {
+    public void eliminarElementoArbol(ArrayList<MyTab> tabsAbiertos, TreeTableView<String> tablaProyectos, TabPane tablaArchivos) {
         MyTreeItemCarpeta myTreeItemCarpeta;
         MyTreeItemProyecto myTreeItemProyecto;
         if (tablaProyectos.getSelectionModel().getSelectedItem() != null) {
             switch (tablaProyectos.getSelectionModel().getSelectedItem().getClass().toString()) {
                 case "class clasesApoyo.MyTreeItemProyecto":
-                    if (!esColaborativo) {
-                        myTreeItemProyecto = (MyTreeItemProyecto) tablaProyectos.getSelectionModel().getSelectedItem();
-                        Proyecto proyecto = new Proyecto();
-                        proyecto.setNombreProyecto(myTreeItemProyecto.getNombreProyecto());
-                        proyecto.setRutaProyecto(myTreeItemProyecto.getRuta());
-                        proyecto.setLenguaje(myTreeItemProyecto.getLenguaje());
-                        proyecto.eliminarProyecto(myTreeItemProyecto.getRuta());
-                        proyecto.eliminarRutaDeProyecto(proyecto);
-                        removerTabsAbiertosProyectoEliminado(myTreeItemProyecto, tabsAbiertos, tablaArchivos);
-                        myTreeItemProyecto.getParent().getChildren().remove(myTreeItemProyecto);
-                    }
+                    myTreeItemProyecto = (MyTreeItemProyecto) tablaProyectos.getSelectionModel().getSelectedItem();
+                    Proyecto proyecto = new Proyecto();
+                    proyecto.setNombreProyecto(myTreeItemProyecto.getNombreProyecto());
+                    proyecto.setRutaProyecto(myTreeItemProyecto.getRuta());
+                    proyecto.setLenguaje(myTreeItemProyecto.getLenguaje());
+                    proyecto.eliminarProyecto(myTreeItemProyecto.getRuta());
+                    proyecto.eliminarRutaDeProyecto(proyecto);
+                    removerTabsAbiertosProyectoEliminado(myTreeItemProyecto, tabsAbiertos, tablaArchivos);
+                    myTreeItemProyecto.getParent().getChildren().remove(myTreeItemProyecto);
                     break;
                 case "class clasesApoyo.MyTreeItemCarpeta":
                     myTreeItemCarpeta = (MyTreeItemCarpeta) tablaProyectos.getSelectionModel().getSelectedItem();
                     if (!myTreeItemCarpeta.getLenguaje().equals("c++")) {
                         Carpeta carpeta = new Carpeta();
                         carpeta.eliminarCarpeta(myTreeItemCarpeta.getRuta());
-                        removerTabsAbiertosCarpetaEliminada(myTreeItemCarpeta, tabsAbiertos, tablaArchivos);
+                        removerTabsAbiertosCarpetaEliminada(myTreeItemCarpeta.getRuta(), tabsAbiertos, tablaArchivos);
                         myTreeItemProyecto = (MyTreeItemProyecto) myTreeItemCarpeta.getParent();
                         myTreeItemProyecto.getNombreCarpetas().remove(myTreeItemCarpeta.getNombreCarpeta());
                         myTreeItemCarpeta.getParent().getChildren().remove(myTreeItemCarpeta);
@@ -663,7 +669,7 @@ public class PantallaPrincipalController implements Initializable {
                 case "class clasesApoyo.MyTreeItem":
                     MyTreeItem myTreeItem = (MyTreeItem) tablaProyectos.getSelectionModel().getSelectedItem();
                     myTreeItem.getArchivo().eliminarArchivo(myTreeItem.getArchivo());
-                    removerTabAbiertoArchivoEliminado(myTreeItem, tabsAbiertos, tablaArchivos);
+                    removerTabAbiertoArchivoEliminado(myTreeItem.getArchivo().getRuta() + myTreeItem.getArchivo().getNombreArchivo(), tabsAbiertos, tablaArchivos);
                     myTreeItemCarpeta = (MyTreeItemCarpeta) myTreeItem.getParent();
                     myTreeItemCarpeta.getNombreArchivos().remove(myTreeItem.getArchivo().getNombreArchivo());
                     myTreeItem.getParent().getChildren().remove(myTreeItem);
@@ -682,10 +688,10 @@ public class PantallaPrincipalController implements Initializable {
         }
     }
 
-    public void removerTabsAbiertosCarpetaEliminada(MyTreeItemCarpeta myTreeItemCarpeta, ArrayList<MyTab> tabsAbiertos, TabPane tablaArchivos) {
+    public void removerTabsAbiertosCarpetaEliminada(String rutaCarpeta, ArrayList<MyTab> tabsAbiertos, TabPane tablaArchivos) {
         ArrayList<MyTab> tabsAbiertosAux = crearAuxiliarTabsAbiertos(tabsAbiertos);
         for (MyTab myTab : tabsAbiertosAux) {
-            if (myTab.getTreeItem().getRutaCarpeta().equals(myTreeItemCarpeta.getRuta())) {
+            if (myTab.getTreeItem().getRutaCarpeta().equals(rutaCarpeta)) {
                 tablaArchivos.getTabs().remove(myTab);
                 tabsAbiertos.remove(myTab);
             }
@@ -700,9 +706,9 @@ public class PantallaPrincipalController implements Initializable {
         return tabsAbiertosAux;
     }
 
-    public void removerTabAbiertoArchivoEliminado(MyTreeItem myTreeItem, ArrayList<MyTab> tabsAbiertos, TabPane tablaArchivos) {
+    public void removerTabAbiertoArchivoEliminado(String rutaArchivo, ArrayList<MyTab> tabsAbiertos, TabPane tablaArchivos) {
         for (MyTab myTab : tabsAbiertos) {
-            if (myTab.getTreeItem().equals(myTreeItem)) {
+            if ((myTab.getTreeItem().getArchivo().getRuta() + myTab.getTreeItem().getArchivo().getNombreArchivo()).equals(rutaArchivo)) {
                 tablaArchivos.getTabs().remove(myTab);
                 tabsAbiertos.remove(myTab);
                 break;

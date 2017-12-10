@@ -75,11 +75,12 @@ public class PantallaInvitadoController implements Initializable {
 
     public void setStagePantallaInvitado(Stage stagePantallaInvitado) {
         this.stagePantallaInvitado = stagePantallaInvitado;
-        this.stagePantallaInvitado.setOnCloseRequest(new EventHandler<WindowEvent>(){
-            @Override public void handle(WindowEvent event) {
+        this.stagePantallaInvitado.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
                 controlador.hacerVisiblePantallaprincipal();
                 controlador.getSocket().emit("terminarSesionInvitado");
-            }  
+            }
         });
     }
 
@@ -92,6 +93,9 @@ public class PantallaInvitadoController implements Initializable {
 
     @FXML
     private void cancelarColaboracion(ActionEvent event) {
+        controlador.hacerVisiblePantallaprincipal();
+        controlador.getSocket().emit("terminarSesionInvitado");
+        stagePantallaInvitado.close();
     }
 
     public void cargarProyecto() {
@@ -106,7 +110,7 @@ public class PantallaInvitadoController implements Initializable {
         columnaProyecto.setCellValueFactory((TreeTableColumn.CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
         tablaProyecto.setRoot(root);
         tablaProyecto.setShowRoot(true);
-        controlador.handlerTablaProyectos(tablaProyecto, tabsAbiertosInvitado, tablaArchivos,true);
+        controlador.handlerTablaProyectos(tablaProyecto, tabsAbiertosInvitado, tablaArchivos, true);
     }
 
     public Proyecto transformarJSON() {
@@ -118,7 +122,7 @@ public class PantallaInvitadoController implements Initializable {
             Carpeta carpetaNegocio = new Carpeta();
             JSONObject carpeta = proyecto.getJSONArray("carpetas").getJSONObject(i);
             carpetaNegocio.setNombreCarpeta(carpeta.getString("nombreCarpeta"));
-            carpetaNegocio.setRutaCarpeta(carpeta.getString("ruta"));
+            carpetaNegocio.setRutaCarpeta(carpeta.getString("rutaCarpeta"));
             ArrayList<Archivo> archivos = new ArrayList();
             for (int j = 0; j < carpeta.getJSONArray("archivos").length(); j++) {
                 Archivo archivoNegocio = new Archivo();
@@ -137,22 +141,22 @@ public class PantallaInvitadoController implements Initializable {
 
         return proyectoNegocio;
     }
-    
-        
-    public static void finalizarSesion(){
+
+    public static void finalizarSesion() {
         stagePantallaInvitado.close();
         controlador.hacerVisiblePantallaprincipal();
         mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeSesionTerminada"));
         controlador.getSocket().emit("terminarSesion");
     }
-    public static void escribirCodigoInvitado(String texto,String ruta){
-        for(MyTab myTab:tabsAbiertosInvitado){
-            if((myTab.getTreeItem().getArchivo().getRuta()+myTab.getTreeItem().getArchivo().getNombreArchivo()).equals(ruta)){
+
+    public static void escribirCodigoInvitado(String texto, String ruta) {
+        for (MyTab myTab : tabsAbiertosInvitado) {
+            if ((myTab.getTreeItem().getArchivo().getRuta() + myTab.getTreeItem().getArchivo().getNombreArchivo()).equals(ruta)) {
                 ((CodeArea) myTab.getContent()).replaceText(texto);
             }
         }
     }
-    
+
     public static Archivo transformarJSONArchivo(JSONObject archivoJSON) {
         Archivo archivo = new Archivo();
         archivo.setNombreArchivo(archivoJSON.getString("nombreArchivo"));
@@ -162,11 +166,12 @@ public class PantallaInvitadoController implements Initializable {
         archivo.setPaquete(archivoJSON.getString("paquete"));
         return archivo;
     }
-    
+
     public void abrirTabInvitado(JSONObject archivoJSON) {
         Archivo archivo = transformarJSONArchivo(archivoJSON);
         MyTreeItem treeItem = new MyTreeItem();
         treeItem.setArchivo(archivo);
+        treeItem.setRutaCarpeta(archivo.getRuta());
         MyTab tab = new MyTab(archivo.getNombreArchivo());
         FormatoCodigo areaCodigo = new FormatoCodigo();
         areaCodigo.setSampleCode(treeItem.getArchivo().getContenido());
@@ -175,35 +180,35 @@ public class PantallaInvitadoController implements Initializable {
             @Override
             public void handle(KeyEvent event) {
                 treeItem.setModificado(true);
-                controlador.getSocket().emit("escribirCodigo", areaCodigo.getCodeArea().getText(), treeItem.getArchivo().getRuta()+treeItem.getArchivo().getNombreArchivo());
+                controlador.getSocket().emit("escribirCodigo", areaCodigo.getCodeArea().getText(), treeItem.getArchivo().getRuta() + treeItem.getArchivo().getNombreArchivo());
             }
         });
         tab.setTreeItem(treeItem);
         tablaArchivos.getTabs().add(tab);
         tabsAbiertosInvitado.add(tab);
     }
-    
-    public void mostrarMensajeCompilacionExitosa(){
+
+    public void mostrarMensajeCompilacionExitosa() {
         mensajeAlert(recurso.getString("felicidades"), recurso.getString("mensajeCompilacionExitosa"));
     }
-    
-    public void mostrarMensajeErrorCompilacion(String errorCompilacion){
-         resultadoCompilacion(errorCompilacion, recurso);
+
+    public void mostrarMensajeErrorCompilacion(String errorCompilacion) {
+        resultadoCompilacion(errorCompilacion, recurso);
     }
-    
-    public void mostrarResultadoEjecucion(String resultado){
+
+    public void mostrarResultadoEjecucion(String resultado) {
         mensajeAlert(recurso.getString("mensajeResultadoEjecucion"), resultado);
     }
-    
-    public void agregarPaqueteArbol(JSONObject carpeta){
+
+    public void agregarPaqueteArbol(JSONObject carpeta) {
         MyTreeItemCarpeta treeItemCarpeta = transformarJSONCarpeta(carpeta);
         MyTreeItemProyecto treeItemProyecto = (MyTreeItemProyecto) root.getChildren().get(0);
         treeItemProyecto.getChildren().add(treeItemCarpeta);
         treeItemProyecto.getNombreCarpetas().add(treeItemCarpeta.getNombreCarpeta());
     }
-    
-    public MyTreeItemCarpeta transformarJSONCarpeta(JSONObject carpeta){
-        MyTreeItemCarpeta treeItemCarpeta = new MyTreeItemCarpeta(carpeta.getString("nombreCarpeta"),controlador.crearIconoCarpeta());
+
+    public MyTreeItemCarpeta transformarJSONCarpeta(JSONObject carpeta) {
+        MyTreeItemCarpeta treeItemCarpeta = new MyTreeItemCarpeta(carpeta.getString("nombreCarpeta"), controlador.crearIconoCarpeta());
         treeItemCarpeta.setNombreCarpeta(carpeta.getString("nombreCarpeta"));
         treeItemCarpeta.setLenguaje(carpeta.getString("lenguaje"));
         treeItemCarpeta.setRuta(carpeta.getString("rutaCarpeta"));
@@ -211,28 +216,57 @@ public class PantallaInvitadoController implements Initializable {
         treeItemCarpeta.setNombreArchivos(new ArrayList());
         return treeItemCarpeta;
     }
-    
-    public void agregarArchivoArbol(JSONObject archivoJSON, String rutaCarpeta){
+
+    public void agregarArchivoArbol(JSONObject archivoJSON, String rutaCarpeta) {
         Archivo archivo = transformarJSONArchivo(archivoJSON);
-        MyTreeItem treeItemArchivo = new MyTreeItem(archivo.getNombreArchivo(),controlador.crearIconoArchivo(proyecto.getString("lenguaje")));
+        MyTreeItem treeItemArchivo = new MyTreeItem(archivo.getNombreArchivo(), controlador.crearIconoArchivo(proyecto.getString("lenguaje")));
         treeItemArchivo.setArchivo(archivo);
         treeItemArchivo.setRutaCarpeta(rutaCarpeta);
         ObservableList<TreeItem<String>> observableList = root.getChildren().get(0).getChildren();
-        for(TreeItem<String> treeItem: observableList){
-              MyTreeItemCarpeta treeItemCarpeta = (MyTreeItemCarpeta) treeItem;
-              if(treeItemCarpeta.getRuta().equals(rutaCarpeta)){
-                 treeItemCarpeta.getChildren().add(treeItemArchivo);
-                 treeItemCarpeta.getNombreArchivos().add(archivo.getNombreArchivo());
-                 break;
-              }
+        for (TreeItem<String> treeItem : observableList) {
+            MyTreeItemCarpeta treeItemCarpeta = (MyTreeItemCarpeta) treeItem;
+            if (treeItemCarpeta.getRuta().equals(rutaCarpeta)) {
+                treeItemCarpeta.getChildren().add(treeItemArchivo);
+                treeItemCarpeta.getNombreArchivos().add(archivo.getNombreArchivo());
+                break;
+            }
         }
     }
-    
-    public void eliminarPaqueteArbol(){
-        
+
+    public void eliminarPaqueteArbol(String nombrePaquete) {
+        ObservableList<TreeItem<String>> observableList = root.getChildren().get(0).getChildren();
+        for (TreeItem<String> treeItem : observableList) {
+            MyTreeItemCarpeta treeItemCarpeta = (MyTreeItemCarpeta) treeItem;
+            if (treeItemCarpeta.getNombreCarpeta().equals(nombrePaquete)) {
+                MyTreeItemProyecto myTreeItemProyecto = (MyTreeItemProyecto) treeItemCarpeta.getParent();
+                controlador.removerTabsAbiertosCarpetaEliminada(treeItemCarpeta.getRuta(), tabsAbiertosInvitado, tablaArchivos);
+                myTreeItemProyecto.getNombreCarpetas().remove(treeItemCarpeta.getNombreCarpeta());
+                myTreeItemProyecto.getChildren().remove(treeItemCarpeta);
+
+                break;
+            }
+        }
     }
-    
-    public void elimanrArchivoArbol(){
-        
+
+    public void elimanrArchivoArbol(String nombrePaquete, String nombreArchivo) {
+        ObservableList<TreeItem<String>> observableList = root.getChildren().get(0).getChildren();
+        for (TreeItem<String> treeItem : observableList) {
+            MyTreeItemCarpeta treeItemCarpeta = (MyTreeItemCarpeta) treeItem;
+            if (treeItemCarpeta.getNombreCarpeta().equals(nombrePaquete)) {
+                ObservableList<TreeItem<String>> observableListArchivos = treeItemCarpeta.getChildren();
+                for (TreeItem treeItemArchivo : observableListArchivos) {
+                    MyTreeItem myTreeItem = (MyTreeItem) treeItemArchivo;
+                    if (myTreeItem.getArchivo().getNombreArchivo().equals(nombreArchivo)) {
+                        controlador.removerTabAbiertoArchivoEliminado(myTreeItem.getArchivo().getRuta() + myTreeItem.getArchivo().getNombreArchivo(), tabsAbiertosInvitado, tablaArchivos);
+                        treeItemCarpeta.getChildren().remove(myTreeItem);
+                        treeItemCarpeta.getNombreArchivos().remove(myTreeItem.getArchivo().getNombreArchivo());
+                        break;
+                    }
+                }
+
+                break;
+            }
+        }
+
     }
 }

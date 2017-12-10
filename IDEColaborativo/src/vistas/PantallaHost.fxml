@@ -53,5 +53,10 @@
             <MaterialDesignIconView fill="#575050" glyphName="NOTE_PLUS" size="20" />
          </graphic>
       </JFXButton>
+      <JFXButton fx:id="botonTerminarSesion" layoutX="933.0" layoutY="12.0" onAction="#terminarSesion" ripplerFill="#7c7c7c" text="">
+         <graphic>
+            <FontAwesomeIconView fill="#20a11e" glyphName="SIGN_OUT" size="20" />
+         </graphic>
+      </JFXButton>
    </children>
 </AnchorPane>

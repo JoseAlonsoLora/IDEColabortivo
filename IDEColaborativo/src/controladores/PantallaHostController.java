@@ -57,15 +57,17 @@ public class PantallaHostController implements Initializable {
     private Stage stagePantallaHost;
     @FXML
     private TreeTableColumn<String, String> columnaProyecto;
-     private TreeItem<String> root;
-     private static ArrayList<MyTab> tabsAbiertosHost;
+    private TreeItem<String> root;
+    private static ArrayList<MyTab> tabsAbiertosHost;
     @FXML
     private JFXButton botonEliminar;
     @FXML
     private JFXButton botonAgregarPaquete;
     @FXML
     private JFXButton botonAgregarArchivo;
-     
+    @FXML
+    private JFXButton botonTerminarSesion;
+
     /**
      * Initializes the controller class.
      */
@@ -74,7 +76,7 @@ public class PantallaHostController implements Initializable {
         recurso = rb;
         root = new TreeItem<>(recurso.getString("etProyectos"));
         tabsAbiertosHost = new ArrayList();
-    }    
+    }
 
     public void setProyecto(Proyecto proyecto) {
         this.proyecto = proyecto;
@@ -87,15 +89,15 @@ public class PantallaHostController implements Initializable {
 
     public void setStagePantallaHost(Stage stagePantallaHost) {
         this.stagePantallaHost = stagePantallaHost;
-        this.stagePantallaHost.setOnCloseRequest(new EventHandler<WindowEvent>(){
-            @Override public void handle(WindowEvent event) {
+        this.stagePantallaHost.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                controlador.cargarProyectos();
                 controlador.hacerVisiblePantallaprincipal();
                 controlador.getSocket().emit("terminarSesionHost");
-            }  
+            }
         });
     }
-    
-    
 
     @FXML
     private void guardarArchivo(ActionEvent event) {
@@ -111,10 +113,10 @@ public class PantallaHostController implements Initializable {
     private void ejecutar(ActionEvent event) {
         controlador.ejecutarArchivo(tablaArchivos, true);
     }
-    
-    public void cargarProyecto(){
+
+    public void cargarProyecto() {
         MyTreeItemProyecto hijo = new MyTreeItemProyecto(proyecto.getNombreProyecto(), controlador.crearIconoLenguaje(proyecto.getLenguaje()));
-        hijo.getChildren().setAll(controlador.agregarCarpetasArbol(proyecto,obtenerNombreCarpetas(proyecto)));
+        hijo.getChildren().setAll(controlador.agregarCarpetasArbol(proyecto, obtenerNombreCarpetas(proyecto)));
         root.getChildren().add(hijo);
         hijo.setLenguaje(proyecto.getLenguaje());
         hijo.setNombreCarpetas(obtenerNombreCarpetas(proyecto));
@@ -123,29 +125,29 @@ public class PantallaHostController implements Initializable {
         columnaProyecto.setCellValueFactory((TreeTableColumn.CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
         tablaProyecto.setRoot(root);
         tablaProyecto.setShowRoot(true);
-        controlador.handlerTablaProyectos(tablaProyecto, tabsAbiertosHost, tablaArchivos,true);
+        controlador.handlerTablaProyectos(tablaProyecto, tabsAbiertosHost, tablaArchivos, true);
     }
-   
-    public static ArrayList<String> obtenerNombreCarpetas(Proyecto proyecto){
+
+    public static ArrayList<String> obtenerNombreCarpetas(Proyecto proyecto) {
         ArrayList<String> nombreCarpetas = new ArrayList();
-        for(Carpeta carpeta: proyecto.getCarpetas()){
+        for (Carpeta carpeta : proyecto.getCarpetas()) {
             nombreCarpetas.add(carpeta.getNombreCarpeta());
         }
         return nombreCarpetas;
     }
-    
-    public static void colaboradorDesconectado(){
+
+    public static void colaboradorDesconectado() {
         mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeColaboradorDesconectado"));
     }
-    
-    public static void escribirCodigoHost(String texto,String ruta){
-        for(MyTab myTab:tabsAbiertosHost){
-            if((myTab.getTreeItem().getArchivo().getRuta()+myTab.getTreeItem().getArchivo().getNombreArchivo()).equals(ruta)){
+
+    public static void escribirCodigoHost(String texto, String ruta) {
+        for (MyTab myTab : tabsAbiertosHost) {
+            if ((myTab.getTreeItem().getArchivo().getRuta() + myTab.getTreeItem().getArchivo().getNombreArchivo()).equals(ruta)) {
                 ((CodeArea) myTab.getContent()).replaceText(texto);
             }
         }
     }
-    
+
     public void abrirTabHost(JSONObject archivoJSON) {
         Archivo archivo = transformarJSONArchivo(archivoJSON);
         MyTreeItem treeItem = new MyTreeItem();
@@ -158,7 +160,7 @@ public class PantallaHostController implements Initializable {
             @Override
             public void handle(KeyEvent event) {
                 treeItem.setModificado(true);
-                controlador.getSocket().emit("escribirCodigo", areaCodigo.getCodeArea().getText(), treeItem.getArchivo().getRuta()+treeItem.getArchivo().getNombreArchivo());
+                controlador.getSocket().emit("escribirCodigo", areaCodigo.getCodeArea().getText(), treeItem.getArchivo().getRuta() + treeItem.getArchivo().getNombreArchivo());
             }
         });
         tab.setTreeItem(treeItem);
@@ -168,18 +170,46 @@ public class PantallaHostController implements Initializable {
 
     @FXML
     private void eliminar(ActionEvent event) {
-        controlador.eliminarElementoArbol(tabsAbiertosHost, tablaProyecto, tablaArchivos, true);
+        MyTreeItemCarpeta myTreeItemCarpeta;
+        MyTreeItemProyecto myTreeItemProyecto;
+        if (tablaProyecto.getSelectionModel().getSelectedItem() != null) {
+            switch (tablaProyecto.getSelectionModel().getSelectedItem().getClass().toString()) {
+                case "class clasesApoyo.MyTreeItemCarpeta":
+                    myTreeItemCarpeta = (MyTreeItemCarpeta) tablaProyecto.getSelectionModel().getSelectedItem();
+                    if (!myTreeItemCarpeta.getLenguaje().equals("c++")) {
+                        Carpeta carpeta = new Carpeta();
+                        carpeta.eliminarCarpeta(myTreeItemCarpeta.getRuta());
+                        controlador.removerTabsAbiertosCarpetaEliminada(myTreeItemCarpeta.getRuta(), tabsAbiertosHost, tablaArchivos);
+                        controlador.removerTabsAbiertosCarpetaEliminada(myTreeItemCarpeta.getRuta(), controlador.getTabsAbiertos(), controlador.getTablaArchivos());
+                        myTreeItemProyecto = (MyTreeItemProyecto) myTreeItemCarpeta.getParent();
+                        myTreeItemProyecto.getNombreCarpetas().remove(myTreeItemCarpeta.getNombreCarpeta());
+                        myTreeItemCarpeta.getParent().getChildren().remove(myTreeItemCarpeta);
+                        controlador.getSocket().emit("eliminarPaquete", myTreeItemCarpeta.getNombreCarpeta());
+                    }
+                    break;
+                case "class clasesApoyo.MyTreeItem":
+                    MyTreeItem myTreeItem = (MyTreeItem) tablaProyecto.getSelectionModel().getSelectedItem();
+                    myTreeItem.getArchivo().eliminarArchivo(myTreeItem.getArchivo());
+                    controlador.removerTabAbiertoArchivoEliminado(myTreeItem.getArchivo().getRuta() + myTreeItem.getArchivo().getNombreArchivo(), tabsAbiertosHost, tablaArchivos);
+                    controlador.removerTabAbiertoArchivoEliminado(myTreeItem.getArchivo().getRuta() + myTreeItem.getArchivo().getNombreArchivo(), controlador.getTabsAbiertos(), controlador.getTablaArchivos());
+                    myTreeItemCarpeta = (MyTreeItemCarpeta) myTreeItem.getParent();
+                    myTreeItemCarpeta.getNombreArchivos().remove(myTreeItem.getArchivo().getNombreArchivo());
+                    myTreeItem.getParent().getChildren().remove(myTreeItem);
+                    controlador.getSocket().emit("eliminarArchivo", myTreeItemCarpeta.getNombreCarpeta(), myTreeItem.getArchivo().getNombreArchivo());
+                    break;
+            }
+        }
     }
 
     @FXML
     private void agregarPaquete(ActionEvent event) {
-        MyTreeItemCarpeta treeItemCarpeta=  controlador.agregarPaqueteArbol(tablaProyecto, recurso);
-        if(treeItemCarpeta!=null){
+        MyTreeItemCarpeta treeItemCarpeta = controlador.agregarPaqueteArbol(tablaProyecto, recurso);
+        if (treeItemCarpeta != null) {
             controlador.getSocket().emit("agregarPaquete", crearJSONCarpeta(treeItemCarpeta));
         }
     }
-    
-    public JSONObject crearJSONCarpeta(MyTreeItemCarpeta treeItemCarpeta){
+
+    public JSONObject crearJSONCarpeta(MyTreeItemCarpeta treeItemCarpeta) {
         JSONObject carpeta = new JSONObject();
         carpeta.put("nombreCarpeta", treeItemCarpeta.getNombreCarpeta());
         carpeta.put("lenguaje", treeItemCarpeta.getLenguaje());
@@ -191,13 +221,17 @@ public class PantallaHostController implements Initializable {
     @FXML
     private void agregarArchivo(ActionEvent event) {
         MyTreeItem treeItemArchivo = controlador.agregarArchvioArbol(tablaProyecto, recurso);
-        if(treeItemArchivo != null){
-            controlador.getSocket().emit("agregarArchivo", controlador.crearObjetoJSONArchivo(treeItemArchivo.getArchivo()),treeItemArchivo.getRutaCarpeta());
+        if (treeItemArchivo != null) {
+            controlador.getSocket().emit("agregarArchivo", controlador.crearObjetoJSONArchivo(treeItemArchivo.getArchivo()), treeItemArchivo.getRutaCarpeta());
         }
     }
-    
-   
 
-    
-    
+    @FXML
+    private void terminarSesion(ActionEvent event) {
+        controlador.cargarProyectos();
+        controlador.hacerVisiblePantallaprincipal();
+        controlador.getSocket().emit("terminarSesionHost");
+        stagePantallaHost.close();
+    }
+
 }

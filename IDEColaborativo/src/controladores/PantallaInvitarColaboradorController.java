@@ -65,7 +65,7 @@ public class PantallaInvitarColaboradorController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         recurso = rb;
         configurarIdioma();
-
+        mostrarProyectos();
     }
 
     public void setSocket(Socket socket) {
@@ -86,8 +86,9 @@ public class PantallaInvitarColaboradorController implements Initializable {
         this.controlador = controlador;
     }
 
-    public void setProyectos(ArrayList<Proyecto> proyectos) {
-        this.proyectos = proyectos;
+    public void mostrarProyectos() {
+        Proyecto proyecto = new Proyecto();
+        this.proyectos = proyecto.cargarProyectos();
         ObservableList<String> items = FXCollections.observableArrayList();
         items.addAll(obtenerNombresProyectos());
         comboProyectos.setItems(items);
@@ -176,7 +177,7 @@ public class PantallaInvitarColaboradorController implements Initializable {
         for (Carpeta carpeta : proyecto.getCarpetas()) {
             JSONObject carpetaJSON = new JSONObject();
             carpetaJSON.put("nombreCarpeta", carpeta.getNombreCarpeta());
-            carpetaJSON.put("ruta", carpeta.getRutaCarpeta());
+            carpetaJSON.put("rutaCarpeta", carpeta.getRutaCarpeta());
             JSONArray arregloArchivos = new JSONArray();
             for (Archivo archivo : carpeta.getArchivos()) {
                 JSONObject archivoJSON = new JSONObject();

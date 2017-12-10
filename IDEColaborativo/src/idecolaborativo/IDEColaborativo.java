@@ -180,14 +180,13 @@ public class IDEColaborativo extends Application {
         }
     }
     
-    public static void ventanaInvitarColaborador(ResourceBundle recurso,Socket socket,ArrayList<Proyecto> proyectos,PantallaPrincipalController controlador){
+    public static void ventanaInvitarColaborador(ResourceBundle recurso,Socket socket,PantallaPrincipalController controlador){
          try {
             Stage stage = new Stage();
             FXMLLoader loader = new FXMLLoader(IDEColaborativo.class.getResource("/vistas/PantallaInvitarColaborador.fxml"), recurso);
             Parent root = (Parent) loader.load();
             PantallaInvitarColaboradorController control = loader.getController();
             control.setSocket(socket);
-            control.setProyectos(proyectos);
             control.setControlador(controlador);
             Scene scene = new Scene(root);
             stage.setScene(scene);

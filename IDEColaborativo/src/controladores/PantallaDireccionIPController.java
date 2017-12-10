@@ -53,6 +53,7 @@ public class PantallaDireccionIPController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.recurso = rb;// TODO
+        configurarIdioma();
     }
 
     public void configurarIdioma() {

@@ -152,6 +152,7 @@ public class PantallaHostController implements Initializable {
         Archivo archivo = transformarJSONArchivo(archivoJSON);
         MyTreeItem treeItem = new MyTreeItem();
         treeItem.setArchivo(archivo);
+        treeItem.setRutaCarpeta(archivo.getRuta());
         MyTab tab = new MyTab(archivo.getNombreArchivo());
         FormatoCodigo areaCodigo = new FormatoCodigo();
         areaCodigo.setSampleCode(treeItem.getArchivo().getContenido());

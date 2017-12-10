@@ -170,40 +170,41 @@ public class PantallaPrincipalController implements Initializable {
         tablaProyectos.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldVal, Object newVal) {
-                if ("class clasesApoyo.MyTreeItem".equals(newVal.getClass().toString())) {
-                    MyTreeItem treeItem = (MyTreeItem) newVal;
-                    if (!buscarArchivosAbiertos(treeItem, tabsAbiertos)) {
-                        MyTab tab = new MyTab(treeItem.getArchivo().getNombreArchivo());
-                        FormatoCodigo areaCodigo = new FormatoCodigo();
-                        areaCodigo.setSampleCode(treeItem.getArchivo().getContenido());
-                        tab.setContent(areaCodigo.crearAreaCodigo());
-                        if (!esColaborativo) {
-                            areaCodigo.getCodeArea().setOnKeyTyped(new EventHandler<KeyEvent>() {
-                                @Override
-                                public void handle(KeyEvent event) {
-                                    treeItem.setModificado(true);
-                                }
-                            });
-                        } else {
-                            areaCodigo.getCodeArea().setOnKeyTyped(new EventHandler<KeyEvent>() {
-                                @Override
-                                public void handle(KeyEvent event) {
-                                    treeItem.setModificado(true);
+                if (newVal != null) {
+                    if ("class clasesApoyo.MyTreeItem".equals(newVal.getClass().toString())) {
+                        MyTreeItem treeItem = (MyTreeItem) newVal;
+                        if (!buscarArchivosAbiertos(treeItem, tabsAbiertos)) {
+                            MyTab tab = new MyTab(treeItem.getArchivo().getNombreArchivo());
+                            FormatoCodigo areaCodigo = new FormatoCodigo();
+                            areaCodigo.setSampleCode(treeItem.getArchivo().getContenido());
+                            tab.setContent(areaCodigo.crearAreaCodigo());
+                            if (!esColaborativo) {
+                                areaCodigo.getCodeArea().setOnKeyTyped(new EventHandler<KeyEvent>() {
+                                    @Override
+                                    public void handle(KeyEvent event) {
+                                        treeItem.setModificado(true);
+                                    }
+                                });
+                            } else {
+                                areaCodigo.getCodeArea().setOnKeyTyped(new EventHandler<KeyEvent>() {
+                                    @Override
+                                    public void handle(KeyEvent event) {
+                                        treeItem.setModificado(true);
 
-                                    socket.emit("escribirCodigo", areaCodigo.getCodeArea().getText(), treeItem.getArchivo().getRuta() + treeItem.getArchivo().getNombreArchivo());
+                                        socket.emit("escribirCodigo", areaCodigo.getCodeArea().getText(), treeItem.getArchivo().getRuta() + treeItem.getArchivo().getNombreArchivo());
 
-                                }
-                            });
-                            socket.emit("abrirTab", crearObjetoJSONArchivo(treeItem.getArchivo()));
+                                    }
+                                });
+                                socket.emit("abrirTab", crearObjetoJSONArchivo(treeItem.getArchivo()));
+                            }
+
+                            tab.setTreeItem(treeItem);
+                            tablaArchivos.getTabs().add(tab);
+                            tabsAbiertos.add(tab);
+                            handlerCerrarProyectoTab(tab, treeItem, tabsAbiertos, tablaArchivos);
                         }
-
-                        tab.setTreeItem(treeItem);
-                        tablaArchivos.getTabs().add(tab);
-                        tabsAbiertos.add(tab);
-                        handlerCerrarProyectoTab(tab, treeItem, tabsAbiertos, tablaArchivos);
                     }
                 }
-
             }
         });
     }
@@ -784,30 +785,35 @@ public class PantallaPrincipalController implements Initializable {
             dialog.setContentText(recurso.getString("etNombreArchivo"));
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent()) {
-                if (treeItem.getNombreArchivos().contains(result.get())) {
-                    mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeArchivoExistente"));
+                String nombreArchivo = result.get();
+                if (nombreArchivo.contains(".") || nombreArchivo.isEmpty()) {
+                    mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeDatosInvalidos"));
                 } else {
-                    String nombreArchivo = result.get();
                     if (treeItem.getLenguaje().equals("java")) {
                         nombreArchivo += ".java";
                     } else {
                         nombreArchivo += ".cpp";
                     }
-                    Archivo archivo = new Archivo();
-                    archivo.setNombreArchivo(nombreArchivo);
-                    ArchivoConfiguracion archivoConfig = new ArchivoConfiguracion();
-                    archivo.setRutaClases(treeItem.getRutaProyecto() + archivoConfig.getNombreCarpetaClases());
-                    archivo.setRuta(treeItem.getRuta());
-                    archivo.setContenido("");
-                    archivo.setPaquete(treeItem.getNombreCarpeta());
+                    if (treeItem.getNombreArchivos().contains(nombreArchivo)) {
+                        mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeArchivoExistente"));
+                    } else {
+                        Archivo archivo = new Archivo();
+                        archivo.setNombreArchivo(nombreArchivo);
+                        ArchivoConfiguracion archivoConfig = new ArchivoConfiguracion();
+                        archivo.setRutaClases(treeItem.getRutaProyecto() + archivoConfig.getNombreCarpetaClases());
+                        archivo.setRuta(treeItem.getRuta());
+                        archivo.setContenido("");
+                        archivo.setPaquete(treeItem.getNombreCarpeta());
 
-                    if (archivo.crearArchivo(archivo)) {
-                        treeItemArchivo = new MyTreeItem(nombreArchivo, crearIconoArchivo(treeItem.getLenguaje()));
-                        treeItemArchivo.setArchivo(archivo);
-                        treeItemArchivo.setModificado(false);
-                        treeItemArchivo.setRutaCarpeta(treeItem.getRuta());
-                        treeItemArchivo.setRutaProyecto(treeItem.getRutaProyecto());
-                        treeItem.getChildren().add(treeItemArchivo);
+                        if (archivo.crearArchivo(archivo)) {
+                            treeItemArchivo = new MyTreeItem(nombreArchivo, crearIconoArchivo(treeItem.getLenguaje()));
+                            treeItemArchivo.setArchivo(archivo);
+                            treeItemArchivo.setModificado(false);
+                            treeItemArchivo.setRutaCarpeta(treeItem.getRuta());
+                            treeItemArchivo.setRutaProyecto(treeItem.getRutaProyecto());
+                            treeItem.getChildren().add(treeItemArchivo);
+                            treeItem.getNombreArchivos().add(nombreArchivo);
+                        }
                     }
                 }
 

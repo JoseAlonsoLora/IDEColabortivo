@@ -7,6 +7,7 @@ package controladores;
 
 import clasesApoyo.MyTab;
 import clasesApoyo.MyTreeItem;
+import clasesApoyo.MyTreeItemCarpeta;
 import clasesApoyo.MyTreeItemProyecto;
 import com.jfoenix.controls.JFXButton;
 import componentes.FormatoCodigo;
@@ -172,12 +173,27 @@ public class PantallaHostController implements Initializable {
 
     @FXML
     private void agregarPaquete(ActionEvent event) {
-       controlador.agregarPaqueteArbol(tablaProyecto, recurso);
+        MyTreeItemCarpeta treeItemCarpeta=  controlador.agregarPaqueteArbol(tablaProyecto, recurso);
+        if(treeItemCarpeta!=null){
+            controlador.getSocket().emit("agregarPaquete", crearJSONCarpeta(treeItemCarpeta));
+        }
+    }
+    
+    public JSONObject crearJSONCarpeta(MyTreeItemCarpeta treeItemCarpeta){
+        JSONObject carpeta = new JSONObject();
+        carpeta.put("nombreCarpeta", treeItemCarpeta.getNombreCarpeta());
+        carpeta.put("lenguaje", treeItemCarpeta.getLenguaje());
+        carpeta.put("rutaCarpeta", treeItemCarpeta.getRuta());
+        carpeta.put("rutaProyecto", treeItemCarpeta.getRutaProyecto());
+        return carpeta;
     }
 
     @FXML
     private void agregarArchivo(ActionEvent event) {
-        controlador.agregarArchvioArbol(tablaProyecto, recurso);
+        MyTreeItem treeItemArchivo = controlador.agregarArchvioArbol(tablaProyecto, recurso);
+        if(treeItemArchivo != null){
+            controlador.getSocket().emit("agregarArchivo", controlador.crearObjetoJSONArchivo(treeItemArchivo.getArchivo()),treeItemArchivo.getRutaCarpeta());
+        }
     }
     
    

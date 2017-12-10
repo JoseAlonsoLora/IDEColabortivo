@@ -715,7 +715,8 @@ public class PantallaPrincipalController implements Initializable {
         agregarPaqueteArbol(tablaProyectos, recurso);
     }
 
-    public void agregarPaqueteArbol(TreeTableView<String> tablaProyectos, ResourceBundle recurso) {
+    public MyTreeItemCarpeta agregarPaqueteArbol(TreeTableView<String> tablaProyectos, ResourceBundle recurso) {
+        MyTreeItemCarpeta treeItemCarpeta = null;
         if (tablaProyectos.getSelectionModel().getSelectedItem() != null
                 && tablaProyectos.getSelectionModel().getSelectedItem().getClass().toString().equals("class clasesApoyo.MyTreeItemProyecto")) {
             MyTreeItemProyecto treeItem = (MyTreeItemProyecto) tablaProyectos.getSelectionModel().getSelectedItem();
@@ -735,7 +736,7 @@ public class PantallaPrincipalController implements Initializable {
                         ArchivoConfiguracion archivoConfig = new ArchivoConfiguracion();
                         carpeta.setRutaCarpeta(treeItem.getRuta() + archivoConfig.getNombreCarpetaCodigos() + result.get());
                         if (carpeta.crearCarpeta(carpeta)) {
-                            MyTreeItemCarpeta treeItemCarpeta = new MyTreeItemCarpeta(result.get(), crearIconoCarpeta());
+                            treeItemCarpeta = new MyTreeItemCarpeta(result.get(), crearIconoCarpeta());
                             treeItemCarpeta.setNombreCarpeta(carpeta.getNombreCarpeta());
                             treeItemCarpeta.setRuta(carpeta.getRutaCarpeta());
                             treeItemCarpeta.setNombreArchivos(new ArrayList());
@@ -749,6 +750,7 @@ public class PantallaPrincipalController implements Initializable {
                 }
             }
         }
+        return treeItemCarpeta;
     }
 
     @FXML
@@ -756,7 +758,8 @@ public class PantallaPrincipalController implements Initializable {
         agregarArchvioArbol(tablaProyectos, recurso);
     }
 
-    public void agregarArchvioArbol(TreeTableView<String> tablaProyectos, ResourceBundle recurso) {
+    public MyTreeItem agregarArchvioArbol(TreeTableView<String> tablaProyectos, ResourceBundle recurso) {
+        MyTreeItem treeItemArchivo = null;
         if (tablaProyectos.getSelectionModel().getSelectedItem() != null
                 && tablaProyectos.getSelectionModel().getSelectedItem().getClass().toString().equals("class clasesApoyo.MyTreeItemCarpeta")) {
             MyTreeItemCarpeta treeItem = (MyTreeItemCarpeta) tablaProyectos.getSelectionModel().getSelectedItem();
@@ -793,7 +796,7 @@ public class PantallaPrincipalController implements Initializable {
                     archivo.setPaquete(treeItem.getNombreCarpeta());
 
                     if (archivo.crearArchivo(archivo)) {
-                        MyTreeItem treeItemArchivo = new MyTreeItem(nombreArchivo, crearIconoArchivo(treeItem.getLenguaje()));
+                        treeItemArchivo = new MyTreeItem(nombreArchivo, crearIconoArchivo(treeItem.getLenguaje()));
                         treeItemArchivo.setArchivo(archivo);
                         treeItemArchivo.setModificado(false);
                         treeItemArchivo.setRutaCarpeta(treeItem.getRuta());
@@ -804,6 +807,7 @@ public class PantallaPrincipalController implements Initializable {
 
             }
         }
+        return treeItemArchivo;
     }
 
     @FXML

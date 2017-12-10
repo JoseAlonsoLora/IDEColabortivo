@@ -144,6 +144,20 @@ public class ConexionNode {
                   controladorInvitado.mostrarResultadoEjecucion((String)os[0]);
                 });
             }
+        }).on("agregarPaquete", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                Platform.runLater(() -> {
+                  controladorInvitado.agregarPaqueteArbol((JSONObject)os[0]);
+                });
+            }
+        }).on("agregarArchivo", new Emitter.Listener() {
+            @Override
+            public void call(Object... os) {
+                Platform.runLater(() -> {
+                  controladorInvitado.agregarArchivoArbol((JSONObject)os[0],(String)os[1]);
+                });
+            }
         });
         socket.connect();
          } catch (URISyntaxException ex) {

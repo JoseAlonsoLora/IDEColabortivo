@@ -7,6 +7,8 @@ package controladores;
 
 import clasesApoyo.MyTab;
 import clasesApoyo.MyTreeItem;
+import clasesApoyo.MyTreeItemCarpeta;
+import clasesApoyo.MyTreeItemProyecto;
 import com.jfoenix.controls.JFXButton;
 import componentes.FormatoCodigo;
 import static controladores.PantallaHostController.obtenerNombreCarpetas;
@@ -16,6 +18,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -93,9 +96,13 @@ public class PantallaInvitadoController implements Initializable {
 
     public void cargarProyecto() {
         Proyecto proyecto = transformarJSON();
-        TreeItem<String> hijo = new TreeItem<>(proyecto.getNombreProyecto(), controlador.crearIconoLenguaje(proyecto.getLenguaje()));
+        MyTreeItemProyecto hijo = new MyTreeItemProyecto(proyecto.getNombreProyecto(), controlador.crearIconoLenguaje(proyecto.getLenguaje()));
         hijo.getChildren().setAll(controlador.agregarCarpetasArbol(proyecto, obtenerNombreCarpetas(proyecto)));
         root.getChildren().add(hijo);
+        hijo.setLenguaje(proyecto.getLenguaje());
+        hijo.setNombreCarpetas(obtenerNombreCarpetas(proyecto));
+        hijo.setNombreProyecto(proyecto.getNombreProyecto());
+        hijo.setRuta(proyecto.getRutaProyecto());
         columnaProyecto.setCellValueFactory((TreeTableColumn.CellDataFeatures<String, String> p) -> new ReadOnlyStringWrapper(p.getValue().getValue()));
         tablaProyecto.setRoot(root);
         tablaProyecto.setShowRoot(true);
@@ -111,6 +118,7 @@ public class PantallaInvitadoController implements Initializable {
             Carpeta carpetaNegocio = new Carpeta();
             JSONObject carpeta = proyecto.getJSONArray("carpetas").getJSONObject(i);
             carpetaNegocio.setNombreCarpeta(carpeta.getString("nombreCarpeta"));
+            carpetaNegocio.setRutaCarpeta(carpeta.getString("ruta"));
             ArrayList<Archivo> archivos = new ArrayList();
             for (int j = 0; j < carpeta.getJSONArray("archivos").length(); j++) {
                 Archivo archivoNegocio = new Archivo();
@@ -187,12 +195,37 @@ public class PantallaInvitadoController implements Initializable {
         mensajeAlert(recurso.getString("mensajeResultadoEjecucion"), resultado);
     }
     
-    public void agregarPaqueteArbol(){
-        
+    public void agregarPaqueteArbol(JSONObject carpeta){
+        MyTreeItemCarpeta treeItemCarpeta = transformarJSONCarpeta(carpeta);
+        MyTreeItemProyecto treeItemProyecto = (MyTreeItemProyecto) root.getChildren().get(0);
+        treeItemProyecto.getChildren().add(treeItemCarpeta);
+        treeItemProyecto.getNombreCarpetas().add(treeItemCarpeta.getNombreCarpeta());
     }
     
-    public void agregarArchivoArbol(){
-        
+    public MyTreeItemCarpeta transformarJSONCarpeta(JSONObject carpeta){
+        MyTreeItemCarpeta treeItemCarpeta = new MyTreeItemCarpeta(carpeta.getString("nombreCarpeta"),controlador.crearIconoCarpeta());
+        treeItemCarpeta.setNombreCarpeta(carpeta.getString("nombreCarpeta"));
+        treeItemCarpeta.setLenguaje(carpeta.getString("lenguaje"));
+        treeItemCarpeta.setRuta(carpeta.getString("rutaCarpeta"));
+        treeItemCarpeta.setRutaProyecto(carpeta.getString("rutaProyecto"));
+        treeItemCarpeta.setNombreArchivos(new ArrayList());
+        return treeItemCarpeta;
+    }
+    
+    public void agregarArchivoArbol(JSONObject archivoJSON, String rutaCarpeta){
+        Archivo archivo = transformarJSONArchivo(archivoJSON);
+        MyTreeItem treeItemArchivo = new MyTreeItem(archivo.getNombreArchivo(),controlador.crearIconoArchivo(proyecto.getString("lenguaje")));
+        treeItemArchivo.setArchivo(archivo);
+        treeItemArchivo.setRutaCarpeta(rutaCarpeta);
+        ObservableList<TreeItem<String>> observableList = root.getChildren().get(0).getChildren();
+        for(TreeItem<String> treeItem: observableList){
+              MyTreeItemCarpeta treeItemCarpeta = (MyTreeItemCarpeta) treeItem;
+              if(treeItemCarpeta.getRuta().equals(rutaCarpeta)){
+                 treeItemCarpeta.getChildren().add(treeItemArchivo);
+                 treeItemCarpeta.getNombreArchivos().add(archivo.getNombreArchivo());
+                 break;
+              }
+        }
     }
     
     public void eliminarPaqueteArbol(){

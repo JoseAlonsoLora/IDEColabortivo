@@ -176,6 +176,7 @@ public class PantallaInvitarColaboradorController implements Initializable {
         for (Carpeta carpeta : proyecto.getCarpetas()) {
             JSONObject carpetaJSON = new JSONObject();
             carpetaJSON.put("nombreCarpeta", carpeta.getNombreCarpeta());
+            carpetaJSON.put("ruta", carpeta.getRutaCarpeta());
             JSONArray arregloArchivos = new JSONArray();
             for (Archivo archivo : carpeta.getArchivos()) {
                 JSONObject archivoJSON = new JSONObject();

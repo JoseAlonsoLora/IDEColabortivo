@@ -159,15 +159,16 @@ public class Archivo {
 
     public String ejecutarArchivo(Archivo archivo, String parametros) {
         String resultado = "";
-        String[] lenguaje = archivo.getNombreArchivo().split("\\.");
-        crearArchivoParametros(archivo.getRutaClases(), parametros);
+        String[] lenguaje = archivo.getNombreArchivo().split("\\.");      
         switch (lenguaje[1]) {
             case "java":
+                crearArchivoParametros(archivo.getRutaClases(), parametros);
                 resultado = ejecutarJava(archivo, lenguaje[0], true);
                 break;
             case "cs":
                 break;
             case "cpp":
+                crearArchivoParametros(archivo.getRutaClases()+archivo.getPaquete()+"/", parametros);
                 resultado = ejecutarCPlusPlus(archivo, lenguaje[0], true);
                 break;
             default:

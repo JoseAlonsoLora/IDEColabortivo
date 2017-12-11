@@ -42,27 +42,27 @@ public class ProgramadorDAOTest {
     /**
      * Test of iniciarSesion method, of class ProgramadorDAO.
      */
-    /*@Test
+    @Test
     public void testIniciarSesionUsuarioValido() throws Exception {
         System.out.println("iniciarSesion");
         Programador programador = new Programador();
         programador.setNombreUsuario("alonso");
         programador.setContraseña(makeHash("alonso"));
         ProgramadorDAO instance = new ProgramadorDAO();
-        boolean expResult = true;
-        boolean result = instance.iniciarSesion(programador);
+        InformacionInicioSesion expResult = InformacionInicioSesion.DatosValidos;
+        InformacionInicioSesion result = instance.iniciarSesion(programador);
         assertEquals(expResult, result);
     }
     
-    /*@Test
+    @Test
     public void testIniciarSesionUsuarioNoValido() throws Exception {
         System.out.println("iniciarSesion");
         Programador programador = new Programador();
         programador.setNombreUsuario("alonso");
         programador.setContraseña(makeHash("lorenzo"));
         ProgramadorDAO instance = new ProgramadorDAO();
-        boolean expResult = false;
-        boolean result = instance.iniciarSesion(programador);
+        InformacionInicioSesion expResult = InformacionInicioSesion.DatosInvalidos;
+        InformacionInicioSesion result = instance.iniciarSesion(programador);
         assertEquals(expResult, result);
     }
 
@@ -73,8 +73,8 @@ public class ProgramadorDAOTest {
     public void testRegistrarUsuarioValido() throws Exception {
         System.out.println("registrarUsuario");
         Programador programador = new Programador();
-        programador.setNombreUsuario("usuario3");
-        programador.setContraseña(makeHash("usuario3"));
+        programador.setNombreUsuario("usuario11");
+        programador.setContraseña(makeHash("usuario11"));
         programador.setCorreoElectronico("usuario3@gmail.com");
         ProgramadorDAO instance = new ProgramadorDAO();
         boolean expResult = true;

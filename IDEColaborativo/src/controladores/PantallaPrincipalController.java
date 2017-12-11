@@ -6,6 +6,9 @@
 package controladores;
 
 import clasesApoyo.ArchivoConfiguracion;
+import static clasesApoyo.GraficosTreeItem.crearIconoArchivo;
+import static clasesApoyo.GraficosTreeItem.crearIconoCarpeta;
+import static clasesApoyo.GraficosTreeItem.crearIconoLenguaje;
 import clasesApoyo.MyTab;
 import clasesApoyo.MyTreeItem;
 import clasesApoyo.MyTreeItemCarpeta;
@@ -58,7 +61,6 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -71,7 +73,8 @@ import org.json.JSONObject;
 /**
  * FXML Controller class
  *
- * @author raymu
+ * @author Alonso Lora
+ * @author Raymundo Pérez
  */
 public class PantallaPrincipalController implements Initializable {
 
@@ -135,6 +138,8 @@ public class PantallaPrincipalController implements Initializable {
 
     /**
      * Initializes the controller class.
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -557,82 +562,6 @@ public class PantallaPrincipalController implements Initializable {
         tablaProyectos.setRoot(root);
         tablaProyectos.setShowRoot(true);
 
-    }
-
-    /**
-     * Crea el icono de carpeta para agregarlo al árbol de proyectos
-     *
-     * @return Icono carpeta
-     */
-    public ImageView crearIconoCarpeta() {
-        ImageView carpeta;
-        carpeta = new ImageView("/Imagenes/carpeta_1.png");
-        carpeta.setFitHeight(15);
-        carpeta.setFitWidth(15);
-        return carpeta;
-    }
-
-    /**
-     * Crea el icono de lenguaje de programación para agregarlo al árbol de
-     * proyectos
-     *
-     * @param lenguajeProgramacion Lenguaje de programación
-     * @return Icono de lenguaje de programación
-     */
-    public ImageView crearIconoLenguaje(String lenguajeProgramacion) {
-        ImageView lenguaje = null;
-        switch (lenguajeProgramacion) {
-            case "java":
-                lenguaje = new ImageView("/Imagenes/java.png");
-                lenguaje.setFitHeight(35);
-                lenguaje.setFitWidth(35);
-                break;
-            case "c#":
-                lenguaje = new ImageView("/Imagenes/c#.png");
-                lenguaje.setFitHeight(20);
-                lenguaje.setFitWidth(20);
-                break;
-            case "c++":
-                lenguaje = new ImageView("/Imagenes/cpp_logo.png");
-                lenguaje.setFitHeight(15);
-                lenguaje.setFitWidth(15);
-                break;
-            default:
-                break;
-        }
-
-        return lenguaje;
-    }
-
-    /**
-     * Crea el icono del archivo para agregarlo al árbol de proyectos
-     *
-     * @param lenguajeProgramacion Lenguaje de programación
-     * @return Icono del archivo
-     */
-    public ImageView crearIconoArchivo(String lenguajeProgramacion) {
-        ImageView lenguaje = null;
-        switch (lenguajeProgramacion) {
-            case "java":
-                lenguaje = new ImageView("/Imagenes/archivoJava.png");
-                lenguaje.setFitHeight(20);
-                lenguaje.setFitWidth(20);
-                break;
-            case "c#":
-                lenguaje = new ImageView("/Imagenes/archivoCSharp.png");
-                lenguaje.setFitHeight(20);
-                lenguaje.setFitWidth(20);
-                break;
-            case "c++":
-                lenguaje = new ImageView("/Imagenes/cpp_logo.png");
-                lenguaje.setFitHeight(15);
-                lenguaje.setFitWidth(15);
-                break;
-            default:
-                break;
-        }
-
-        return lenguaje;
     }
 
     /**

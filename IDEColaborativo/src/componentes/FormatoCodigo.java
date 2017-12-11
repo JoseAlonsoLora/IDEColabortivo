@@ -82,27 +82,50 @@ public class FormatoCodigo {
     private CodeArea codeArea;
     private ExecutorService executor;
     private boolean codigoModificado;
-
+    
+    /**
+     * No hay documentación, componente externo
+     */
     public FormatoCodigo() {
         codigoModificado = false;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public CodeArea getCodeArea() {
         return codeArea;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public boolean isCodigoModificado() {
         return codigoModificado;
     }
 
+    /**
+     * 
+     * @param codigoModificado 
+     */
     public void setCodigoModificado(boolean codigoModificado) {
         this.codigoModificado = codigoModificado;
     }
 
+    /**
+     * 
+     * @param sampleCode 
+     */
     public void setSampleCode(String sampleCode) {
         this.sampleCode = sampleCode;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public CodeArea crearAreaCodigo() {
         executor = Executors.newSingleThreadExecutor();
         codeArea = new CodeArea();
@@ -124,10 +147,17 @@ public class FormatoCodigo {
         return codeArea;
     }
 
+    /**
+     * No hay documentación, componente externo
+     */
     public void stop() {
         executor.shutdown();
     }
 
+    /**
+     * 
+     * @return 
+     */
     private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
         String text = codeArea.getText();
         Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
@@ -140,6 +170,10 @@ public class FormatoCodigo {
         return task;
     }
 
+    /**
+     * 
+     * @param highlighting 
+     */
     private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
         try {
             codeArea.setStyleSpans(0, highlighting);
@@ -148,6 +182,11 @@ public class FormatoCodigo {
         }
     }
 
+    /**
+     * 
+     * @param text
+     * @return 
+     */
     private static StyleSpans<Collection<String>> computeHighlighting(String text) {
         Matcher matcher = PATTERN.matcher(text);
         int lastKwEnd = 0;

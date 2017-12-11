@@ -5,6 +5,7 @@
  */
 package controladores;
 
+import static clasesApoyo.GraficosTreeItem.crearIconoLenguaje;
 import clasesApoyo.MyTab;
 import clasesApoyo.MyTreeItem;
 import clasesApoyo.MyTreeItemCarpeta;
@@ -37,7 +38,8 @@ import org.json.JSONObject;
 /**
  * FXML Controller class
  *
- * @author alonso
+ * @author Alonso Lora
+ * @author Raymundo Pérez
  */
 public class PantallaHostController implements Initializable {
 
@@ -70,6 +72,8 @@ public class PantallaHostController implements Initializable {
 
     /**
      * Initializes the controller class.
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -78,15 +82,28 @@ public class PantallaHostController implements Initializable {
         tabsAbiertosHost = new ArrayList();
     }
 
+    /**
+     * Da valor al proyecto con el se trabajará de manerea colaborativa
+     * @param proyecto Proyecto colaborativo
+     */
     public void setProyecto(Proyecto proyecto) {
         this.proyecto = proyecto;
     }
 
+     /**
+     * Da valor al controlador para poder manipular componentes de la pantalla principal
+     *
+     * @param controlador Instancia del controlador
+     */
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
         controlador.getConexionNode().setControladorHost(this);
     }
 
+    /**
+     * Dar valor al stage para poder manipular la pantalla host
+     * @param stagePantallaHost Stage de la instancia actual
+     */
     public void setStagePantallaHost(Stage stagePantallaHost) {
         this.stagePantallaHost = stagePantallaHost;
         this.stagePantallaHost.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -99,23 +116,38 @@ public class PantallaHostController implements Initializable {
         });
     }
 
+    /**
+     * Evento para guardar el archivo
+     * @param event Clic del usuario
+     */
     @FXML
     private void guardarArchivo(ActionEvent event) {
         controlador.guardarArchivo(tablaArchivos);
     }
 
+    /**
+     * Evento para compilar el archivo seleccionado por el usuario
+     * @param event Clic del usuario
+     */
     @FXML
     private void compilar(ActionEvent event) {
         controlador.compilarArchivo(tablaArchivos, true, false);
     }
 
+    /**
+     * Evento para ejecutar 
+     * @param event 
+     */
     @FXML
     private void ejecutar(ActionEvent event) {
         controlador.ejecutarArchivo(tablaArchivos, true);
     }
 
+    /**
+     * Carga el proyecto que será utilizado en la sesión colaborativa
+     */
     public void cargarProyecto() {
-        MyTreeItemProyecto hijo = new MyTreeItemProyecto(proyecto.getNombreProyecto(), controlador.crearIconoLenguaje(proyecto.getLenguaje()));
+        MyTreeItemProyecto hijo = new MyTreeItemProyecto(proyecto.getNombreProyecto(), crearIconoLenguaje(proyecto.getLenguaje()));
         hijo.getChildren().setAll(controlador.agregarCarpetasArbol(proyecto, obtenerNombreCarpetas(proyecto)));
         root.getChildren().add(hijo);
         hijo.setLenguaje(proyecto.getLenguaje());
@@ -128,6 +160,11 @@ public class PantallaHostController implements Initializable {
         controlador.handlerTablaProyectos(tablaProyecto, tabsAbiertosHost, tablaArchivos, true);
     }
 
+    /**
+     * Obtiene el nombre de todas las carpetas pertenecientes a un proyecto
+     * @param proyecto Proyecto donde se buscarán todas las carpetas 
+     * @return Lista con el nombre de todas las carpetas de un proyecto
+     */
     public static ArrayList<String> obtenerNombreCarpetas(Proyecto proyecto) {
         ArrayList<String> nombreCarpetas = new ArrayList();
         for (Carpeta carpeta : proyecto.getCarpetas()) {
@@ -136,10 +173,18 @@ public class PantallaHostController implements Initializable {
         return nombreCarpetas;
     }
 
+    /**
+     * Muestra un mensaje cuando el invitado finaliza la sesión colaborativa
+     */
     public static void colaboradorDesconectado() {
         mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeColaboradorDesconectado"));
     }
 
+    /**
+     * Escribe el código que el invitado escribió en la pantalla host
+     * @param texto Texto que el invitado escribió
+     * @param ruta Identificador para saber en que Tab lo va a mostrar
+     */
     public static void escribirCodigoHost(String texto, String ruta) {
         for (MyTab myTab : tabsAbiertosHost) {
             if ((myTab.getTreeItem().getArchivo().getRuta() + myTab.getTreeItem().getArchivo().getNombreArchivo()).equals(ruta)) {
@@ -148,6 +193,10 @@ public class PantallaHostController implements Initializable {
         }
     }
 
+    /**
+     * Abre el archivo que el invidado abrió 
+     * @param archivoJSON Archivo que el invitado abrió
+     */
     public void abrirTabHost(JSONObject archivoJSON) {
         Archivo archivo = transformarJSONArchivo(archivoJSON);
         MyTreeItem treeItem = new MyTreeItem();
@@ -169,6 +218,10 @@ public class PantallaHostController implements Initializable {
         tabsAbiertosHost.add(tab);
     }
 
+    /**
+     * Eliminar el archivo o carpeta que el usuario seleccionó
+     * @param event Clic del usuario
+     */
     @FXML
     private void eliminar(ActionEvent event) {
         MyTreeItemCarpeta myTreeItemCarpeta;
@@ -202,6 +255,10 @@ public class PantallaHostController implements Initializable {
         }
     }
 
+    /**
+     * Evento para agregar una carpeta al poryecto
+     * @param event 
+     */
     @FXML
     private void agregarPaquete(ActionEvent event) {
         MyTreeItemCarpeta treeItemCarpeta = controlador.agregarPaqueteArbol(tablaProyecto, recurso);
@@ -210,6 +267,11 @@ public class PantallaHostController implements Initializable {
         }
     }
 
+    /**
+     * Transforma un carpeta a objeto JSON
+     * @param treeItemCarpeta Carpeta que será transformada a objeto JSON
+     * @return Objeto JSON con las propiedades del objeto carpeta
+     */
     public JSONObject crearJSONCarpeta(MyTreeItemCarpeta treeItemCarpeta) {
         JSONObject carpeta = new JSONObject();
         carpeta.put("nombreCarpeta", treeItemCarpeta.getNombreCarpeta());
@@ -219,6 +281,10 @@ public class PantallaHostController implements Initializable {
         return carpeta;
     }
 
+    /**
+     * Evento para agregar un archivo al proyecto
+     * @param event Clic del usuario
+     */
     @FXML
     private void agregarArchivo(ActionEvent event) {
         MyTreeItem treeItemArchivo = controlador.agregarArchvioArbol(tablaProyecto, recurso);
@@ -227,6 +293,10 @@ public class PantallaHostController implements Initializable {
         }
     }
 
+    /**
+     * Evento para finalizar la sesión colaborativa
+     * @param event 
+     */
     @FXML
     private void terminarSesion(ActionEvent event) {
         controlador.cargarProyectos();

@@ -25,7 +25,8 @@ import modelo.negocio.Archivo;
 /**
  * FXML Controller class
  *
- * @author raymu
+ * @author Alonso Lora
+ * @author Raymundo Pérez
  */
 public class PantallaEjecutarController implements Initializable {
 
@@ -58,6 +59,8 @@ public class PantallaEjecutarController implements Initializable {
 
     /**
      * Initializes the controller class.
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -69,6 +72,9 @@ public class PantallaEjecutarController implements Initializable {
         configurarIdioma();
     }
 
+    /**
+     * Configura el idioma de todas etiquetas de la pantalla
+     */
     public void configurarIdioma() {
         radioConParametros.setText(recurso.getString("etConParametros"));
         radioSinParametros.setText(recurso.getString("etSinParametros"));
@@ -77,18 +83,35 @@ public class PantallaEjecutarController implements Initializable {
         botonSalir.setText(recurso.getString("btSalir"));
     }
 
+    /**
+     * Da valor al archivo que será ejecutado por el comilador
+     * @param archivo Archivo que será ejecutado
+     */
     public void setArchivo(Archivo archivo) {
         this.archivo = archivo;
     }
-
+    
+     /**
+     * Da valor al controlador para poder manipular componentes de la pantalla principal
+     *
+     * @param controlador Instancia del controlador
+     */
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
     }
 
+    /**
+     * Define si la ejecución es de manera colaborativa
+     * @param esColaborativo Indica si la ejecución es colaborativa
+     */
     public void setEsColaborativo(boolean esColaborativo) {
         this.esColaborativo = esColaborativo;
     }
 
+    /**
+     * Evento para ejecutar un archivo en el compilador
+     * @param event Clic del usuario
+     */
     @FXML
     private void botonEjecutar(ActionEvent event) {
         JFXRadioButton radioSeleccionado = (JFXRadioButton) grupoRadio.getSelectedToggle();
@@ -102,6 +125,10 @@ public class PantallaEjecutarController implements Initializable {
 
     }
 
+    /**
+     * Ejecuta el archivo de manera local
+     * @param radioSeleccionado Indica si se ejecuta con parámetros o sin parámetros
+     */
     public void ejecutarLocal(JFXRadioButton radioSeleccionado) {
         if (radioSeleccionado.getText().equals(recurso.getString("etConParametros")) && !campoTextoParametros.getText().isEmpty()) {
             if (validarPatronParametros(campoTextoParametros.getText())) {
@@ -115,6 +142,10 @@ public class PantallaEjecutarController implements Initializable {
         }
     }
 
+        /**
+     * Ejecuta el archivo de manera colaborativa, mostrando los resultados a todos los colaboradores
+     * @param radioSeleccionado Indica si se ejecuta con parámetros o sin parámetros
+     */
     public void ejecutarColaborativo(JFXRadioButton radioSeleccionado) {
         String resultadoEjecucion;
         if (radioSeleccionado.getText().equals(recurso.getString("etConParametros")) && !campoTextoParametros.getText().isEmpty()) {
@@ -134,12 +165,20 @@ public class PantallaEjecutarController implements Initializable {
         
     }
 
+    /**
+     * Evento para salir de la pantalla ejecutar archivo
+     * @param event Clic del usuario
+     */
     @FXML
     private void botonSalir(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
     }
 
+    /**
+     * Evento para mostrar el campo para ingresar los parámetros
+     * @param event Clic del usuario
+     */
     @FXML
     private void radioSeleccionOpciones(ActionEvent event) {
         String radioSeleccionado = ((JFXRadioButton) event.getSource()).getText();
@@ -152,6 +191,10 @@ public class PantallaEjecutarController implements Initializable {
         }
     }
 
+    /**
+     * Evento para validar el formato de entrada de parámetros
+     * @param evt Clic del usuario
+     */
     @FXML
     private void campoTextoParametros(KeyEvent evt) {
         char digito = evt.getCharacter().charAt(0);
@@ -167,6 +210,11 @@ public class PantallaEjecutarController implements Initializable {
         }
     }
 
+    /**
+     * Valida si formato de entrada de parámetros es la correcta
+     * @param parametros Parámetros
+     * @return 
+     */
     public boolean validarPatronParametros(String parametros) {
         return parametros.matches(patron);
     }

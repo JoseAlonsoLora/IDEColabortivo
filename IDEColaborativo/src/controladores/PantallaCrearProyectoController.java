@@ -27,7 +27,8 @@ import modelo.negocio.Proyecto;
 /**
  * FXML Controller class
  *
- * @author alonso
+ * @author Alonso Lora
+ * @author Raymundo Pérez
  */
 public class PantallaCrearProyectoController implements Initializable {
 
@@ -64,6 +65,8 @@ public class PantallaCrearProyectoController implements Initializable {
 
     /**
      * Initializes the controller class.
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -75,10 +78,19 @@ public class PantallaCrearProyectoController implements Initializable {
         radioCSharp.setVisible(false);
     }
 
+     /**
+     * Da valor al controlador para poder manipular componentes de la pantalla principal
+     *
+     * @param controlador Instancia del controlador
+     */
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
     }
 
+    /**
+     * Dar valor al stage para poder manipular la pantalla crear proyecto
+     * @param stagePantallaCrearProyecto Stage de la instancia actual
+     */
     public void setStagePantallaCrearProyecto(Stage stagePantallaCrearProyecto) {
         this.stagePantallaCrearProyecto = stagePantallaCrearProyecto;
         this.stagePantallaCrearProyecto.setOnCloseRequest(new EventHandler<WindowEvent>(){
@@ -88,6 +100,9 @@ public class PantallaCrearProyectoController implements Initializable {
         });
     }
 
+    /**
+     * Configura el idioma de todas etiquetas de la pantalla
+     */
     public void configurarIdioma() {
         etiquetaEligeProyecto.setText(recurso.getString("etEligeProyecto"));
         etiquetaNombreProyecto.setText(recurso.getString("etNombreProyecto"));
@@ -97,6 +112,10 @@ public class PantallaCrearProyectoController implements Initializable {
         botonCrear.setText(recurso.getString("btCrear"));
     }
 
+    /**
+     * Evento para seleccionar la ruta destino del proyecto
+     * @param event Clic del usuario
+     */
     @FXML
     private void seleccionarRuta(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -112,6 +131,10 @@ public class PantallaCrearProyectoController implements Initializable {
 
     }
 
+    /**
+     * Evento para salir de la pantalla crear proyecto
+     * @param event Clic del usuario
+     */
     @FXML
     private void botonCancelar(ActionEvent event) {
         controlador.hacerVisiblePantallaprincipal();
@@ -119,6 +142,10 @@ public class PantallaCrearProyectoController implements Initializable {
         stage.close();
     }
 
+    /**
+     * Evento para crear un nuevo proyecto
+     * @param event Clic del usuario
+     */
     @FXML
     private void botonCrearProyecto(ActionEvent event) {
         if (grupoRadio.getSelectedToggle() != null && !campoTextoRuta.getText().equals("") && !campoTextoNombreProyecto.equals("")) {
@@ -148,6 +175,11 @@ public class PantallaCrearProyectoController implements Initializable {
         }
     }
 
+    /**
+     * Crea el proyecto con base en el lenguaje de programación
+     * @param lenguaje Lenguaje de programación
+     * @return 
+     */
     public Proyecto crearProyecto(String lenguaje) {
         Proyecto proyecto = new Proyecto();
         proyecto.setNombreProyecto(campoTextoNombreProyecto.getText());

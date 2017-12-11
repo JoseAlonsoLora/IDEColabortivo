@@ -35,6 +35,10 @@ public class ConexionNode {
      private PantallaInvitadoController controladorInvitado;
      private PantallaHostController controladorHost;
 
+     /**
+      * Conecta con el servidor de NodeJS
+      * @param controlador Controlador para poder manipular la pantalla principal
+      */
     public ConexionNode(PantallaPrincipalController controlador){
         this.controlador = controlador;
          try {
@@ -174,18 +178,26 @@ public class ConexionNode {
         
     }
       
+    /**
+     * Regresa el socket con la conexión al servidor de NodeJS
+     * @return Socket con la conexión al servidor
+     */
     public Socket getSocket() {
         return socket;
     }
 
-    public void setSocket(Socket socket) {
-        this.socket = socket;
-    }
-
+    /**
+     * Da valor al controlador invitado, con el fin de manipular todos los componentes de la pantalla invitado
+     * @param controladorInvitado Controlador para poder manipular la pantalla invitado
+     */
     public void setControladorInvitado(PantallaInvitadoController controladorInvitado) {
         this.controladorInvitado = controladorInvitado;
     }
 
+    /**
+     * Da valor al controlador invitado, con el fin de manipular todos los componentes de la pantalla host
+     * @param controladorHost Controlador para poder manipular la pantalla host
+     */
     public void setControladorHost(PantallaHostController controladorHost) {
         this.controladorHost = controladorHost;
     }

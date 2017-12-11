@@ -14,7 +14,8 @@ import modelo.negocio.Proyecto;
 
 /**
  *
- * @author alonso
+ * @author Alonso Lora
+ * @author Raymundo Pérez
  */
 public class ArchivoConfiguracion {
     private String rutaProyectosLinux;
@@ -22,6 +23,9 @@ public class ArchivoConfiguracion {
     private String nombreCarpetaClases;
     private String nombreCarpetaCodigos;
     
+    /**
+     * Constructor por defecto
+     */
     public ArchivoConfiguracion(){
         Properties p = new Properties();
         try (InputStream propertiesStream = ClassLoader.getSystemResourceAsStream("properties/config.properties")) {
@@ -36,40 +40,67 @@ public class ArchivoConfiguracion {
         ClassLoader.getSystemResource("properties/config.properties");
     }
 
+    /**
+     * Regresa la ruta del archivo rutas en el sistema operativo Linux
+     * @return Ruta del archivo rutas
+     */
     public String getRutaProyectosLinux() {
         return rutaProyectosLinux;
     }
 
+    /**
+     * Da valor a la ruta del archivo rutas en el sistema operativo Linux
+     * @param rutaProyectosLinux Ruta del archivo rutas
+     */
     public void setRutaProyectosLinux(String rutaProyectosLinux) {
         this.rutaProyectosLinux = rutaProyectosLinux;
     }
 
+    /**
+     * Regresa la ruta del archivo rutas en el sistema operativo Windows
+     * @return Ruta del archivo rutas
+     */
     public String getRutaProyectosWindows() {
         return rutaProyectosWindows;
     }
 
+    /**
+     * Da valor a la ruta del archivo rutas en el sistema operativo Windows
+     * @param rutaProyectosWindows Ruta del archivo rutas
+     */
     public void setRutaProyectosWindows(String rutaProyectosWindows) {
         this.rutaProyectosWindows = rutaProyectosWindows;
     }
-    
-    
 
+    /**
+     * Nombre de la carpeta donde se encuentran los archivos compilados
+     * @return Nombre de la carpeta de los archivos compilados
+     */
     public String getNombreCarpetaClases() {
         return nombreCarpetaClases;
     }
 
+    /**
+     * Da valor al nombre de la carpeta donde se encuentran los archivos compilados
+     * @param nombreCarpetaClases Nombre de la carpeta de los archivos compilados
+     */
     public void setNombreCarpetaClases(String nombreCarpetaClases) {
         this.nombreCarpetaClases = nombreCarpetaClases;
     }
 
+    /**
+     * Nombre de la carpeta donde se encuentran los archivos con el código fuente
+     * @return Nombre de la carpeta de los archivos con el código fuente
+     */
     public String getNombreCarpetaCodigos() {
         return nombreCarpetaCodigos;
     }
 
+    /**
+     * Da valor al nombre de la carpeta donde se encuentran los archivos con el código fuente
+     * @param nombreCarpetaCodigos Nombre de la carpeta de los archivos con el código fuente
+     */
     public void setNombreCarpetaCodigos(String nombreCarpetaCodigos) {
         this.nombreCarpetaCodigos = nombreCarpetaCodigos;
     }
-    
-    
-    
 }

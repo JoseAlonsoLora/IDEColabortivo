@@ -9,7 +9,8 @@ import java.io.Serializable;
 
 /**
  *
- * @author raymu
+ * @author Alonso Lora
+ * @author Raymundo Pérez
  */
 public enum InformacionInicioSesion implements Serializable{
     /**

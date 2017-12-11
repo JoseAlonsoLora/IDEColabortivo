@@ -53,31 +53,35 @@ public class PantallaIniciarSesionController implements Initializable {
     private JFXTextField campoTextoNombreUsuario;
     @FXML
     private JFXPasswordField campoTextoContraseña;
-
     private IProgramador stub;
     private final String mensajeAtencion = "atencion";
     private Stage stagePantallaIniciarSesion;
 
+    /**
+     *
+     * @param url
+     * @param rb
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.recurso = rb;
         configurarIdioma();
     }
 
+     /**
+     * Da valor al controlador para poder manipular componentes de la pantalla principal
+     *
+     * @param controlador Instancia del controlador
+     */
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
         inicializarRegistro();
     }
 
-    public void inicializarRegistro() {
-        try {
-            Registry registry = LocateRegistry.getRegistry(controlador.getDireccionIP());
-            stub = (IProgramador) registry.lookup("AdministrarUsuarios");
-        } catch (RemoteException | NotBoundException ex) {
-            System.out.println(ex.getMessage());
-        }
-    }
-
+    /**
+     * Dar valor al stage para poder manipular la pantalla iniciar sesión
+     * @param stagePantallaIniciarSesion Stage de la instancia actual
+     */
     public void setStagePantallaIniciarSesion(Stage stagePantallaIniciarSesion) {
         this.stagePantallaIniciarSesion = stagePantallaIniciarSesion;
         this.stagePantallaIniciarSesion.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -88,6 +92,21 @@ public class PantallaIniciarSesionController implements Initializable {
         });
     }
 
+    /**
+     * Conecta con el servidor RMI
+     */
+    public void inicializarRegistro() {
+        try {
+            Registry registry = LocateRegistry.getRegistry(controlador.getDireccionIP());
+            stub = (IProgramador) registry.lookup("AdministrarUsuarios");
+        } catch (RemoteException | NotBoundException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    /**
+     * Configura el idioma de todas etiquetas de la pantalla
+     */
     public void configurarIdioma() {
         etiquetaIniciarSesion.setText(recurso.getString("etInicioSesion"));
         etiquetaNombreUsuario.setText(recurso.getString("etNombreUsuario"));
@@ -97,6 +116,11 @@ public class PantallaIniciarSesionController implements Initializable {
         botonCancelar.setText(recurso.getString("btCancelar"));
     }
 
+    /**
+     * Evento para salir de la pantalla
+     *
+     * @param event Clic del usuario
+     */
     @FXML
     private void botonCancelar(ActionEvent event) {
         controlador.hacerVisiblePantallaprincipal();
@@ -104,6 +128,11 @@ public class PantallaIniciarSesionController implements Initializable {
         ventanaIniciarSesion.close();
     }
 
+    /**
+     * Evento para iniciar sesisón
+     *
+     * @param event Clic del usuario
+     */
     @FXML
     private void botonIniciarSesion(ActionEvent event) {
         Programador programador = new Programador();
@@ -138,6 +167,10 @@ public class PantallaIniciarSesionController implements Initializable {
 
     }
 
+    /**
+     * Evento para mostrar la pantalla de registrar usuario
+     * @param event Clic del usuario
+     */
     @FXML
     private void etiquetaCrearCuenta(MouseEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -145,6 +178,11 @@ public class PantallaIniciarSesionController implements Initializable {
         ventanaRegistrarUsuario(recurso, controlador);
     }
 
+    /**
+     * Encripta una cadena con el algoritmo SAH2
+     * @param string Cadena que será encriptada
+     * @return Cadena encriptada
+     */
     public static String makeHash(String string) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");

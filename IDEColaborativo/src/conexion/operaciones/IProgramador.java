@@ -15,7 +15,24 @@ import modelo.negocio.Programador;
  * @author raymu
  */
 public interface IProgramador extends Remote{
-    public InformacionInicioSesion iniciarSesion(Programador programador) throws RemoteException; 
+    /**
+     * 
+     * @param programador
+     * @return
+     * @throws RemoteException 
+     */
+    public InformacionInicioSesion iniciarSesion(Programador programador) throws RemoteException;
+    /**
+     * 
+     * @param programador
+     * @return
+     * @throws RemoteException 
+     */
     public boolean registrarUsuario(Programador programador) throws RemoteException;
+    /**
+     * 
+     * @param nombreProgramador
+     * @throws RemoteException 
+     */
     public void cerrarSesion(String nombreProgramador) throws RemoteException;
 }

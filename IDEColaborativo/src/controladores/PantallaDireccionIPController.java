@@ -21,8 +21,9 @@ import javafx.stage.WindowEvent;
 
 /**
  * FXML Controller class
- *
- * @author raymu
+ * 
+ * @author Alonso Lora
+ * @author Raymundo Pérez
  */
 public class PantallaDireccionIPController implements Initializable {
 
@@ -49,6 +50,8 @@ public class PantallaDireccionIPController implements Initializable {
 
     /**
      * Initializes the controller class.
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -56,16 +59,28 @@ public class PantallaDireccionIPController implements Initializable {
         configurarIdioma();
     }
 
+    /**
+     * Configura el idioma de todas etiquetas de la pantalla
+     */
     public void configurarIdioma() {
         etiquetaIP.setText(recurso.getString("etDireccionIP"));
         botonCancelar.setText(recurso.getString("btCancelar"));
         botonGuardar.setText(recurso.getString("btGuardar"));
     }
 
+     /**
+     * Da valor al controlador para poder manipular componentes de la pantalla principal
+     *
+     * @param controlador Instancia del controlador
+     */
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
     }
 
+    /**
+     * Dar valor al stage para poder manipular la pantalla direccion Ip
+     * @param stagePantallaDireccionIP Stage de la instancia actual
+     */
     public void setStagePantallaDireccionIP(Stage stagePantallaDireccionIP) {
         this.stagePantallaDireccionIP = stagePantallaDireccionIP;
         this.stagePantallaDireccionIP.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -76,6 +91,10 @@ public class PantallaDireccionIPController implements Initializable {
         });
     }
 
+    /**
+     * Guarda la IP de servidor
+     * @param event Clic del usuario
+     */
     @FXML
     private void guardarIP(ActionEvent event) {
         StringBuilder direccionIP = new StringBuilder();
@@ -91,12 +110,20 @@ public class PantallaDireccionIPController implements Initializable {
         }
     }
 
+    /**
+     * Evento para salir de la pantalla dirección IP
+     * @param event Clic del usuario
+     */
     @FXML
     private void cancelar(ActionEvent event) {
         controlador.hacerVisiblePantallaprincipal();
         stagePantallaDireccionIP.close();
     }
 
+    /**
+     * Valida que solo pueda ingresar números
+     * @param event Presión de una tecla
+     */
     @FXML
     private void validarEntradas(KeyEvent event) {
         int limiteCaracteres = 3;

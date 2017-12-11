@@ -45,21 +45,22 @@ public class PantallaInvitarColaboradorController implements Initializable {
     private JFXButton botonInvitar;
     @FXML
     private JFXButton botonCancelar;
-
-    private Socket socket;
-    private static ResourceBundle recurso;
-    private ArrayList<Proyecto> proyectos;
     @FXML
     private Label etiquetaProyecto;
     @FXML
     private JFXComboBox<String> comboProyectos;
-
+    
     private static PantallaPrincipalController controlador;
     private static Stage stagePantallaInivitar;
     private static Proyecto proyecto;
+    private Socket socket;
+    private static ResourceBundle recurso;
+    private ArrayList<Proyecto> proyectos;
 
     /**
      * Initializes the controller class.
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -67,11 +68,28 @@ public class PantallaInvitarColaboradorController implements Initializable {
         configurarIdioma();
         mostrarProyectos();
     }
-
+    
+    /**
+     * Configura el idioma de todas etiquetas de la pantalla
+     */
+    public void configurarIdioma() {
+        etiquetaNombreColaborador.setText(recurso.getString("etNombreColaborador"));
+        botonInvitar.setText(recurso.getString("btInvitar"));
+        botonCancelar.setText(recurso.getString("btCancelar"));
+    }
+    
+    /**
+     * Da valor al socket que contiene la conexión con el servidor de NodeJS
+     * @param socket Socket con la conexión al servidor
+     */
     public void setSocket(Socket socket) {
         this.socket = socket;
     }
 
+    /**
+     * Dar valor al stage para poder manipular la pantalla invitar colaborador
+     * @param stagePantallaInivitar Stage de la instancia actual
+     */
     public void setStagePantallaInivitar(Stage stagePantallaInivitar) {
         this.stagePantallaInivitar = stagePantallaInivitar;
         this.stagePantallaInivitar.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -82,10 +100,18 @@ public class PantallaInvitarColaboradorController implements Initializable {
         });
     }
 
+     /**
+     * Da valor al controlador para poder manipular componentes de la pantalla principal
+     *
+     * @param controlador Instancia del controlador
+     */
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
     }
 
+    /**
+     * Muestra los proyectos disponibles
+     */
     public void mostrarProyectos() {
         Proyecto proyecto = new Proyecto();
         this.proyectos = proyecto.cargarProyectos();
@@ -94,12 +120,10 @@ public class PantallaInvitarColaboradorController implements Initializable {
         comboProyectos.setItems(items);
     }
 
-    public void configurarIdioma() {
-        etiquetaNombreColaborador.setText(recurso.getString("etNombreColaborador"));
-        botonInvitar.setText(recurso.getString("btInvitar"));
-        botonCancelar.setText(recurso.getString("btCancelar"));
-    }
-
+    /**
+     * Obtiene el nombre de los proyectos
+     * @return Lista con los nombres de los proyectos
+     */
     public ArrayList<String> obtenerNombresProyectos() {
         ArrayList<String> nombreProyectos = new ArrayList();
         for (Proyecto proyecto : proyectos) {
@@ -108,6 +132,11 @@ public class PantallaInvitarColaboradorController implements Initializable {
         return nombreProyectos;
     }
 
+    /**
+     * Busca el proyeto por su nombre
+     * @param nombre Nombre del proyecto
+     * @return Proyecto seleccionado
+     */
     public Proyecto buscarProyecto(String nombre) {
         Proyecto proyectoEnviar = new Proyecto();
         for (Proyecto proyecto : proyectos) {
@@ -118,6 +147,10 @@ public class PantallaInvitarColaboradorController implements Initializable {
         return proyectoEnviar;
     }
 
+    /**
+     * Evento para invitar a un colaborador
+     * @param event Clic del usuario
+     */
     @FXML
     private void invitarColaborador(ActionEvent event) {
 
@@ -130,26 +163,42 @@ public class PantallaInvitarColaboradorController implements Initializable {
         }
     }
 
+    /**
+     * Despliega la pantalla host
+     */
     public static void mostrarVentanaHost() {
         controlador.hacerInVisiblePantallaprincipal();
         ventanaHost(recurso, proyecto, controlador);
         stagePantallaInivitar.close();
     }
     
+    /**
+     * Muestra el mensaje donde indica que la invitación fue enviada
+     */
     public static void invitacionEnviada(){
         controlador.hacerVisiblePantallaprincipal();
         controlador.invitacionEnviada();
         stagePantallaInivitar.close();
     }
 
+    /**
+     * Muestra el mensaje donde indica que el colaborador no existe
+     */
     public static void invitacionErronea() {
         mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeColaboradorNoEncontrado"));
     }
 
+    /**
+     * Muestra el mensaje donde indica que no te puedes invitar a ti mismo
+     */
     public static void mensajeRecursivo() {
         mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeRecursivo"));
     }
 
+    /**
+     * Obtene el proyecto seleccionado por el usuario
+     * @return Proyecto seleccionado 
+     */
     public Proyecto obtenerProyectoCombo() {
         Proyecto proyecto = null;
         for (Proyecto proyectoColaborativo : proyectos) {
@@ -162,6 +211,11 @@ public class PantallaInvitarColaboradorController implements Initializable {
         return proyecto;
     }
 
+    /**
+     * Evento para salir de la pantalla
+     *
+     * @param event Clic del usuario
+     */
     @FXML
     private void cancelar(ActionEvent event) {
         Stage ventanaInvitarColaborador = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -169,6 +223,11 @@ public class PantallaInvitarColaboradorController implements Initializable {
         controlador.hacerVisiblePantallaprincipal();
     }
 
+    /**
+     * Transforma un objeto proyecto a un objeto tipo JSON
+     * @param proyecto Proyecto que será transformado a un objeto tipo JSON
+     * @return Proyecto transformado a objeto JSON
+     */
     public static JSONObject crearObjetoJSON(Proyecto proyecto) {
         JSONObject proyectoJSON = new JSONObject();
         proyectoJSON.put("nombreProyecto", proyecto.getNombreProyecto());

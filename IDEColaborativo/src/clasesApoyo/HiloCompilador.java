@@ -15,22 +15,33 @@ import modelo.negocio.Archivo;
 
 /**
  *
- * @author raymu
+ * @author Alonso Lora
+ * @author Raymundo Pérez
  */
 public class HiloCompilador extends Thread{
     private final StringBuilder resultadoCompilacion;
     private final ProcessBuilder procesoCompilar;
     
+    /**
+     * Constructor sobrecargado
+     * @param procesoCompilar El proceso que va ejecutará el hilo
+     */
     public HiloCompilador(ProcessBuilder procesoCompilar){
         this.procesoCompilar = procesoCompilar;
         resultadoCompilacion = new StringBuilder();
     }
-
+    
+    /**
+     * Regresa el resultado de la compilación
+     * @return Resultado de la compilación
+     */
     public StringBuilder getResultadoCompilacion() {
         return resultadoCompilacion;
     }
     
-    
+    /**
+     * Tarea que va ha realizar el hilo
+     */
     @Override
     public void run() {
                 try {

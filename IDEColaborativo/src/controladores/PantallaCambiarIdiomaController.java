@@ -19,7 +19,8 @@ import javafx.stage.WindowEvent;
 /**
  * FXML Controller class
  *
- * @author raymu
+ * @author Alonso Lora
+ * @author Raymundo Pérez
  */
 public class PantallaCambiarIdiomaController implements Initializable {
 
@@ -41,6 +42,8 @@ public class PantallaCambiarIdiomaController implements Initializable {
 
     /**
      * Initializes the controller class.
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -50,11 +53,19 @@ public class PantallaCambiarIdiomaController implements Initializable {
         radioEspañol.setToggleGroup(grupoRadio);
     }
 
-
+    /**
+     * Da valor al controlador para poder manipular componentes de la pantalla principal
+     *
+     * @param controlador Instancia del controlador
+     */
     public void setControlador(PantallaPrincipalController controlador) {
         this.controlador = controlador;
     }
 
+    /**
+     * Dar valor al stage para poder manipular la pantalla cambiar idioma
+     * @param stagePantallaCambiarIdioma Stage de la instancia actual
+     */
     public void setStagePantallaCambiarIdioma(Stage stagePantallaCambiarIdioma) {
         this.stagePantallaCambiarIdioma = stagePantallaCambiarIdioma;
         this.stagePantallaCambiarIdioma.setOnCloseRequest(new EventHandler<WindowEvent>(){
@@ -64,13 +75,19 @@ public class PantallaCambiarIdiomaController implements Initializable {
         });
     }
     
-
+    /**
+     * Configura el idioma de todas etiquetas de la pantalla
+     */
     public void configurarIdioma() {
         etiquetaIdiomasDisponibles.setText(recurso.getString("etIdiomasDisponibles"));
         botonAceptar.setText(recurso.getString("btAceptar"));
         botonCancelar.setText(recurso.getString("btCancelar"));
     }
-
+    
+    /**
+     * Evento para configurar el idioma en todo el sistema
+     * @param event Clic del usuario
+     */
     @FXML
     private void botonAceptar(ActionEvent event) {
         JFXRadioButton radioSeleccionado = (JFXRadioButton) grupoRadio.getSelectedToggle();
@@ -96,6 +113,10 @@ public class PantallaCambiarIdiomaController implements Initializable {
 
     }
 
+    /**
+     * Evento para salir de la pantalla cambiar idioma
+     * @param event Clic del usuario
+     */
     @FXML
     private void botonCancelar(ActionEvent event) {
         controlador.hacerVisiblePantallaprincipal();

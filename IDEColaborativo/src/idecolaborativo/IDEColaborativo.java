@@ -52,12 +52,21 @@ import org.json.JSONObject;
  */
 public class IDEColaborativo extends Application {
 
+    /**
+     * Inicializa la ventana prinicpal
+     * @param stage 
+     * @throws Exception 
+     */
     @Override
     public void start(Stage stage) throws Exception {
         ResourceBundle recurso = ResourceBundle.getBundle("recursos.idioma_en_US");
         ventanaPrincipal(recurso);
     }
 
+    /**
+     * Depliega la ventana principal
+     * @param recurso Idioma
+     */
     public static void ventanaPrincipal(ResourceBundle recurso) {
         try {
             Stage stage = new Stage();
@@ -77,6 +86,11 @@ public class IDEColaborativo extends Application {
         }
     }
 
+    /**
+     * Despliega la pantalla de iniciar sesión
+     * @param recurso Idioma
+     * @param controlador Controlador para poder manipular la pantalla principal
+     */
     public static void ventanaInicioSesion(ResourceBundle recurso, PantallaPrincipalController controlador) {
         try {
             Stage stage = new Stage();
@@ -94,6 +108,11 @@ public class IDEColaborativo extends Application {
         }
     }
 
+    /**
+     * Despliega la pantalla registrar usuario
+     * @param recurso Idioma
+     * @param controlador Controlador para poder manipular la pantalla principal
+     */
     public static void ventanaRegistrarUsuario(ResourceBundle recurso, PantallaPrincipalController controlador) {
         try {
             Stage stage = new Stage();
@@ -111,6 +130,11 @@ public class IDEColaborativo extends Application {
         }
     }
 
+    /**
+     * Despliega la pantalla para crear proyecto
+     * @param recurso Idioma
+     * @param controlador Controlador para poder manipular la pantalla principal
+     */
     public static void ventanaCrearProyecto(ResourceBundle recurso, PantallaPrincipalController controlador) {
         try {
             Stage stage = new Stage();
@@ -128,6 +152,11 @@ public class IDEColaborativo extends Application {
         }
     }
 
+    /**
+     * Despliega la pantalla para cambiar idioma
+     * @param recurso Idioma
+     * @param controlador Controlador para poder manipular la pantalla principal 
+     */
     public static void ventanaCambiarIdioma(ResourceBundle recurso, PantallaPrincipalController controlador) {
         try {
             Stage stage = new Stage();
@@ -145,6 +174,11 @@ public class IDEColaborativo extends Application {
         }
     }
 
+    /**
+     * Muestra un mensaje al usuario
+     * @param encabezado Encabezado del alert
+     * @param mensaje Mensaje del alert
+     */
     public static void mensajeAlert(String encabezado, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(encabezado);
@@ -152,6 +186,11 @@ public class IDEColaborativo extends Application {
         alert.show();
     }
 
+    /**
+     * Muestra la pantalla con el resultado de la compilación
+     * @param resultado Resultado de la compilación
+     * @param recurso Idioma
+     */
     public static void resultadoCompilacion(String resultado, ResourceBundle recurso) {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle(recurso.getString("errorCompilacion"));
@@ -170,6 +209,13 @@ public class IDEColaborativo extends Application {
         alert.showAndWait();
     }
 
+    /**
+     * Muestra la pantalla para ejecutar un archivo
+     * @param recurso Idioma
+     * @param archivo Archivo que va a ser ejecutado
+     * @param controlador Controlador para poder manipular la pantalla principal
+     * @param esColaborativo Indica si la ejecucion es de manera colaborativa
+     */
     public static void ventanaEjecutar(ResourceBundle recurso, Archivo archivo, 
             PantallaPrincipalController controlador,boolean esColaborativo) {
         try {
@@ -189,6 +235,12 @@ public class IDEColaborativo extends Application {
         }
     }
     
+    /**
+     * Muestra la pantalla invitar colaborador
+     * @param recurso Idioma
+     * @param socket Socket contiene la conexión con el servidor NodeJS
+     * @param controlador Controlador para poder manipular la pantalla principal
+     */
     public static void ventanaInvitarColaborador(ResourceBundle recurso,Socket socket,PantallaPrincipalController controlador){
          try {
             Stage stage = new Stage();
@@ -206,7 +258,12 @@ public class IDEColaborativo extends Application {
             Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+    /**
+     * Muestra la pantalla host 
+     * @param recurso Idioma
+     * @param proyecto Proyecto colaborativo
+     * @param controlador Controlador para poder manipular la pantalla principal
+     */
     public static void ventanaHost(ResourceBundle recurso,Proyecto proyecto,PantallaPrincipalController controlador){
          try {
             Stage stage = new Stage();
@@ -227,6 +284,12 @@ public class IDEColaborativo extends Application {
         }
     }
     
+    /**
+     * Muestra la pantalla invitado
+     * @param recurso Idioma
+     * @param proyecto Proyecto colaborativo
+     * @param controlador Controlador para poder manipular la pantalla principal
+     */
     public static void ventanaInvitado(ResourceBundle recurso,JSONObject proyecto,PantallaPrincipalController controlador){
         try {
             Stage stage = new Stage();
@@ -246,7 +309,11 @@ public class IDEColaborativo extends Application {
             Logger.getLogger(IDEColaborativo.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+    /**
+     * Muestra la pantalla dirección IP
+     * @param recurso Idioma
+     * @param controlador Controlador para poder manipular la pantalla principal
+     */
     public static void ventanaDireccionIP(ResourceBundle recurso, PantallaPrincipalController controlador){
         try {
             Stage stage = new Stage();

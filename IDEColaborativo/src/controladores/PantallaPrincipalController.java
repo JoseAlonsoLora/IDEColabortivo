@@ -43,7 +43,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -260,13 +259,10 @@ public class PantallaPrincipalController implements Initializable {
      */
     public void setStagePantallaPrincipal(Stage stagePantallaPrincipal) {
         this.stagePantallaPrincipal = stagePantallaPrincipal;
-        this.stagePantallaPrincipal.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                if (!etiquetaNombreUsuario.getText().isEmpty()) {
-                    cerrarSesion(null);
-                    stagePantallaPrincipal.close();
-                }
+        this.stagePantallaPrincipal.setOnCloseRequest((WindowEvent event) -> {
+            if (!etiquetaNombreUsuario.getText().isEmpty()) {
+                cerrarSesion(null);
+                stagePantallaPrincipal.close();
             }
         });
     }
@@ -305,21 +301,14 @@ public class PantallaPrincipalController implements Initializable {
                             areaCodigo.setSampleCode(treeItem.getArchivo().getContenido());
                             tab.setContent(areaCodigo.crearAreaCodigo());
                             if (!esColaborativo) {
-                                areaCodigo.getCodeArea().setOnKeyTyped(new EventHandler<KeyEvent>() {
-                                    @Override
-                                    public void handle(KeyEvent event) {
-                                        treeItem.setModificado(true);
-                                    }
+                                areaCodigo.getCodeArea().setOnKeyTyped((KeyEvent event) -> {
+                                    treeItem.setModificado(true);
                                 });
                             } else {
-                                areaCodigo.getCodeArea().setOnKeyTyped(new EventHandler<KeyEvent>() {
-                                    @Override
-                                    public void handle(KeyEvent event) {
-                                        treeItem.setModificado(true);
-
-                                        socket.emit("escribirCodigo", areaCodigo.getCodeArea().getText(), treeItem.getArchivo().getRuta() + treeItem.getArchivo().getNombreArchivo());
-
-                                    }
+                                areaCodigo.getCodeArea().setOnKeyTyped((KeyEvent event) -> {
+                                    treeItem.setModificado(true);
+                                    
+                                    socket.emit("escribirCodigo", areaCodigo.getCodeArea().getText(), treeItem.getArchivo().getRuta() + treeItem.getArchivo().getNombreArchivo());
                                 });
                                 socket.emit("abrirTab", crearObjetoJSONArchivo(treeItem.getArchivo()));
                             }
@@ -574,7 +563,7 @@ public class PantallaPrincipalController implements Initializable {
     public ArrayList<MyTreeItemCarpeta> agregarCarpetasArbol(Proyecto proyecto, ArrayList<String> nombreCarpetas) {
         ArrayList<Carpeta> carpetasProyecto = proyecto.getCarpetas();
         ArrayList<MyTreeItemCarpeta> carpetas = new ArrayList();
-        for (Carpeta carpeta : carpetasProyecto) {
+        carpetasProyecto.forEach((carpeta) -> {
             ArrayList<String> nombreArchivos = new ArrayList();
             MyTreeItemCarpeta hijo = new MyTreeItemCarpeta(carpeta.getNombreCarpeta(), crearIconoCarpeta());
             hijo.getChildren().addAll(agregarArchivosArbol(carpeta, proyecto.getLenguaje(), nombreArchivos, proyecto.getRutaProyecto()));
@@ -585,7 +574,7 @@ public class PantallaPrincipalController implements Initializable {
             hijo.setLenguaje(proyecto.getLenguaje());
             nombreCarpetas.add(carpeta.getNombreCarpeta());
             carpetas.add(hijo);
-        }
+        });
 
         return carpetas;
     }
@@ -602,15 +591,14 @@ public class PantallaPrincipalController implements Initializable {
     public ArrayList<MyTreeItem> agregarArchivosArbol(Carpeta carpeta, String lenguaje, ArrayList<String> nombreArchivos, String rutaProyecto) {
         ArrayList<Archivo> archivos = carpeta.getArchivos();
         ArrayList<MyTreeItem> treeArchivos = new ArrayList();
-        for (Archivo archivo : archivos) {
+        archivos.forEach((archivo) -> {
             MyTreeItem hijo = new MyTreeItem(archivo.getNombreArchivo(), crearIconoArchivo(lenguaje));
             hijo.setArchivo(archivo);
             hijo.setRutaProyecto(rutaProyecto);
             hijo.setRutaCarpeta(carpeta.getRutaCarpeta());
             nombreArchivos.add(archivo.getNombreArchivo());
             treeArchivos.add(hijo);
-
-        }
+        });
         return treeArchivos;
     }
 
@@ -845,6 +833,8 @@ public class PantallaPrincipalController implements Initializable {
                     myTreeItemCarpeta.getNombreArchivos().remove(myTreeItem.getArchivo().getNombreArchivo());
                     myTreeItem.getParent().getChildren().remove(myTreeItem);
                     break;
+                default:
+                    break;
             }
         }
     }
@@ -857,12 +847,12 @@ public class PantallaPrincipalController implements Initializable {
      */
     public void removerTabsAbiertosProyectoEliminado(MyTreeItemProyecto myTreeItemProyecto, ArrayList<MyTab> tabsAbiertos, TabPane tablaArchivos) {
         ArrayList<MyTab> tabsAbiertosAux = crearAuxiliarTabsAbiertos(tabsAbiertos);
-        for (MyTab myTab : tabsAbiertosAux) {
-            if (myTab.getTreeItem().getRutaProyecto().equals(myTreeItemProyecto.getRuta())) {
-                tablaArchivos.getTabs().remove(myTab);
-                tabsAbiertos.remove(myTab);
-            }
-        }
+        tabsAbiertosAux.stream().filter((myTab) -> (myTab.getTreeItem().getRutaProyecto().equals(myTreeItemProyecto.getRuta()))).map((myTab) -> {
+            tablaArchivos.getTabs().remove(myTab);
+            return myTab;
+        }).forEachOrdered((myTab) -> {
+            tabsAbiertos.remove(myTab);
+        });
     }
     
     /**
@@ -873,12 +863,12 @@ public class PantallaPrincipalController implements Initializable {
      */
     public void removerTabsAbiertosCarpetaEliminada(String rutaCarpeta, ArrayList<MyTab> tabsAbiertos, TabPane tablaArchivos) {
         ArrayList<MyTab> tabsAbiertosAux = crearAuxiliarTabsAbiertos(tabsAbiertos);
-        for (MyTab myTab : tabsAbiertosAux) {
-            if (myTab.getTreeItem().getRutaCarpeta().equals(rutaCarpeta)) {
-                tablaArchivos.getTabs().remove(myTab);
-                tabsAbiertos.remove(myTab);
-            }
-        }
+        tabsAbiertosAux.stream().filter((myTab) -> (myTab.getTreeItem().getRutaCarpeta().equals(rutaCarpeta))).map((myTab) -> {
+            tablaArchivos.getTabs().remove(myTab);
+            return myTab;
+        }).forEachOrdered((myTab) -> {
+            tabsAbiertos.remove(myTab);
+        });
     }
 
     /**
@@ -888,9 +878,9 @@ public class PantallaPrincipalController implements Initializable {
      */
     public ArrayList<MyTab> crearAuxiliarTabsAbiertos(ArrayList<MyTab> tabsAbiertos) {
         ArrayList<MyTab> tabsAbiertosAux = new ArrayList();
-        for (MyTab myTab : tabsAbiertos) {
+        tabsAbiertos.forEach((myTab) -> {
             tabsAbiertosAux.add(myTab);
-        }
+        });
         return tabsAbiertosAux;
     }
 
@@ -984,13 +974,10 @@ public class PantallaPrincipalController implements Initializable {
                 && tablaProyectos.getSelectionModel().getSelectedItem().getClass().toString().equals("class clasesApoyo.MyTreeItemCarpeta")) {
             MyTreeItemCarpeta treeItem = (MyTreeItemCarpeta) tablaProyectos.getSelectionModel().getSelectedItem();
             TextInputDialog dialog = new TextInputDialog();
-            dialog.getEditor().setOnKeyTyped(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent event) {
-                    String digito = event.getCharacter();
-                    if (digito.equals(".")) {
-                        event.consume();
-                    }
+            dialog.getEditor().setOnKeyTyped((KeyEvent event) -> {
+                String digito = event.getCharacter();
+                if (digito.equals(".")) {
+                    event.consume();
                 }
             });
             dialog.setTitle("");

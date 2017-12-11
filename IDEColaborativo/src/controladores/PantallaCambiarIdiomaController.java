@@ -7,10 +7,8 @@ import static idecolaborativo.IDEColaborativo.mensajeAlert;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
@@ -68,10 +66,8 @@ public class PantallaCambiarIdiomaController implements Initializable {
      */
     public void setStagePantallaCambiarIdioma(Stage stagePantallaCambiarIdioma) {
         this.stagePantallaCambiarIdioma = stagePantallaCambiarIdioma;
-        this.stagePantallaCambiarIdioma.setOnCloseRequest(new EventHandler<WindowEvent>(){
-            @Override public void handle(WindowEvent event) {
-                controlador.hacerVisiblePantallaprincipal();
-            }  
+        this.stagePantallaCambiarIdioma.setOnCloseRequest((WindowEvent event) -> {
+            controlador.hacerVisiblePantallaprincipal();  
         });
     }
     
@@ -105,8 +101,7 @@ public class PantallaCambiarIdiomaController implements Initializable {
                     break;
             }
             controlador.hacerVisiblePantallaprincipal();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.close();
+            stagePantallaCambiarIdioma.close();
         } else {
             mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeIdioma"));
         }
@@ -120,8 +115,7 @@ public class PantallaCambiarIdiomaController implements Initializable {
     @FXML
     private void botonCancelar(ActionEvent event) {
         controlador.hacerVisiblePantallaprincipal();
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.close();
+        stagePantallaCambiarIdioma.close();
     }
 
 }

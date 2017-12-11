@@ -23,7 +23,6 @@ import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TabPane;
@@ -53,16 +52,16 @@ public class PantallaInvitadoController implements Initializable {
 
     private JSONObject proyecto;
 
-    private static PantallaPrincipalController controlador;
-    private static Stage stagePantallaInvitado;
+    private PantallaPrincipalController controlador;
+    private Stage stagePantallaInvitado;
     @FXML
     private TreeTableView<String> tablaProyecto;
     @FXML
     private TreeTableColumn<String, String> columnaProyecto;
     private TreeItem<String> root;
-    private static ArrayList<MyTab> tabsAbiertosInvitado;
-    private static ResourceBundle recurso;
-    private static final String mensajeAtencion = "atencion";
+    private ArrayList<MyTab> tabsAbiertosInvitado;
+    private ResourceBundle recurso;
+    private static final String MENSAJE_ATENCION = "atencion";
 
     /**
      * Da valor al proyecto que será utilazado en la sesión colaborativa
@@ -88,12 +87,9 @@ public class PantallaInvitadoController implements Initializable {
      */
     public void setStagePantallaInvitado(Stage stagePantallaInvitado) {
         this.stagePantallaInvitado = stagePantallaInvitado;
-        this.stagePantallaInvitado.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                controlador.hacerVisiblePantallaprincipal();
-                controlador.getSocket().emit("terminarSesionInvitado");
-            }
+        this.stagePantallaInvitado.setOnCloseRequest((WindowEvent event) -> {
+            controlador.hacerVisiblePantallaprincipal();
+            controlador.getSocket().emit("terminarSesionInvitado");
         });
     }
 
@@ -174,10 +170,10 @@ public class PantallaInvitadoController implements Initializable {
     /**
      * El invitado finaliza su participación de la sesión
      */
-    public static void finalizarSesion() {
+    public void finalizarSesion() {
         stagePantallaInvitado.close();
         controlador.hacerVisiblePantallaprincipal();
-        mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeSesionTerminada"));
+        mensajeAlert(recurso.getString(MENSAJE_ATENCION), recurso.getString("mensajeSesionTerminada"));
         controlador.getSocket().emit("terminarSesion");
     }
 
@@ -186,12 +182,10 @@ public class PantallaInvitadoController implements Initializable {
      * @param texto Texto que el host escribió
      * @param ruta Identificador para saber en que Tab lo va a mostrar
      */
-    public static void escribirCodigoInvitado(String texto, String ruta) {
-        for (MyTab myTab : tabsAbiertosInvitado) {
-            if ((myTab.getTreeItem().getArchivo().getRuta() + myTab.getTreeItem().getArchivo().getNombreArchivo()).equals(ruta)) {
-                ((CodeArea) myTab.getContent()).replaceText(texto);
-            }
-        }
+    public void escribirCodigoInvitado(String texto, String ruta) {
+        tabsAbiertosInvitado.stream().filter((myTab) -> ((myTab.getTreeItem().getArchivo().getRuta() + myTab.getTreeItem().getArchivo().getNombreArchivo()).equals(ruta))).forEachOrdered((myTab) -> {
+            ((CodeArea) myTab.getContent()).replaceText(texto);
+        });
     }
 
     /**
@@ -222,12 +216,9 @@ public class PantallaInvitadoController implements Initializable {
         FormatoCodigo areaCodigo = new FormatoCodigo();
         areaCodigo.setSampleCode(treeItem.getArchivo().getContenido());
         tab.setContent(areaCodigo.crearAreaCodigo());
-        areaCodigo.getCodeArea().setOnKeyTyped(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                treeItem.setModificado(true);
-                controlador.getSocket().emit("escribirCodigo", areaCodigo.getCodeArea().getText(), treeItem.getArchivo().getRuta() + treeItem.getArchivo().getNombreArchivo());
-            }
+        areaCodigo.getCodeArea().setOnKeyTyped((KeyEvent event) -> {
+            treeItem.setModificado(true);
+            controlador.getSocket().emit("escribirCodigo", areaCodigo.getCodeArea().getText(), treeItem.getArchivo().getRuta() + treeItem.getArchivo().getNombreArchivo());
         });
         tab.setTreeItem(treeItem);
         tablaArchivos.getTabs().add(tab);

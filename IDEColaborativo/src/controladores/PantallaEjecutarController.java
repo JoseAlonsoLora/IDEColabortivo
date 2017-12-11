@@ -51,7 +51,7 @@ public class PantallaEjecutarController implements Initializable {
 
     private final ToggleGroup grupoRadio = new ToggleGroup();
 
-    private final String patron = "^[\u0400-\u04FFa-zA-Z ]+(,[\u0400-\u04FFa-zA-Z ]+)*$";
+    private static final String PATRON = "^[\u0400-\u04FFa-zA-Z ]+(,[\u0400-\u04FFa-zA-Z ]+)*$";
 
     private PantallaPrincipalController controlador;
 
@@ -216,7 +216,7 @@ public class PantallaEjecutarController implements Initializable {
      * @return 
      */
     public boolean validarPatronParametros(String parametros) {
-        return parametros.matches(patron);
+        return parametros.matches(PATRON);
     }
 
 }

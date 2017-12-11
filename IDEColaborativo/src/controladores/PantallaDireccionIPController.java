@@ -11,7 +11,6 @@ import idecolaborativo.IDEColaborativo;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -83,11 +82,8 @@ public class PantallaDireccionIPController implements Initializable {
      */
     public void setStagePantallaDireccionIP(Stage stagePantallaDireccionIP) {
         this.stagePantallaDireccionIP = stagePantallaDireccionIP;
-        this.stagePantallaDireccionIP.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                controlador.hacerVisiblePantallaprincipal();
-            }
+        this.stagePantallaDireccionIP.setOnCloseRequest((WindowEvent event) -> {
+            controlador.hacerVisiblePantallaprincipal();
         });
     }
 

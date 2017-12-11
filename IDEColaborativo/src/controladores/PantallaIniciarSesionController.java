@@ -18,10 +18,8 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -84,11 +82,8 @@ public class PantallaIniciarSesionController implements Initializable {
      */
     public void setStagePantallaIniciarSesion(Stage stagePantallaIniciarSesion) {
         this.stagePantallaIniciarSesion = stagePantallaIniciarSesion;
-        this.stagePantallaIniciarSesion.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                controlador.hacerVisiblePantallaprincipal();
-            }
+        this.stagePantallaIniciarSesion.setOnCloseRequest((WindowEvent event) -> {
+            controlador.hacerVisiblePantallaprincipal();
         });
     }
 
@@ -124,8 +119,7 @@ public class PantallaIniciarSesionController implements Initializable {
     @FXML
     private void botonCancelar(ActionEvent event) {
         controlador.hacerVisiblePantallaprincipal();
-        Stage ventanaIniciarSesion = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        ventanaIniciarSesion.close();
+        stagePantallaIniciarSesion.close();
     }
 
     /**
@@ -150,8 +144,7 @@ public class PantallaIniciarSesionController implements Initializable {
                         controlador.setSocket(conexionNode.getSocket());
                         controlador.setConexionNode(conexionNode);
                         controlador.hacerVisiblePantallaprincipal();
-                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                        stage.close();
+                        stagePantallaIniciarSesion.close();
                         break;
                     case DatosInvalidos:
                         mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeDatosIncorrectos"));
@@ -173,8 +166,7 @@ public class PantallaIniciarSesionController implements Initializable {
      */
     @FXML
     private void etiquetaCrearCuenta(MouseEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.close();
+        stagePantallaIniciarSesion.close();
         ventanaRegistrarUsuario(recurso, controlador);
     }
 

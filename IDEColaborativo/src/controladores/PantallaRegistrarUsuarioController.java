@@ -20,10 +20,8 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
@@ -62,7 +60,7 @@ public class PantallaRegistrarUsuarioController implements Initializable {
 
     private static final String PATTERN_EMAIL = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-    private final String mensajeAtencion = "atencion";
+    private static final String MENSAJE_ATENCION = "atencion";
 
     private Stage stagePantallaRegistrarUsuario;
 
@@ -105,11 +103,8 @@ public class PantallaRegistrarUsuarioController implements Initializable {
      */
     public void setStagePantallaRegistrarUsuario(Stage stagePantallaRegistrarUsuario) {
         this.stagePantallaRegistrarUsuario = stagePantallaRegistrarUsuario;
-        this.stagePantallaRegistrarUsuario.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                controlador.hacerVisiblePantallaprincipal();
-            }
+        this.stagePantallaRegistrarUsuario.setOnCloseRequest((WindowEvent event) -> {
+            controlador.hacerVisiblePantallaprincipal();
         });
     }
 
@@ -132,8 +127,7 @@ public class PantallaRegistrarUsuarioController implements Initializable {
      */
     @FXML
     private void botonCancelar(ActionEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.close();
+        stagePantallaRegistrarUsuario.close();
         ventanaInicioSesion(recurso, controlador);
     }
 
@@ -145,7 +139,7 @@ public class PantallaRegistrarUsuarioController implements Initializable {
     private void botonCrearCuenta(ActionEvent event) {
         Programador programador = new Programador();
         if (campoTextoContraseña.getText().isEmpty() || campoTextoCorreoElectronico.getText().isEmpty() || campoTextoNombreUsuario.getText().isEmpty()) {
-            mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeCamposVacios"));
+            mensajeAlert(recurso.getString(MENSAJE_ATENCION), recurso.getString("mensajeCamposVacios"));
         } else {
             if (validarCorreo(campoTextoCorreoElectronico.getText())) {
                 if (datosRegistroValidos()) {
@@ -160,17 +154,17 @@ public class PantallaRegistrarUsuarioController implements Initializable {
                             controlador.hacerVisiblePantallaprincipal();
                             stagePantallaRegistrarUsuario.close();
                         } else {
-                            mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeNombreUsuarioExistente"));
+                            mensajeAlert(recurso.getString(MENSAJE_ATENCION), recurso.getString("mensajeNombreUsuarioExistente"));
 
                         }
                     } catch (RemoteException | java.lang.NullPointerException ex) {
-                        mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeNoConexion"));
+                        mensajeAlert(recurso.getString(MENSAJE_ATENCION), recurso.getString("mensajeNoConexion"));
                     }
                 } else {
-                    mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeDatosInvalidos"));
+                    mensajeAlert(recurso.getString(MENSAJE_ATENCION), recurso.getString("mensajeDatosInvalidos"));
                 }
             } else {
-                mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeCorreoInvalido"));
+                mensajeAlert(recurso.getString(MENSAJE_ATENCION), recurso.getString("mensajeCorreoInvalido"));
             }
         }
     }

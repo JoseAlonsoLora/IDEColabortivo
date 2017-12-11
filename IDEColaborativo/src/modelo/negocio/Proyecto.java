@@ -31,7 +31,7 @@ public class Proyecto {
     private String nombreProyecto;
     private String rutaProyecto;
     private ArrayList<Carpeta> carpetas;
-    private final static ArchivoConfiguracion archivoConfig = new ArchivoConfiguracion();
+    private final static ArchivoConfiguracion ARCHIVO_CONFIGURACION = new ArchivoConfiguracion();
     
     /**
      * Regresa el lenguaje de programación del proyecto
@@ -99,52 +99,64 @@ public class Proyecto {
     
     /**
      * El archivo contiene las rutas de los proyectos creados, para su posterior lectura
+     * @return Indica si el archivo se creo correctamente
      */   
-    public void crearArchivoRutas() {
+    public boolean crearArchivoRutas() {
+        boolean seCreo = false;
         String ruta = obtenerRutaProyectos();
         File file = new File(ruta);
         if (!file.exists()) {
             try {
-                file.createNewFile();
+                seCreo = file.createNewFile();
             } catch (IOException ex) {
                 Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
+        return seCreo;
     }
     
     /**
      * Guarda la ruta del nuevo proyecto en el archivo de rutas
+     * @return Indica si el archivo se actualizó con la nueva cadena
      */
-    public void guardarRuta() {
+    public boolean guardarRuta() {
+        boolean seActualizo = false;
         String rutaArchivoProyectos = obtenerRutaProyectos();
         File file = new File(rutaArchivoProyectos);
         try (FileWriter fileWriter = new FileWriter(file, true);
                 PrintWriter pw = new PrintWriter(fileWriter)) {
             pw.append(rutaProyecto + "," + lenguaje + "," + nombreProyecto + "\n");
+            seActualizo = true;
         } catch (IOException ex) {
             Logger.getLogger(PantallaCrearProyectoController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return seActualizo;
     }
     
     /**
      * Elimina la ruta de de un proyecto del archivo de rutas
      * @param cadenaActualizadda Contenido del archivo de rutas actualizado
+     * @return Indica si el archivo se actualizó correctamente
      */
-    public void actualizarArchivoRutas(String cadenaActualizadda) {
+    public boolean actualizarArchivoRutas(String cadenaActualizadda) {
+        boolean seActualizo = false;
         File file = new File(obtenerRutaProyectos());
         try (PrintWriter printWriter = new PrintWriter(new FileWriter(file))) {
             printWriter.write(cadenaActualizadda);
+            seActualizo= true;
         } catch (IOException ex) {
             Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return seActualizo;
     }
         
     /**
      * Elimina el proyecto del archivo rutas
      * @param proyecto Proyecto que será eliminado del archivo de rutas
+     * @return Indica si el archivo se actualizó correctamente
      */
-    public void eliminarRutaDeProyecto(Proyecto proyecto) {
+    public boolean eliminarRutaDeProyecto(Proyecto proyecto) {
+        boolean seElimino= false;
         File file = new File(obtenerRutaProyectos());
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
             String auxiliar;
@@ -155,13 +167,14 @@ public class Proyecto {
                 if (!auxiliar.equals(rutaEliminar.toString())) {
                     contenidoArchivo += auxiliar + "\n";
                 }
-            }
-            actualizarArchivoRutas(contenidoArchivo);
+            }       
+            seElimino = actualizarArchivoRutas(contenidoArchivo);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(Proyecto.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return seElimino;
     }
     
     /**
@@ -172,9 +185,9 @@ public class Proyecto {
         String rutaArchivoProyectos;
         String palabraClave = "user.name";
         if (isLinux()) {
-            rutaArchivoProyectos = archivoConfig.getRutaProyectosLinux().replace(palabraClave, System.getProperty(palabraClave));
+            rutaArchivoProyectos = ARCHIVO_CONFIGURACION.getRutaProyectosLinux().replace(palabraClave, System.getProperty(palabraClave));
         } else {
-            rutaArchivoProyectos = archivoConfig.getRutaProyectosWindows().replace(palabraClave, System.getProperty(palabraClave));
+            rutaArchivoProyectos = ARCHIVO_CONFIGURACION.getRutaProyectosWindows().replace(palabraClave, System.getProperty(palabraClave));
         }
 
         return rutaArchivoProyectos;
@@ -187,14 +200,14 @@ public class Proyecto {
     public boolean crearProyecto() {
         boolean proyetoCreado = false;
         File carpetaProyecto = new File(rutaProyecto);
-        String rutaArchivoMain = rutaProyecto + archivoConfig.getNombreCarpetaCodigos() + nombreProyecto;
+        String rutaArchivoMain = rutaProyecto + ARCHIVO_CONFIGURACION.getNombreCarpetaCodigos() + nombreProyecto;
         if (!carpetaProyecto.exists()) {
             carpetaProyecto.mkdir();
-            carpetaProyecto = new File(rutaProyecto + archivoConfig.getNombreCarpetaCodigos());
+            carpetaProyecto = new File(rutaProyecto + ARCHIVO_CONFIGURACION.getNombreCarpetaCodigos());
             carpetaProyecto.mkdir();
             carpetaProyecto = new File(rutaArchivoMain);
             carpetaProyecto.mkdir();
-            carpetaProyecto = new File(rutaProyecto + archivoConfig.getNombreCarpetaClases());
+            carpetaProyecto = new File(rutaProyecto + ARCHIVO_CONFIGURACION.getNombreCarpetaClases());
             carpetaProyecto.mkdir();
             File archivoMain = null;
             rutaArchivoMain += "/";
@@ -262,9 +275,9 @@ public class Proyecto {
      * @return Carpetas pertenecientes a un proyecto
      */
     public ArrayList<Carpeta> buscarCarpetas(String ruta) {
-        String rutaClases = ruta + archivoConfig.getNombreCarpetaClases();
+        String rutaClases = ruta + ARCHIVO_CONFIGURACION.getNombreCarpetaClases();
         ArrayList<Carpeta> carpetas = new ArrayList();
-        ruta += archivoConfig.getNombreCarpetaCodigos();
+        ruta += ARCHIVO_CONFIGURACION.getNombreCarpetaCodigos();
         File file = new File(ruta);
         if (file.exists()) {
             String[] carpetasCreadas = file.list();
@@ -360,7 +373,7 @@ public class Proyecto {
             }
             fileSegundoNivel.delete();
         }
-        file.delete();
+        seElimino = file.delete();
         return seElimino;
     }
 

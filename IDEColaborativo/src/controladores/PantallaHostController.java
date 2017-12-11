@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TabPane;
@@ -53,14 +52,14 @@ public class PantallaHostController implements Initializable {
     private JFXButton botonEjecutar;
     @FXML
     private TabPane tablaArchivos;
-    private static ResourceBundle recurso;
+    private ResourceBundle recurso;
     private Proyecto proyecto;
     private PantallaPrincipalController controlador;
     private Stage stagePantallaHost;
     @FXML
     private TreeTableColumn<String, String> columnaProyecto;
     private TreeItem<String> root;
-    private static ArrayList<MyTab> tabsAbiertosHost;
+    private ArrayList<MyTab> tabsAbiertosHost;
     @FXML
     private JFXButton botonEliminar;
     @FXML
@@ -72,6 +71,7 @@ public class PantallaHostController implements Initializable {
 
     /**
      * Initializes the controller class.
+     *
      * @param url
      * @param rb
      */
@@ -84,14 +84,16 @@ public class PantallaHostController implements Initializable {
 
     /**
      * Da valor al proyecto con el se trabajará de manerea colaborativa
+     *
      * @param proyecto Proyecto colaborativo
      */
     public void setProyecto(Proyecto proyecto) {
         this.proyecto = proyecto;
     }
 
-     /**
-     * Da valor al controlador para poder manipular componentes de la pantalla principal
+    /**
+     * Da valor al controlador para poder manipular componentes de la pantalla
+     * principal
      *
      * @param controlador Instancia del controlador
      */
@@ -102,22 +104,21 @@ public class PantallaHostController implements Initializable {
 
     /**
      * Dar valor al stage para poder manipular la pantalla host
+     *
      * @param stagePantallaHost Stage de la instancia actual
      */
     public void setStagePantallaHost(Stage stagePantallaHost) {
         this.stagePantallaHost = stagePantallaHost;
-        this.stagePantallaHost.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                controlador.cargarProyectos();
-                controlador.hacerVisiblePantallaprincipal();
-                controlador.getSocket().emit("terminarSesionHost");
-            }
+        this.stagePantallaHost.setOnCloseRequest((WindowEvent event) -> {
+            controlador.cargarProyectos();
+            controlador.hacerVisiblePantallaprincipal();
+            controlador.getSocket().emit("terminarSesionHost");
         });
     }
 
     /**
      * Evento para guardar el archivo
+     *
      * @param event Clic del usuario
      */
     @FXML
@@ -127,6 +128,7 @@ public class PantallaHostController implements Initializable {
 
     /**
      * Evento para compilar el archivo seleccionado por el usuario
+     *
      * @param event Clic del usuario
      */
     @FXML
@@ -135,8 +137,9 @@ public class PantallaHostController implements Initializable {
     }
 
     /**
-     * Evento para ejecutar 
-     * @param event 
+     * Evento para ejecutar
+     *
+     * @param event
      */
     @FXML
     private void ejecutar(ActionEvent event) {
@@ -162,39 +165,40 @@ public class PantallaHostController implements Initializable {
 
     /**
      * Obtiene el nombre de todas las carpetas pertenecientes a un proyecto
-     * @param proyecto Proyecto donde se buscarán todas las carpetas 
+     *
+     * @param proyecto Proyecto donde se buscarán todas las carpetas
      * @return Lista con el nombre de todas las carpetas de un proyecto
      */
     public static ArrayList<String> obtenerNombreCarpetas(Proyecto proyecto) {
         ArrayList<String> nombreCarpetas = new ArrayList();
-        for (Carpeta carpeta : proyecto.getCarpetas()) {
+        proyecto.getCarpetas().forEach((carpeta) -> {
             nombreCarpetas.add(carpeta.getNombreCarpeta());
-        }
+        });
         return nombreCarpetas;
     }
 
     /**
      * Muestra un mensaje cuando el invitado finaliza la sesión colaborativa
      */
-    public static void colaboradorDesconectado() {
+    public void colaboradorDesconectado() {
         mensajeAlert(recurso.getString("atencion"), recurso.getString("mensajeColaboradorDesconectado"));
     }
 
     /**
      * Escribe el código que el invitado escribió en la pantalla host
+     *
      * @param texto Texto que el invitado escribió
      * @param ruta Identificador para saber en que Tab lo va a mostrar
      */
-    public static void escribirCodigoHost(String texto, String ruta) {
-        for (MyTab myTab : tabsAbiertosHost) {
-            if ((myTab.getTreeItem().getArchivo().getRuta() + myTab.getTreeItem().getArchivo().getNombreArchivo()).equals(ruta)) {
-                ((CodeArea) myTab.getContent()).replaceText(texto);
-            }
-        }
+    public void escribirCodigoHost(String texto, String ruta) {
+        tabsAbiertosHost.stream().filter((myTab) -> ((myTab.getTreeItem().getArchivo().getRuta() + myTab.getTreeItem().getArchivo().getNombreArchivo()).equals(ruta))).forEachOrdered((myTab) -> {
+            ((CodeArea) myTab.getContent()).replaceText(texto);
+        });
     }
 
     /**
-     * Abre el archivo que el invidado abrió 
+     * Abre el archivo que el invidado abrió
+     *
      * @param archivoJSON Archivo que el invitado abrió
      */
     public void abrirTabHost(JSONObject archivoJSON) {
@@ -206,12 +210,9 @@ public class PantallaHostController implements Initializable {
         FormatoCodigo areaCodigo = new FormatoCodigo();
         areaCodigo.setSampleCode(treeItem.getArchivo().getContenido());
         tab.setContent(areaCodigo.crearAreaCodigo());
-        areaCodigo.getCodeArea().setOnKeyTyped(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                treeItem.setModificado(true);
-                controlador.getSocket().emit("escribirCodigo", areaCodigo.getCodeArea().getText(), treeItem.getArchivo().getRuta() + treeItem.getArchivo().getNombreArchivo());
-            }
+        areaCodigo.getCodeArea().setOnKeyTyped((KeyEvent event) -> {
+            treeItem.setModificado(true);
+            controlador.getSocket().emit("escribirCodigo", areaCodigo.getCodeArea().getText(), treeItem.getArchivo().getRuta() + treeItem.getArchivo().getNombreArchivo());
         });
         tab.setTreeItem(treeItem);
         tablaArchivos.getTabs().add(tab);
@@ -220,6 +221,7 @@ public class PantallaHostController implements Initializable {
 
     /**
      * Eliminar el archivo o carpeta que el usuario seleccionó
+     *
      * @param event Clic del usuario
      */
     @FXML
@@ -251,13 +253,16 @@ public class PantallaHostController implements Initializable {
                     myTreeItem.getParent().getChildren().remove(myTreeItem);
                     controlador.getSocket().emit("eliminarArchivo", myTreeItemCarpeta.getNombreCarpeta(), myTreeItem.getArchivo().getNombreArchivo());
                     break;
+                default:
+                    break;
             }
         }
     }
 
     /**
      * Evento para agregar una carpeta al poryecto
-     * @param event 
+     *
+     * @param event
      */
     @FXML
     private void agregarPaquete(ActionEvent event) {
@@ -269,6 +274,7 @@ public class PantallaHostController implements Initializable {
 
     /**
      * Transforma un carpeta a objeto JSON
+     *
      * @param treeItemCarpeta Carpeta que será transformada a objeto JSON
      * @return Objeto JSON con las propiedades del objeto carpeta
      */
@@ -283,6 +289,7 @@ public class PantallaHostController implements Initializable {
 
     /**
      * Evento para agregar un archivo al proyecto
+     *
      * @param event Clic del usuario
      */
     @FXML
@@ -295,7 +302,8 @@ public class PantallaHostController implements Initializable {
 
     /**
      * Evento para finalizar la sesión colaborativa
-     * @param event 
+     *
+     * @param event
      */
     @FXML
     private void terminarSesion(ActionEvent event) {

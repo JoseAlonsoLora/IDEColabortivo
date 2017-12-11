@@ -13,10 +13,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.FileChooser;
@@ -93,10 +91,8 @@ public class PantallaCrearProyectoController implements Initializable {
      */
     public void setStagePantallaCrearProyecto(Stage stagePantallaCrearProyecto) {
         this.stagePantallaCrearProyecto = stagePantallaCrearProyecto;
-        this.stagePantallaCrearProyecto.setOnCloseRequest(new EventHandler<WindowEvent>(){
-            @Override public void handle(WindowEvent event) {
-                controlador.hacerVisiblePantallaprincipal();
-            }  
+        this.stagePantallaCrearProyecto.setOnCloseRequest((WindowEvent event) -> {
+            controlador.hacerVisiblePantallaprincipal();  
         });
     }
 
@@ -138,8 +134,7 @@ public class PantallaCrearProyectoController implements Initializable {
     @FXML
     private void botonCancelar(ActionEvent event) {
         controlador.hacerVisiblePantallaprincipal();
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.close();
+        stagePantallaCrearProyecto.close();
     }
 
     /**
@@ -148,7 +143,7 @@ public class PantallaCrearProyectoController implements Initializable {
      */
     @FXML
     private void botonCrearProyecto(ActionEvent event) {
-        if (grupoRadio.getSelectedToggle() != null && !campoTextoRuta.getText().equals("") && !campoTextoNombreProyecto.equals("")) {
+        if (grupoRadio.getSelectedToggle() != null && !campoTextoRuta.getText().equals("") && !campoTextoNombreProyecto.getText().equals("")) {
             JFXRadioButton radioSeleccionado = (JFXRadioButton) grupoRadio.getSelectedToggle();
             Proyecto proyecto = null;
             switch (radioSeleccionado.getText()) {
@@ -167,8 +162,7 @@ public class PantallaCrearProyectoController implements Initializable {
             proyecto = proyecto.cargarNuevoProyecto(proyecto);
             controlador.cargarNuevoProyecto(proyecto);
             controlador.hacerVisiblePantallaprincipal();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.close();
+            stagePantallaCrearProyecto.close();
 
         } else {
             mensajeAlert(recurso.getString(mensajeAtencion), recurso.getString("mensajeCamposVacios"));

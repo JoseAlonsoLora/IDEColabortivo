@@ -17,15 +17,11 @@ import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import modelo.negocio.Archivo;
-import modelo.negocio.Carpeta;
 import modelo.negocio.Proyecto;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -92,11 +88,8 @@ public class PantallaInvitarColaboradorController implements Initializable {
      */
     public void setStagePantallaInivitar(Stage stagePantallaInivitar) {
         this.stagePantallaInivitar = stagePantallaInivitar;
-        this.stagePantallaInivitar.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                controlador.hacerVisiblePantallaprincipal();
-            }
+        PantallaInvitarColaboradorController.stagePantallaInivitar.setOnCloseRequest((WindowEvent event) -> {
+            controlador.hacerVisiblePantallaprincipal();
         });
     }
 
@@ -126,9 +119,9 @@ public class PantallaInvitarColaboradorController implements Initializable {
      */
     public ArrayList<String> obtenerNombresProyectos() {
         ArrayList<String> nombreProyectos = new ArrayList();
-        for (Proyecto proyecto : proyectos) {
+        proyectos.forEach((proyecto) -> {
             nombreProyectos.add(proyecto.getNombreProyecto());
-        }
+        });
         return nombreProyectos;
     }
 
@@ -218,8 +211,7 @@ public class PantallaInvitarColaboradorController implements Initializable {
      */
     @FXML
     private void cancelar(ActionEvent event) {
-        Stage ventanaInvitarColaborador = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        ventanaInvitarColaborador.close();
+        stagePantallaInivitar.close();
         controlador.hacerVisiblePantallaprincipal();
     }
 
@@ -233,23 +225,27 @@ public class PantallaInvitarColaboradorController implements Initializable {
         proyectoJSON.put("nombreProyecto", proyecto.getNombreProyecto());
         proyectoJSON.put("lenguaje", proyecto.getLenguaje());
         JSONArray arregloCarpetas = new JSONArray();
-        for (Carpeta carpeta : proyecto.getCarpetas()) {
+        proyecto.getCarpetas().stream().map((carpeta) -> {
             JSONObject carpetaJSON = new JSONObject();
             carpetaJSON.put("nombreCarpeta", carpeta.getNombreCarpeta());
             carpetaJSON.put("rutaCarpeta", carpeta.getRutaCarpeta());
             JSONArray arregloArchivos = new JSONArray();
-            for (Archivo archivo : carpeta.getArchivos()) {
+            carpeta.getArchivos().stream().map((archivo) -> {
                 JSONObject archivoJSON = new JSONObject();
                 archivoJSON.put("nombreArchivo", archivo.getNombreArchivo());
                 archivoJSON.put("contenido", archivo.getContenido());
                 archivoJSON.put("ruta", archivo.getRuta());
                 archivoJSON.put("rutaClases", archivo.getRutaClases());
                 archivoJSON.put("paquete", archivo.getPaquete());
+                return archivoJSON;
+            }).forEachOrdered((archivoJSON) -> {
                 arregloArchivos.put(archivoJSON);
-            }
+            });
             carpetaJSON.put("archivos", arregloArchivos);
+            return carpetaJSON;
+        }).forEachOrdered((carpetaJSON) -> {
             arregloCarpetas.put(carpetaJSON);
-        }
+        });
         proyectoJSON.put("carpetas", arregloCarpetas);
         return proyectoJSON;
     }

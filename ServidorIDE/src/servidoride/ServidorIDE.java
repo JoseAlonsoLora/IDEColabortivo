@@ -1,7 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* Identificador del programa: SERVIDORIDE2017
+
+   Clave única del programa: SIDE2017
+   
+   Nombre: Servidor IDE Colaborativo
+ 
+   Nombre de los desarrolladores: José Alonso Lora González
+                                  Raymundo de Jesús Pérez Castellanos
+    
+   Fecha en la que se inicio el desarrollo del programa: 20 de septiembre 2017
+
+   Descripción: Servidor que permite conectar a los clientes de la aplicación con la base de datos del sistema.
+
  */
 package servidoride;
 
@@ -15,8 +24,9 @@ import java.util.ArrayList;
 import modelo.negocio.ProgramadorDAO;
 
 /**
- *
- * @author raymu
+ * Clase principal del servidor
+ * @author Raymundo Perez
+ * @author Alonso Lora
  */
 public class ServidorIDE {
 
@@ -37,7 +47,12 @@ public class ServidorIDE {
             System.out.println(ex.getMessage());
         }
     }
-
+    
+    /**
+     * Busca si el colaborador ya esta en el arreglo de conectados
+     * @param nombreColaborador Nombre del colaborador que sera buscado
+     * @return Indica si el colaborador esta o no conectado
+     */
     public static boolean buscarColaborador(String nombreColaborador) {
         boolean estaConectado = false;
         if (colaboradoresConectados.contains(nombreColaborador)) {
@@ -45,11 +60,19 @@ public class ServidorIDE {
         }
         return estaConectado;
     }
-
+    
+    /**
+     * Agrega el nombre de un colaborador al arreglo de colaboradores conectados
+     * @param nombreColaborador Nombre del colaborador a agregar 
+     */
     public static void agregarColaborador(String nombreColaborador) {
         colaboradoresConectados.add(nombreColaborador);
     }
 
+    /**
+     * Elimina el nombre de un colaborador del arreglo de colaboradores conectados
+     * @param nombreColaborador Nombre del colaborador a eliminar
+     */
     public static void eliminarColaborador(String nombreColaborador) {
         colaboradoresConectados.remove(nombreColaborador);
     }

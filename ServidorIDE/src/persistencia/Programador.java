@@ -6,17 +6,14 @@
 package persistencia;
 
 import java.io.Serializable;
-import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -41,8 +38,6 @@ public class Programador implements Serializable {
     private String contrasena;
     @Column(name = "correoElectronico")
     private String correoElectronico;
-    @OneToMany(mappedBy = "nombreUsuario")
-    private Collection<Desarrolla> desarrollaCollection;
 
     public Programador() {
     }
@@ -73,15 +68,6 @@ public class Programador implements Serializable {
 
     public void setCorreoElectronico(String correoElectronico) {
         this.correoElectronico = correoElectronico;
-    }
-
-    @XmlTransient
-    public Collection<Desarrolla> getDesarrollaCollection() {
-        return desarrollaCollection;
-    }
-
-    public void setDesarrollaCollection(Collection<Desarrolla> desarrollaCollection) {
-        this.desarrollaCollection = desarrollaCollection;
     }
 
     @Override

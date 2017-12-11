@@ -9,9 +9,21 @@ import java.io.Serializable;
 
 /**
  *
- * @author raymu
+ * @author Alonso Lora
+ * @author Raymundo Perez
  */
 public enum InformacionInicioSesion implements Serializable{
-    DatosValidos,DatosInvalidos,SesionIniciada
+    /**
+     * Los datos del usuarios son correctos
+     */
+    DatosValidos,
+    /**
+     * Los datos del usuarios son incorrectos
+     */
+    DatosInvalidos,
+    /**
+     * La sesión ya esta iniciada
+     */
+    SesionIniciada
     
 }
